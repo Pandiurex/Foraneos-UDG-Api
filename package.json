@@ -1,0 +1,41 @@
+{
+  "name": "Foraneos-UDG-api",
+  "version": "0.1.0",
+  "description": "api created for students who needs a space near to school",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pandiurex/Foraneos-UDG-Api.git"
+  },
+  "keywords": [
+    "api",
+    "foraneos",
+    "udg"
+  ],
+  "author": "Cristopher Estrada <crissin21_01@hotmail.com>",
+  "contributors": [
+    "Alfredo Carreon Urbano <alfredo_11_cu@hotmail.com>",
+    "José Emmanuel Gil Carbajal <emmanuel_12_gc@hotmail.com>",
+    "José Miguel Aguayo Gomez <jmiguel.aguayo@alumnos.udg.mx>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pandiurex/Foraneos-UDG-Api/issues"
+  },
+  "homepage": "https://github.com/Pandiurex/Foraneos-UDG-Api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "nodemon": "^1.18.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.1"
+  }
+}
