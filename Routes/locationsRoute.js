@@ -1,4 +1,4 @@
-// Routes of users.
+// Routes of locations.
 const express = require('express');
 const locationsController = require('../Controllers/locationsController');
 
