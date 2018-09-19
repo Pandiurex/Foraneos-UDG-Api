@@ -1,16 +1,17 @@
 // Routes of evaluations.
 const express = require('express');
-const evaluationsController = require('../Controllers/evaluationsController');
+const { evaluationsController } = require('../Controllers');
 
-const api = express.Router();
-const routerEvaluations = express.Router();
+const route = express.Router();
+const routeEvaluations = express.Router();
 
-api
+route
   .get('/', evaluationsController.showAll)
   .get('/:id', evaluationsController.showOne)
   .post('/', evaluationsController.create)
   .put('/:id', evaluationsController.update)
-  .delete('/:id', evaluationsController.deleteOne);
+  .delete('/:id', evaluationsController.deleteOne)
+  .patch('/:id', evaluationsController.patch);
 
-evaluationsController.use('/evaluations', api);
-module.exports = routerEvaluations;
+routeEvaluations.use('/evaluations', route);
+module.exports = routeEvaluations;
