@@ -3,9 +3,12 @@ const express = require('express');
 const { usersController } = require('../Controllers');
 
 const route = express.Router();
-const routeUsers = express.Router();
 
 route
+  // Login users.
+  .post('/login', usersController.login)
+  .get('/signOff', usersController.signOff)
+  // Users.
   .get('/', usersController.showAll)
   .get('/:id', usersController.showOne)
   .post('/', usersController.create)
@@ -13,5 +16,4 @@ route
   .delete('/:id', usersController.deleteOne)
   .patch('/:id', usersController.patch);
 
-routeUsers.use('/users', route);
-module.exports = routeUsers;
+module.exports = route;

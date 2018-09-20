@@ -3,7 +3,6 @@ const express = require('express');
 const { locationsController } = require('../Controllers');
 
 const route = express.Router();
-const routeLocations = express.Router();
 
 route
   .get('/', locationsController.showAll)
@@ -13,5 +12,4 @@ route
   .delete('/:id', locationsController.deleteOne)
   .patch('/:id', locationsController.patch);
 
-routeLocations.use('/locations', route);
-module.exports = routeLocations;
+module.exports = route;
