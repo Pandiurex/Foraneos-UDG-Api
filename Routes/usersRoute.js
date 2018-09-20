@@ -1,12 +1,13 @@
 // Routes of users.
 const express = require('express');
 const { usersController } = require('../Controllers');
+const middlewares = require('../Middlewares/login');
 
 const route = express.Router();
 const routeUsers = express.Router();
 
 route
-  .get('/', usersController.showAll)
+  .get('/', middlewares.checkLogin, usersController.showAll)
   .get('/:id', usersController.showOne)
   .post('/', usersController.create)
   .put('/:id', usersController.update)
