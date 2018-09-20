@@ -5,6 +5,10 @@ const { usersController } = require('../Controllers');
 const route = express.Router();
 
 route
+  // Login users.
+  .post('/login', usersController.login)
+  .get('/signOff', usersController.signOff)
+  // Users.
   .get('/', usersController.showAll)
   .get('/:id', usersController.showOne)
   .post('/', usersController.create)
