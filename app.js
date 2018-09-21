@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -8,6 +9,6 @@ app
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use('/api', routes)
-  .listen(3000, () => console.log('App listening on port 3000!'));
+  .listen(process.env.PORT, () => console.log('App listening!'));
 
 module.exports = app;
