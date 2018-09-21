@@ -1,5 +1,12 @@
+const db = require('../DB');
+
 // Controllers of users.
-const showAll = (req, res) => res.send('Show all users').status(200);
+const showAll = (req, res) => {
+  const users = db.getAll('user');
+  console.log(users);
+  res.send(users).status(200);
+};
+
 const showOne = (req, res) => res.send('Show one user').status(200);
 const create = (req, res) => res.send('Create user').status(201);
 const update = (req, res) => res.send('Update user').status(200);
