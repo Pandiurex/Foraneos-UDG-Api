@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const models = require('../Models');
 
 class DB {
   constructor() {
@@ -9,7 +10,9 @@ class DB {
       database: process.env.DB_NAME,
     });
 
-    this.con.connect();
+    this.con.connect((err) => {
+      if (err) throw err;
+    });
   }
 
   query() {
@@ -32,7 +35,7 @@ class DB {
   processResult(table, result) {
     const arr = [];
     result.forEach((r) => {
-      new [table](r);
+      new models[table](r);
     });
   }
 }
