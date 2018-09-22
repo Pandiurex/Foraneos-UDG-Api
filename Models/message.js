@@ -1,6 +1,6 @@
 const db = require('../DB');
 
-class Rate {
+class Message {
   constructor(id, senderUserId, receiverChatLocationId,
     message, time) {
     this.id = id;
@@ -15,4 +15,4 @@ class Rate {
   }
 }
 
-module.exports = Rate;
+module.exports = Message;
