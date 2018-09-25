@@ -1,16 +1,15 @@
 // Routes of locations.
 const express = require('express');
-const locationsController = require('../Controllers/locationsController');
+const { locationsController } = require('../Controllers');
 
-const api = express.Router();
-const routerLocations = express.Router();
+const route = express.Router();
 
-api
+route
   .get('/', locationsController.showAll)
   .get('/:id', locationsController.showOne)
   .post('/', locationsController.create)
   .put('/:id', locationsController.update)
-  .delete('/:id', locationsController.deleteOne);
+  .delete('/:id', locationsController.deleteOne)
+  .patch('/:id', locationsController.patch);
 
-routerLocations.use('/locations', api);
-module.exports = routerLocations;
+module.exports = route;

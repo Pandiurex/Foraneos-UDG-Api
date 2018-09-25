@@ -1,9 +1,10 @@
 // Controllers of locations.
-const showAll = (req, res) => res.send('Dame todas las Locaciones').status(200);
-const showOne = (req, res) => res.send('Dame una Locacion').status(200);
-const create = (req, res) => res.send('Crea un recurso nuevo').status(201);
-const update = (req, res) => res.send('Modifica un recurso existente').status(200);
-const deleteOne = (req, res) => res.send('Elimina un recurso').status(204);
+const showAll = (req, res) => res.send('Show all locations').status(200);
+const showOne = (req, res) => res.send('Show one location').status(200);
+const create = (req, res) => res.send('Create location').status(201);
+const update = (req, res) => res.send('Updtate location').status(200);
+const deleteOne = (req, res) => res.send('Delete location').status(204);
+const patch = (req, res) => res.send('Update a resource location').status(200);
 
 // Submit controllers.
 module.exports = {
@@ -12,4 +13,5 @@ module.exports = {
   create,
   update,
   deleteOne,
+  patch,
 };

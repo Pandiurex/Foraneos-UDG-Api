@@ -1,16 +1,19 @@
 // Routes of users.
 const express = require('express');
-const usersController = require('../Controllers/usersController');
+const { usersController } = require('../Controllers');
 
-const api = express.Router();
-const routerUsers = express.Router();
+const route = express.Router();
 
-api
+route
+  // Login users.
+  .post('/login', usersController.login)
+  .get('/signOff', usersController.signOff)
+  // Users.
   .get('/', usersController.showAll)
   .get('/:id', usersController.showOne)
   .post('/', usersController.create)
   .put('/:id', usersController.update)
-  .delete('/:id', usersController.deleteOne);
+  .delete('/:id', usersController.deleteOne)
+  .patch('/:id', usersController.patch);
 
-routerUsers.use('/users', api);
-module.exports = routerUsers;
+module.exports = route;
