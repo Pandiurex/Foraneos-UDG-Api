@@ -25,7 +25,7 @@ class DB {
   getAll(table) {
     this.con.query(`SELECT * FROM ${table.toUpperCase()}`, (err, results) => {
       if (err) throw err;
-      console.log(results);  //Sí muestra los resultados aquí en la consola, pero no al retornarlo al usersController
+      console.log(results);
       this.result = results;
     });
 
