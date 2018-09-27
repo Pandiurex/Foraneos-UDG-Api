@@ -1,18 +1,20 @@
 // Routes of users.
 const express = require('express');
-const { usersController } = require('../Controllers');
-const { middlewares } = require('../Middlewares');
+const {
+  usersController,
+} = require('../Controllers');
+const middlewaresErr = require('../Middlewares');
 
 const route = express.Router();
 
 route
-  // Login users.
+// Login users.
   .post('/login', usersController.login)
   .get('/signOff', usersController.signOff)
-  // Users.
+// Users.
   .get('/', usersController.showAll)
   .get('/:id', usersController.showOne)
-  .post('/', [middlewares.nameValid, middlewares.emailValid, middlewares.passwordValid], usersController.create)
+  .post('/', [middlewaresErr.errMid.emailValid, middlewaresErr.errMid.passwordValid], usersController.create)
   .put('/:id', usersController.update)
   .delete('/:id', usersController.deleteOne)
   .patch('/:id', usersController.patch);

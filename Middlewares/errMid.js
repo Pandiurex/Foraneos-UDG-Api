@@ -1,85 +1,85 @@
-function login() {
-  return true;
+function getCompare() {
+  return {
+    word: /[a-zA-ZÃƒÂ±Ãƒâ€˜ ]{3,}/,
+    email: /\S+@\S+\.\S+/,
+    password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+    login: true,
+  };
 }
 
-function isEmpty(valor) {
-  const empty = /^(\w+\S+)$/;
-  if (!empty.exec(valor)) {
-    return false;
-  }
-  return true;
-}
-
-function isEmail(valor) {
-  const re = /^([\da-z-]+)@([\da-z-]+)([a-z]{2,6})$/;
-  if (!re.exec(valor)) {
-    return false;
-  }
-  return true;
-}
-
-function isPassword(valor) {
-  const passReg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-  if (!passReg.exec(valor)) {
-    return false;
-  }
-  return true;
-}
-
-
-function clientErrorHandler(err, req, res, next) {
-  if (req.xhr) {
-    res.status(500).send({ error: 'Unexpected Error!' });
-  } else {
-    next(err);
-  }
-}
-
-const checkLogin = (err, req, res, next) => {
-  if (login()) next(err);
-  else res.status(500).send({ error: 'Unexpected Error! during Login, Try again' });
+const requestTime = (req, res, next) => {
+  req.body.requestTime = Date.now();
+  next();
 };
 
-const emptyValid = (err, req, res, next) => {
-  if (isEmpty(req.body)) {
-    res.status(406).send('Cannot be there empty spaces , Try again');
-  }
-  next(err);
+const requestUrl = (req, res, next) => {
+  console.log('Request URL:', req.originalUrl);
+  next();
 };
 
-const nameValid = (err, req, res, next) => {
-  if (!req.body.name || req.body.name.length < 3) {
-    res.status(406).send('el nombre es demasiado corto');
-  }
-  next(err);
+const requestType = (req, res, next) => {
+  console.log('Request Type:', req.method);
+  next();
 };
 
-const passwordValid = (err, req, res, next) => {
-  if (isPassword(req.body.password.value)) {
+const userGet = (req, res, next) => {
+  console.log('ID:', req.params.id);
+  next();
+};
+const userSend = (req, res, next) => {
+  res.send('User Info');
+  next();
+};
+
+const checkLogin = (req, res, next) => {
+  if (getCompare().login) next();
+  else {
+    res.status(404).send({
+      error: 'Unexpected Error! during Login, Try again',
+    });
+  }
+};
+
+const nameValid = (req, res, next) => {
+  if (getCompare().word.test(req.body.name) === false) {
+    res.status(406).send('Short Name, try Again');
+  }
+  next();
+};
+
+const passwordValid = (req, res, next) => {
+  if (getCompare().password.test(req.body.password) === false) {
     res.status(406).send('Password invalid, Try again');
   }
-  next(err);
+  next();
 };
 
-const emailValid = (err, req, res, next) => {
-  if (isEmail(req.body.email.value)) {
+const emailValid = (req, res, next) => {
+  if (getCompare().email.test(req.body.email) === false) {
     res.status(406).send('Email invalid, Try again');
   }
-  next(err);
+  next();
 };
 
-const errorHandler = (err, req, res, next) => {
-  res.status(500);
-  res.render('error', { error: err });
-  next(err);
+const ensureAuth = (req, res, next) => {
+  if (!req.headers.authorization) {
+    res.status(403).send({
+      message: 'There is no authentication header in request.',
+    });
+  }
+  next();
 };
+
 
 module.exports = {
-  clientErrorHandler,
   checkLogin,
-  emptyValid,
   nameValid,
   passwordValid,
   emailValid,
-  errorHandler,
+  ensureAuth,
+  requestTime,
+  requestUrl,
+  requestType,
+  userGet,
+  userSend,
 };
