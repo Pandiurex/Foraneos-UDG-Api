@@ -1,8 +1,10 @@
+// app.js is main
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-const routes = require('./Routes');
+const routes = require('./routes');
 
 app
   .use(bodyParser.json())
