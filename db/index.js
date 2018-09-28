@@ -9,14 +9,20 @@ class DB {
       database: process.env.DB_NAME,
     });
 
-    this.get = this.get.bind(this);
-    this.getAll = this.getAll.bind(this);
+    this.select = this.select.bind(this);
+    this.selectAll = this.selectAll.bind(this);
+    this.insert = this.insert.bind(this);
+    this.delete = this.delete.bind(this);
+    this.update = this.update.bind(this);
+
     this.disconnect = this.disconnect.bind(this);
     this.destroy = this.destroy.bind(this);
     this.columnsToStr = this.columnsToStr.bind(this);
     this.filtersToStr = this.filtersToStr.bind(this);
     this.orderToStr = this.orderToStr.bind(this);
     this.limitToStr = this.limitToStr.bind(this);
+    this.valuesToStr = this.valuesToStr.bind(this);
+    this.columnsUpdateToStr = this.columnsUpdateToStr.bind(this);
 
     this.con.connect((err) => {
       if (err) throw err;
@@ -31,14 +37,14 @@ class DB {
    * @param  {[Obj]} filters Array of objects with the filters to apply
    * [{col: 'col1', oper: '<', val: 'value1'},
    *  {logic: 'AND', col: 'col2', oper: 'LIKE', val: 'value2'}, ...]
-   * @param  {[Obj]} order   Array of two strings with the column and the sense
-   * [{col: 'col1', sense: 'DES'}]
-   * @param  {[String]} limit   Array of two string with the start element
+   * @param  {Obj} order   Array of two strings with the column and the sense
+   * {col: 'col1', sense: 'DES'}
+   * @param  {String} limit   Array of two string with the start element
    * and the quantity of elements
-   * [{start: '0', quantity: '10'}]
+   * {start: '0', quantity: '10'}
    * @return {[type]}         Returns the result
    */
-  async get(table, columns, filters = '', order = '', limit = '') {
+  async select(table, columns, filters = '', order = '', limit = '') {
     return new Promise((resolve, reject) => {
       let queryStr = 'SELECT ';
 
@@ -47,6 +53,8 @@ class DB {
       queryStr += this.filtersToStr(filters);
       queryStr += this.orderToStr(order);
       queryStr += this.limitToStr(limit);
+
+      console.log(queryStr);
 
       this.con.query(queryStr, (err, results) => {
         if (err) throw reject(err);
@@ -61,14 +69,14 @@ class DB {
    * @param  {[Obj]} filters Array of objects with the filters to apply
    * [{col: 'col1', oper: '<', val: 'value1'},
    *  {logic: 'AND', col: 'col2', oper: 'LIKE', val: 'value2'}, ...]
-   * @param  {[Obj]} order   Array of two strings with the column and the sense
-   * [{col: 'col1', sense: 'DES'}]
-   * @param  {[String]} limit   Array of two string with the start element
+   * @param  {Obj} order   Array of two strings with the column and the sense
+   * {col: 'col1', sense: 'DES'}
+   * @param  {Obj} limit   Array of two string with the start element
    * and the quantity of elements
-   * [{start: '0', quantity: '10'}]
+   * {start: '0', quantity: '10'}
    * @return {[type]}         Returns the result
    */
-  async getAll(table, filters = '', order = '', limit = '') {
+  async selectAll(table, filters = '', order = '', limit = '') {
     return new Promise((resolve, reject) => {
       let queryStr = `SELECT * FROM ${this.con.escape(table).replace(/'/g, '')}`;
 
@@ -79,6 +87,64 @@ class DB {
       this.con.query(queryStr, (err, results) => {
         if (err) throw reject(err);
         resolve(results);
+      });
+    });
+  }
+
+  /**
+   * Insert a new row
+   * @param  {String} table   Name of the table
+   * @param  {[String]} columns Array of strings of the columns to obtain
+   * ['col1', 'col2', ...]
+   * @param  {[type]} values  Array of values to insert in the columns
+   * @return {[type]}         Returns the result
+   */
+  async insert(table, columns, values) {
+    return new Promise((resolve, reject) => {
+      let queryStr = `INSERT INTO ${this.con.escape(table).replace(/'/g, '')} (`;
+
+      queryStr += this.columnsToStr(columns);
+      queryStr += ') VALUES (';
+      queryStr += this.valuesToStr(values);
+      queryStr += ')';
+
+      console.log(queryStr);
+
+      this.con.query(queryStr, (err, result) => {
+        if (err) throw reject(err);
+        resolve(result.insertId);
+      });
+    });
+  }
+
+  async delete() {
+
+  }
+
+  /**
+   * Update a row
+   * @param  {String} table   Name of the table
+   * @param  {[type]} columnsUpdate Array of objects with the column and value to modify
+   * [{col: 'col1', val: 'value1'},
+   *  {col: 'col2', val: 'value2'}, ...]
+   * @param  {[Obj]} filters Array of objects with the filters to apply
+   * [{col: 'col1', oper: '<', val: 'value1'},
+   *  {logic: 'AND', col: 'col2', oper: 'LIKE', val: 'value2'}, ...]
+   * @return {[type]}               Returns the result
+   */
+  async update(table, columnsUpdate, filters) {
+    return new Promise((resolve, reject) => {
+      let queryStr = `UPDATE ${this.con.escape(table).replace(/'/g, '')}`;
+
+      queryStr += ' SET';
+      queryStr += this.columnsUpdateToStr(columnsUpdate);
+      queryStr += this.filtersToStr(filters);
+
+      console.log(queryStr);
+
+      this.con.query(queryStr, (err, result) => {
+        if (err) throw reject(err);
+        resolve(result);
       });
     });
   }
@@ -131,6 +197,10 @@ class DB {
 
     let string = ' ORDER BY';
 
+    console.log(order);
+    console.log(this.con.escape(order.col));
+    console.log(this.con.escape(order.sense));
+
     string += ` ${this.con.escape(order.col).replace(/'/g, '')}`;
     string += ` ${this.con.escape(order.sense).replace(/'/g, '')}`;
 
@@ -143,9 +213,39 @@ class DB {
     let string = ' LIMIT';
 
     if (limit.start !== '') {
-      string += ` ${this.con.escape(limit.start).replace(/'/g, '')}, `;
+      string += ` ${this.con.escape(limit.start).replace(/'/g, '')},`;
     }
     string += ` ${this.con.escape(limit.quantity).replace(/'/g, '')}`;
+
+    return string;
+  }
+
+  valuesToStr(values) {
+    // if (values === '') { return ''; }
+
+    let string = '';
+
+    values.forEach((data) => {
+      string += this.con.escape(data);
+      string += ', ';
+    });
+
+    string = string.substring(0, string.length - 2);
+
+    return string;
+  }
+
+  columnsUpdateToStr(columnsUpdate) {
+    let string = '';
+
+    columnsUpdate.forEach((data) => {
+      string += ` ${this.con.escape(data.col).replace(/'/g, '')}`;
+      string += ' =';
+      string += ` ${this.con.escape(data.val)}`;
+      string += ', ';
+    });
+
+    string = string.substring(0, string.length - 2);
 
     return string;
   }
