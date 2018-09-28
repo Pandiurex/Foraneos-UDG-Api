@@ -1,4 +1,6 @@
-const { users } = require('../models');
+const {
+  users,
+} = require('../models');
 
 // Controllers of users.
 /**
