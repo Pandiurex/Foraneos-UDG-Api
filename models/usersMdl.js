@@ -2,38 +2,114 @@ const db = require('../db');
 const User = require('./user');
 
 class UsersMdl {
-  async get(userId) {
-    this.dbResults = db.get('*', 'user', 'id', userId);
+  static async get(userId) {
+    const userTbl = await db.select('user', '',
+      [{ col: 'id', oper: '=', val: userId }]);
+    const user = this.processResult(userTbl)[0];
+
+    const mainEmailTbl = await db.select('email', ['email'],
+      [{ col: 'id', oper: '=', val: user.main_email_id }]);
+
+    user.setMainEmail(mainEmailTbl[0].email);
+
+    const secondaryEmailsTbl = await db.select('email', ['email'],
+      [{ col: 'user_id', oper: '=', val: user.id }]);
+
+    const secondaryEmails = [];
+
+    secondaryEmailsTbl.forEach((data) => {
+      if (data.email !== user.mainEmail) {
+        secondaryEmails.push(data.email);
+      }
+    });
+
+    user.setSecondaryEmails(secondaryEmails);
+
+    return JSON.stringify(user);
   }
 
-  async getAll() {
-    this.resultsUser = await db.getAll('user');
-    this.processResult(this.resultsUser);
+  static async getAll() {
+    const resultsUser = await db.selectAll('user');
+    const resultProcessed = this.processResult(resultsUser);
 
-    const resultEnd = new Promise((resolve, reject) => {
-      this.result.forEach(async (data) => {
-        const email = await db.get('email', ['email'],
-          [{ col: 'id', oper: '=', val: `${data.main_email_id}` }]);
+    const myPromises = resultProcessed.map(async (data) => {
+      const email = await db.select('email', ['email'],
+        [{ col: 'id', oper: '=', val: `${data.main_email_id}` }]);
 
-        data.setMainEmail(email[0].email);
-        console.log('Dentro');
-      });
-      if (this.result.length === 0) throw reject();
-      resolve(this.result);
-    }).then(console.log('Fuera'));
+      data.setMainEmail(email[0].email);
+    });
 
-    return JSON.stringify(resultEnd);
+    await Promise.all(myPromises);
+
+    return JSON.stringify(resultProcessed);
   }
 
-  async insert() {
+  static async create(
+    {
+      userType, username, password, mainEmail,
+    },
+  ) {
+    const userId = await db.insert('user', ['user_type', 'username', 'password'],
+      [userType, username, password]);
+
+    const mainEmailId = await db.insert('email', ['user_id', 'email'],
+      [userId, mainEmail]);
+
+    await db.update('user', [{ col: 'main_email_id', val: mainEmailId }],
+      [{ col: 'id', oper: '=', val: userId }]);
+
+    return this.get(userId);
+  }
+
+  static async remove(userId) {
 
   }
 
-  async remove(userId) {
+  static async update(userId,
+    {
+      userType, username, password, mainEmailId,
+    }) {
+    const columnsUpdate = [];
 
+    if (userType !== undefined) {
+      columnsUpdate.push(
+        { col: 'user_type', val: userType },
+      );
+    }
+
+    if (username !== undefined) {
+      columnsUpdate.push(
+        { col: 'username', val: username },
+      );
+    }
+
+    if (password !== undefined) {
+      columnsUpdate.push(
+        { col: 'password', val: password },
+      );
+    }
+
+    if (mainEmailId !== undefined) {
+      const emailTbl = await db.selectAll('email',
+        [{ col: 'user_id', oper: '=', val: userId }]);
+
+      if (emailTbl.some(data => data.id === mainEmailId)) {
+        columnsUpdate.push(
+          { col: 'main_email_id', val: mainEmailId },
+        );
+      } else {
+        // Aqui va un error todo chido
+        return this.get(userId);
+      }
+    }
+
+    await db.update('user', columnsUpdate,
+      [{ col: 'id', oper: '=', val: userId }]);
+
+    return this.get(userId);
   }
 
-  processResult(data) {
+  static processResult(data) {
     this.result = [];
     data.forEach((obj) => {
       this.result.push(new User(obj));
@@ -42,4 +118,4 @@ class UsersMdl {
   }
 }
 
-module.exports = new UsersMdl();
+module.exports = UsersMdl;
