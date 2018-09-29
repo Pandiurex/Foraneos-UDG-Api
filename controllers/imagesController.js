@@ -1,6 +1,6 @@
-// Controllers of complaint.
+// Controllers of image.
 exports.showAll = (req, res) => {
-  res.send('Show all Complaints');
+  res.send('Show all Images');
 };
 
 exports.showOne = (req, res) => {

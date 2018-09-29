@@ -5,3 +5,4 @@ exports.ratesController = require('./ratesController');
 exports.messagesController = require('./messagesController');
 exports.emailsController = require('./emailsController');
 exports.complaintsController = require('./complaintsController');
+exports.imagesController = require('./imagesController');
