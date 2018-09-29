@@ -3,3 +3,4 @@ exports.usersController = require('./usersController');
 exports.locationsController = require('./locationsController');
 exports.ratesController = require('./ratesController');
 exports.messagesController = require('./messagesController');
+exports.emailsController = require('./emailsController');
