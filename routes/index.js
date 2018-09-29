@@ -7,6 +7,7 @@ const messagesRoute = require('./messagesRoute');
 const emailsRoute = require('./emailsRoute');
 const complaintsRoute = require('./complaintsRoute');
 const imagesRoute = require('./imagesRoute');
+const livesInRoute = require('./livesInRoute');
 
 route
   .get('/', (req, res) => res.send('Hello World!'))
@@ -16,6 +17,7 @@ route
   .use('/messages', messagesRoute)
   .use('/emails', emailsRoute)
   .use('/complaints', complaintsRoute)
-  .use('/images', imagesRoute);
+  .use('/images', imagesRoute)
+  .use('/livesIn', livesInRoute);
 
 module.exports = route;
