@@ -1,4 +1,4 @@
-// Routes of messages.
+// Routes of emails.
 const express = require('express');
 const {
   emailController,

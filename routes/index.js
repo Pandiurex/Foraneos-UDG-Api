@@ -4,7 +4,8 @@ const usersRoute = require('./usersRoute');
 const locationsRoute = require('./locationsRoute');
 const ratesRoute = require('./ratesRoute');
 const messagesRoute = require('./messagesRoute');
-const emailsRoute = require('./emailRoutes');
+const emailsRoute = require('./emailsRoute');
+const complaintsRoute = require('./complaintsRoute');
 
 route
   .get('/', (req, res) => res.send('Hello World!'))
@@ -12,6 +13,7 @@ route
   .use('/locations', locationsRoute)
   .use('/rates', ratesRoute)
   .use('/messages', messagesRoute)
-  .use('/emails', emailsRoute);
+  .use('/emails', emailsRoute)
+  .use('/complaints', complaintsRoute);
 
 module.exports = route;
