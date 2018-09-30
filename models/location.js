@@ -1,21 +1,23 @@
 class Location {
-  constructor(id, ownerUserId, active, lattitude, longitude,
-    street, colony, postalCode, streetAcross1, streetAcross2,
-    extNum, intNum, numRooms, availableRooms) {
-    this.id = id;
-    this.ownerUserId = ownerUserId;
-    this.active = active;
-    this.lattitude = lattitude;
-    this.longitude = longitude;
-    this.street = street;
-    this.colony = colony;
-    this.postalCode = postalCode;
-    this.streetAcross1 = streetAcross1;
-    this.streetAcross2 = streetAcross2;
-    this.extNum = extNum;
-    this.intNum = intNum;
-    this.numRooms = numRooms;
-    this.availableRooms = availableRooms;
+  constructor(data) {
+    this.id = data.id;
+    this.ownerUserId = data.ownerUserId;
+    this.active = data.active;
+    this.lattitude = data.lattitude;
+    this.longitude = data.longitude;
+    this.street = data.street;
+    this.colony = data.colony;
+    this.postalCode = data.postalCode;
+    this.streetAcross1 = data.streetAcross1;
+    this.streetAcross2 = data.streetAcross2;
+    this.extNum = data.extNum;
+    this.intNum = data.intNum;
+    this.numRooms = data.numRooms;
+    this.availableRooms = data.availableRooms;
+    this.description = data.description;
+    this.restrictions = data.restrictions;
+    this.cost = data.cost;
+    this.numComplaints = data.numComplaints;
   }
 }
 
