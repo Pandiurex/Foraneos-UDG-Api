@@ -1,11 +1,10 @@
 class Message {
-  constructor(id, senderUserId, receiverChatLocationId,
-    message, time) {
-    this.id = id;
-    this.senderUserId = senderUserId;
-    this.receiverChatLocationId = receiverChatLocationId;
-    this.message = message;
-    this.time = time;
+  constructor(data) {
+    this.id = data.id;
+    this.senderUserId = data.senderUserId;
+    this.receiverChatLocationId = data.receiverChatLocationId;
+    this.message = data.message;
+    this.time = data.time;
   }
 }
 
