@@ -13,7 +13,7 @@ class UsersMdl {
     user.setMainEmail(mainEmailTbl[0].email);
 
     const secondaryEmailsTbl = await db.select('email', ['email'],
-      [{ col: 'user_id', oper: '=', val: user.id }]);
+      [{ col: 'userId', oper: '=', val: user.id }]);
 
     const secondaryEmails = [];
 
@@ -49,13 +49,13 @@ class UsersMdl {
       userType, username, password, mainEmail,
     },
   ) {
-    const userId = await db.insert('user', ['user_type', 'username', 'password'],
+    const userId = await db.insert('user', ['userType', 'username', 'password'],
       [userType, username, password]);
 
-    const mainEmailId = await db.insert('email', ['user_id', 'email'],
+    const mainEmailId = await db.insert('email', ['userId', 'email'],
       [userId, mainEmail]);
 
-    await db.update('user', [{ col: 'main_email_id', val: mainEmailId }],
+    await db.update('user', [{ col: 'mainEmailId', val: mainEmailId }],
       [{ col: 'id', oper: '=', val: userId }]);
 
     return this.get(userId);
@@ -73,7 +73,7 @@ class UsersMdl {
 
     if (userType !== undefined) {
       columnsUpdate.push(
-        { col: 'user_type', val: userType },
+        { col: 'userType', val: userType },
       );
     }
 
@@ -91,11 +91,11 @@ class UsersMdl {
 
     if (mainEmailId !== undefined) {
       const emailTbl = await db.selectAll('email',
-        [{ col: 'user_id', oper: '=', val: userId }]);
+        [{ col: 'userId', oper: '=', val: userId }]);
 
       if (emailTbl.some(data => data.id === mainEmailId)) {
         columnsUpdate.push(
-          { col: 'main_email_id', val: mainEmailId },
+          { col: 'mainEmailId', val: mainEmailId },
         );
       } else {
         // Aqui va un error todo chido
