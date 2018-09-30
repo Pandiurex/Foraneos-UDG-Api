@@ -1,10 +1,16 @@
 class User {
   constructor(data) {
     this.id = data.id;
-    this.main_email_id = data.main_email_id;
-    this.user_type = data.user_type;
+    this.mainEmailId = data.mainEmailId;
+    this.user_type = data.userType;
     this.username = data.username;
     this.password = data.password;
+    this.name = data.name;
+    this.fistSurname = data.fistSurname;
+    this.secondSurname = data.secondSurname;
+    this.profileImage = data.profileImage;
+    this.birthdate = data.birthdate;
+    this.gender = data.gender;
   }
 
   setMainEmail(email) {
