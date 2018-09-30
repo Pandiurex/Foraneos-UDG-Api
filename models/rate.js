@@ -1,18 +1,16 @@
 class Rate {
-  constructor(id, userId, locationId, commentTitle, comment,
-    date, servicesRate, securityRate, localizationRate,
-    costBenefictRate, usefulCounter) {
-    this.id = id;
-    this.userId = userId;
-    this.locationId = locationId;
-    this.commentTitle = commentTitle;
-    this.comment = comment;
-    this.date = date;
-    this.servicesRate = servicesRate;
-    this.securityRate = securityRate;
-    this.localizationRate = localizationRate;
-    this.costBenefictRate = costBenefictRate;
-    this.usefulCounter = usefulCounter;
+  constructor(data) {
+    this.id = data.id;
+    this.userId = data.userId;
+    this.locationId = data.locationId;
+    this.commentTitle = data.commentTitle;
+    this.comment = data.comment;
+    this.date = data.date;
+    this.servicesRate = data.servicesRate;
+    this.securityRate = data.securityRate;
+    this.localizationRate = data.localizationRate;
+    this.costBenefictRate = data.costBenefictRate;
+    this.usefulCounter = data.usefulCounter;
   }
 }
 
