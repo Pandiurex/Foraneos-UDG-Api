@@ -14,7 +14,7 @@ route
 // Users.
   .get('/', usersController.showAll)
   .get('/:id', usersController.showOne)
-  .post('/', [middlewaresErr.errMid.emailValid, middlewaresErr.errMid.passwordValid], usersController.create)
+  .post('/', usersController.create)
   .put('/:id', usersController.update)
   .delete('/:id', usersController.remove)
   .patch('/:id', usersController.patch);

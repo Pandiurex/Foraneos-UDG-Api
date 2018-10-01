@@ -1,17 +1,17 @@
 // Routes of complaint.
 const express = require('express');
 const {
-  complaintsRoutes,
+  complaintsController,
 } = require('../controllers');
 
 const route = express.Router();
 
 route
-  .get('/', complaintsRoutes.showAll)
-  .get('/:id', complaintsRoutes.showOne)
-  .post('/', complaintsRoutes.create)
-  .put('/:id', complaintsRoutes.update)
-  .delete('/:id', complaintsRoutes.remove)
-  .patch('/:id', complaintsRoutes.patch);
+  .get('/', complaintsController.showAll)
+  .get('/:id', complaintsController.showOne)
+  .post('/', complaintsController.create)
+  .put('/:id', complaintsController.update)
+  .delete('/:id', complaintsController.remove)
+  .patch('/:id', complaintsController.patch);
 
 module.exports = route;

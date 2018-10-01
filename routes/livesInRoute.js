@@ -1,17 +1,17 @@
 // Routes of Lives-In.
 const express = require('express');
 const {
-  livesInRoute,
+  livesInController,
 } = require('../controllers');
 
 const route = express.Router();
 
 route
-  .get('/', livesInRoute.showAll)
-  .get('/:id', livesInRoute.showOne)
-  .post('/', livesInRoute.create)
-  .put('/:id', livesInRoute.update)
-  .delete('/:id', livesInRoute.remove)
-  .patch('/:id', livesInRoute.patch);
+  .get('/', livesInController.showAll)
+  .get('/:id', livesInController.showOne)
+  .post('/', livesInController.create)
+  .put('/:id', livesInController.update)
+  .delete('/:id', livesInController.remove)
+  .patch('/:id', livesInController.patch);
 
 module.exports = route;

@@ -1,17 +1,17 @@
 // Routes of emails.
 const express = require('express');
 const {
-  emailController,
+  emailsController,
 } = require('../controllers');
 
 const route = express.Router();
 
 route
-  .get('/', emailController.showAll)
-  .get('/:id', emailController.showOne)
-  .post('/', emailController.create)
-  .put('/:id', emailController.update)
-  .delete('/:id', emailController.remove)
-  .patch('/:id', emailController.patch);
+  .get('/', emailsController.showAll)
+  .get('/:id', emailsController.showOne)
+  .post('/', emailsController.create)
+  .put('/:id', emailsController.update)
+  .delete('/:id', emailsController.remove)
+  .patch('/:id', emailsController.patch);
 
 module.exports = route;
