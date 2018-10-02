@@ -23,6 +23,7 @@ class DB {
     this.limitToStr = this.limitToStr.bind(this);
     this.valuesToStr = this.valuesToStr.bind(this);
     this.columnsUpdateToStr = this.columnsUpdateToStr.bind(this);
+    this.processError = this.processError.bind(this);
 
     this.con.connect((err) => {
       if (err) throw err;
@@ -56,9 +57,9 @@ class DB {
 
       console.log(queryStr);
 
-      this.con.query(queryStr, (err, results) => {
-        if (err) throw reject(err);
-        resolve(results);
+      this.con.query(queryStr, (err, result) => {
+        if (err) return reject(this.processError(err));
+        return resolve(result);
       });
     });
   }
@@ -84,9 +85,9 @@ class DB {
       queryStr += this.orderToStr(order);
       queryStr += this.limitToStr(limit);
 
-      this.con.query(queryStr, (err, results) => {
-        if (err) throw reject(err);
-        resolve(results);
+      this.con.query(queryStr, (err, result) => {
+        if (err) return reject(this.processError(err));
+        return resolve(result);
       });
     });
   }
@@ -111,8 +112,8 @@ class DB {
       console.log(queryStr);
 
       this.con.query(queryStr, (err, result) => {
-        if (err) throw reject(err);
-        resolve(result.insertId);
+        if (err) return reject(this.processError(err));
+        return resolve(result);
       });
     });
   }
@@ -143,8 +144,8 @@ class DB {
       console.log(queryStr);
 
       this.con.query(queryStr, (err, result) => {
-        if (err) throw reject(err);
-        resolve(result);
+        if (err) return reject(this.processError(err));
+        return resolve(result);
       });
     });
   }
@@ -248,6 +249,29 @@ class DB {
     string = string.substring(0, string.length - 2);
 
     return string;
+  }
+
+  processError(err) {
+    const error = {};
+
+    if (err.code === 'ER_DUP_ENTRY') {
+      const data = this.getDataFromErrorMsg(err.sqlMessage);
+      error.duplicated = {
+        message: `The ${data.field} ${data.data} already exists on the system`,
+        field: data.field,
+        sql: err.sql,
+      };
+    }
+
+    return error;
+  }
+
+  static getDataFromErrorMsg(message) {
+    const data = unescape(message).match(/'([^']+)'/g);
+    return {
+      field: data[1].slice(1, -1),
+      data: data[0].slice(1, -1),
+    };
   }
 }
 
