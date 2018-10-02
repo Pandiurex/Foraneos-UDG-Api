@@ -1,11 +1,49 @@
 function getCompare() {
   return {
-    word: /[a-zA-ZÃƒÂ±Ãƒâ€˜ ]{3,}/,
+    word: /^[a-zA-Z_áéíóúñ\s]*$/,
     email: /\S+@\S+\.\S+/,
     password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+    number: /^([0-9])+$/,
     login: true,
   };
 }
+
+function isValidDate(bDay, bMonth, bYear) {
+  let valid = true;
+
+  const month = bMonth;
+  const day = bDay;
+  const year = bYear;
+
+  if (getCompare().number.test(bDay) === false) valid = false;
+  if (getCompare().number.test(bMonth) === false) valid = false;
+  if (getCompare().number.test(bYear) === false) valid = false;
+
+  if (month < 1 || month > 12) valid = false;
+  else if ((day < 1) || (day > 31)) valid = false;
+  else if (((month === 4) || (month === 6) || (month === 9) || (month === 11))
+        && (day > 30)) valid = false;
+  else if ((month === 2) && ((year % 4) === 0) && ((year % 100) !== 0)) valid = true;
+  else if ((month === 2) && ((year % 100) === 0) && (day > 29)) valid = false;
+  else if ((month === 2) && (day > 28)) valid = false;
+
+  return valid;
+}
+
+const validDate = (req, res, next) => {
+  if (isValidDate(req.body.birthDay, req.body.birthMonth, req.body.birthYear) === false) {
+    res.status(406).send('Date invalid, Try again');
+  } else {
+    next();
+  }
+};
+
+const genderValid = (req, res, next) => {
+  if (req.body.gender === 0 || req.body.gender === 1) next();
+  else {
+    res.status(406).send('Gender attribute can only be 1 or 0, Try Again');
+  }
+};
 
 const requestTime = (req, res, next) => {
   req.body.requestTime = Date.now();
@@ -42,7 +80,14 @@ const checkLogin = (req, res, next) => {
 
 const nameValid = (req, res, next) => {
   if (getCompare().word.test(req.body.name) === false) {
-    res.status(406).send('Short Name, try Again');
+    res.status(406).send('Name cant contain numbers, try Again');
+  }
+  next();
+};
+const surnameValid = (req, res, next) => {
+  if (getCompare().word.test(req.body.firstSurnameValid) === false
+        || getCompare().word.test(req.body.secondSurnameValid) === false) {
+    res.status(406).send('Surname cant contain numbers, try Again');
   }
   next();
 };
@@ -70,9 +115,20 @@ const ensureAuth = (req, res, next) => {
   next();
 };
 
+const userTypeValid = (req, res, next) => {
+  if (getCompare().number.test(req.body.userType) === false) {
+    res.status(406).send('UserType invalid, Try again');
+  }
+  next();
+};
+
 
 module.exports = {
   checkLogin,
+  validDate,
+  userTypeValid,
+  surnameValid,
+  genderValid,
   nameValid,
   passwordValid,
   emailValid,
