@@ -1,10 +1,15 @@
-// Controllers of locations.
-exports.showAll = (req, res) => {
-  res.send('Show all locations');
+const {
+  locations,
+} = require('../models');
+
+exports.showAll = async (req, res) => {
+  const result = await locations.getAll();
+  res.send(result);
 };
 
-exports.showOne = (req, res) => {
-  res.send(req.params.id);
+exports.showOne = async (req, res) => {
+  const result = await locations.get(req.params.id);
+  res.send(result).status(200);
 };
 
 exports.create = (req, res) => {
