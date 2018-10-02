@@ -95,7 +95,7 @@ class DB {
   /**
    * Insert a new row
    * @param  {String} table   Name of the table
-   * @param  {[String]} columns Array of strings of the columns to obtain
+   * @param  {[String]} columns Array of strings of the columns to add
    * ['col1', 'col2', ...]
    * @param  {[type]} values  Array of values to insert in the columns
    * @return {[type]}         Returns the result
@@ -113,7 +113,7 @@ class DB {
 
       this.con.query(queryStr, (err, result) => {
         if (err) return reject(this.processError(err));
-        return resolve(result);
+        return resolve(result.insertId);
       });
     });
   }
