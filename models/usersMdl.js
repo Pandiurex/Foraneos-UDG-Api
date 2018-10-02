@@ -36,10 +36,10 @@ class UsersMdl {
   }
 
   static async getAll() {
-    const resultsUser = await db.selectAll('user');
-    const resultProcessed = this.processResult(resultsUser);
+    const usersTbl = await db.selectAll('user');
+    const users = this.processResult(usersTbl);
 
-    const myPromises = resultProcessed.map(async (data) => {
+    const myPromises = users.map(async (data) => {
       const email = await db.select('email', ['email'],
         [{ col: 'id', oper: '=', val: `${data.mainEmailId}` }]);
 
@@ -48,7 +48,7 @@ class UsersMdl {
 
     await Promise.all(myPromises);
 
-    return JSON.stringify(resultProcessed);
+    return JSON.stringify(users);
   }
 
   static async create(
