@@ -31,7 +31,7 @@ function isValidDate(bDay, bMonth, bYear) {
   return valid;
 }
 
-const validDate = (req, res, next) => {
+const birthDateValid = (req, res, next) => {
   if (isValidDate(req.body.birthDay, req.body.birthMonth, req.body.birthYear) === false) {
     res.status(406).send('Date invalid, Try again');
   } else {
@@ -44,11 +44,6 @@ const genderValid = (req, res, next) => {
   else {
     res.status(406).send('Gender attribute can only be 1 or 0, Try Again');
   }
-};
-
-const requestTime = (req, res, next) => {
-  req.body.requestTime = Date.now();
-  next();
 };
 
 const requestUrl = (req, res, next) => {
@@ -180,9 +175,57 @@ const availableRoomValid = (req, res, next) => {
   next();
 };
 
+// Rates Middlewares
+
+const validDate = (req, res, next) => {
+  if (isValidDate(req.body.rateDay, req.body.rateMonth, req.body.rateYear) === false) {
+    res.status(406).send('Date invalid, Try again');
+  } else {
+    next();
+  }
+};
+
+const numberRateValid = (req, res, next) => {
+  if (getCompare().number.test(req.body.servicesRate) === false
+        || getCompare().number.test(req.body.securityRate) === false
+        || getCompare().number.test(req.body.costBenefictRate) === false
+        || getCompare().number.test(req.body.localizationRate) === false
+        || req.body.servicesRate > 5 || req.body.servicesRate < 0
+        || req.body.securityRate > 5 || req.body.securityRate < 0
+        || req.body.costBenefictRate > 5 || req.body.costBenefictRate < 0
+        || req.body.localizationRate > 5 || req.body.localizationRate < 0) {
+    res.status(406).send('Error at Rates Values, Try again');
+  }
+  next();
+};
+
+// Message Middlewares
+
+const requestTime = (req, res, next) => {
+  req.body.requestTime = Date.now();
+  next();
+};
+
+// / Lives In Middlewares
+
+const startDateValid = (req, res, next) => {
+  if (isValidDate(req.body.startDay, req.body.startMonth, req.body.startYear) === false) {
+    res.status(406).send('Date invalid, Try again');
+  } else {
+    next();
+  }
+};
+const endDateValid = (req, res, next) => {
+  if (isValidDate(req.body.endDay, req.body.endMonth, req.body.endYear) === false) {
+    res.status(406).send('Date invalid, Try again');
+  } else {
+    next();
+  }
+};
+
 module.exports = {
   checkLogin,
-  validDate,
+  birthDateValid,
   userTypeValid,
   surnameValid,
   genderValid,
@@ -202,4 +245,8 @@ module.exports = {
   activeValid,
   roomValid,
   availableRoomValid,
+  validDate,
+  numberRateValid,
+  startDateValid,
+  endDateValid,
 };
