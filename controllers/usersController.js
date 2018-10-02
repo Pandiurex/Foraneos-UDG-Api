@@ -2,24 +2,11 @@ const {
   users,
 } = require('../models');
 
-// Controllers of users.
-/**
- * Returns every user only with his main email
- * @param  {[type]} req
- * @param  {[type]} res
- * @return {[type]}
- */
 exports.showAll = async (req, res) => {
   const result = await users.getAll();
   res.send(result);
 };
 
-/**
- * Return an user with all his emails
- * @param  {[type]} req
- * @param  {[type]} res
- * @return {[type]}
- */
 exports.showOne = async (req, res) => {
   const result = await users.get(req.params.id);
   res.send(result).status(200);
