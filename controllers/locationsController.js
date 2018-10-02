@@ -12,8 +12,9 @@ exports.showOne = async (req, res) => {
   res.send(result).status(200);
 };
 
-exports.create = (req, res) => {
-  res.send(req.body);
+exports.create = async (req, res) => {
+  const result = await locations.create(req.body);
+  res.send(result).status(201);
 };
 
 exports.update = (req, res) => {

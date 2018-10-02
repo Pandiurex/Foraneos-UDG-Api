@@ -21,7 +21,7 @@ class LocationsMdl {
 
     try {
       const imagesTbl = await db.select('location_image',
-        ['id', 'image'],
+        ['id', 'image', 'description'],
         [{ col: 'userId', oper: '=', val: location.id }]);
 
 
@@ -29,6 +29,7 @@ class LocationsMdl {
         const image = {
           id: data.id,
           image: data.image,
+          description: data.description,
         };
         images.push(image);
       });
@@ -75,7 +76,7 @@ class LocationsMdl {
       try {
         const imagesTbl = await db.select('location_image',
           ['image'],
-          [{ col: 'userId', oper: '=', val: data.id }]);
+          [{ col: 'locationId', oper: '=', val: data.id }]);
 
         imageAux = imagesTbl[0].image;
       } catch (e) { console.log('No images'); }
@@ -111,46 +112,39 @@ class LocationsMdl {
 
   static async create(
     {
-      userType, username, password, name,
-      firstSurname, secondSurname, profileImage, birthYear,
-      birthMonth, birthDay, gender, mainEmail,
+      ownerUserId, lattitude, longitude, street,
+      colony, postalCode, streetAcross1, streetAcross2,
+      extNum, intNum, numRooms, description,
+      restrictions, cost, images, services,
     },
   ) {
-    const birthdate = `${birthYear}-${birthMonth}-${birthDay}`;
+    const locationId = await db.insert('location',
+      ['ownerUserId', 'lattitude', 'longitude', 'street',
+        'colony', 'postalCode', 'streetAcross1', 'streetAcross2',
+        'extNum', 'intNum', 'numRooms', 'description',
+        'restrictions', 'cost', 'availableRooms', 'active'],
+      [ownerUserId, lattitude, longitude, street,
+        colony, postalCode, streetAcross1, streetAcross2,
+        extNum, intNum, numRooms, description,
+        restrictions, cost, numRooms, 0]);
 
-    const userId = await db.insert('user',
-      ['userType', 'username', 'password', 'name',
-        'firstSurname', 'secondSurname', 'profileImage', 'birthdate',
-        'gender'],
-      [userType, username, password, name,
-        firstSurname, secondSurname, profileImage, birthdate,
-        gender]);
-
-    const mainEmailId = await db.insert('email', ['userId', 'email'],
-      [userId, mainEmail]);
-
-    await db.update('user', [{ col: 'mainEmailId', val: mainEmailId }],
-      [{ col: 'id', oper: '=', val: userId }]);
-
-    const user = new User({
-      id: userId,
-      mainEmailId,
-      userType,
-      username,
-      password,
-      name,
-      firstSurname,
-      secondSurname,
-      profileImage,
-      birthYear,
-      birthMonth,
-      birthDay,
-      gender,
+    const myPromises = images.map(async (data) => {
+      await db.insert('location_image',
+        ['locationId', 'image', 'description'],
+        [locationId, data.image, data.description]);
     });
 
-    user.setMainEmail(mainEmail);
+    await Promise.all(myPromises);
 
-    return JSON.stringify(user);
+    const myPromises2 = services.map(async (serviceId) => {
+      await db.insert('location_service',
+        ['locationId', 'serviceId'],
+        [locationId, serviceId]);
+    });
+
+    await Promise.all(myPromises2);
+
+    return this.get(locationId);
   }
 
   static async remove(userId) {
