@@ -30,7 +30,7 @@ class Location {
   }
 
   setOwnerFullname(name, firstSurname, secondSurname) {
-    this.setOwnerFullname = `${name} ${firstSurname} ${secondSurname}`;
+    this.ownerFullname = `${name} ${firstSurname} ${secondSurname}`;
   }
 
   setImage(image) {
