@@ -4,6 +4,7 @@ function getCompare() {
     email: /\S+@\S+\.\S+/,
     password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
     number: /^([0-9])+$/,
+    decimal: /^(\d|-)?(\d|,)*\.?\d*$/,
     login: true,
   };
 }
@@ -122,6 +123,62 @@ const userTypeValid = (req, res, next) => {
   next();
 };
 
+// Location Valids
+
+const lattLongValid = (req, res, next) => {
+  if (getCompare().decimal.test(req.body.lattitude) === false
+        || getCompare().decimal.test(req.body.longitude) === false) {
+    res.status(406).send('Lattitude Or Longitude are invalid, Try again');
+  }
+  next();
+};
+
+const streetValid = (req, res, next) => {
+  if (getCompare().word.test(req.body.street) === false
+        || getCompare().word.test(req.body.colony) === false
+        || getCompare().word.test(req.body.streetAcross1) === false
+        || getCompare().word.test(req.body.streetAcross2) === false) {
+    res.status(406).send('Streets cant contain numbers, try Again');
+  }
+  next();
+};
+
+const numLocationsValid = (req, res, next) => {
+  if (getCompare().number.test(req.body.postalCode) === false
+        || getCompare().number.test(req.body.extNum) === false
+        || getCompare().number.test(req.body.intNum) === false) {
+    res.status(406).send('Error at Postal Code, ext Num or Int Num, Try again');
+  }
+  next();
+};
+
+const decimalLocationValid = (req, res, next) => {
+  if (getCompare().decimal.test(req.body.cost) === false) {
+    res.status(406).send('Yhe Cost can only be numerical, Try again');
+  }
+  next();
+};
+
+const activeValid = (req, res, next) => {
+  if (req.body.active === 0 || req.body.active === 1) next();
+  else {
+    res.status(406).send('Active Status attribute can only be 1 or 0, Try Again');
+  }
+};
+
+const roomValid = (req, res, next) => {
+  if (getCompare().number.test(req.body.numRooms) === false) {
+    res.status(406).send('Error at numRooms, Try again');
+  }
+  next();
+};
+const availableRoomValid = (req, res, next) => {
+  if (getCompare().number.test(req.body.availableRooms) === false
+        || req.body.availableRooms > req.body.numRooms) {
+    res.status(406).send('Must be number or available Rooms cannot be higher than numRooms, Try again');
+  }
+  next();
+};
 
 module.exports = {
   checkLogin,
@@ -138,4 +195,11 @@ module.exports = {
   requestType,
   userGet,
   userSend,
+  lattLongValid,
+  streetValid,
+  numLocationsValid,
+  decimalLocationValid,
+  activeValid,
+  roomValid,
+  availableRoomValid,
 };
