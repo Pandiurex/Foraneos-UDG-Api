@@ -7,7 +7,7 @@ const route = express.Router();
 route
   .get('/', livesController.showAll)
   .post('/', livesController.create)
-  .put('/:livesId', livesController.update)
-  .patch('/:livesId', livesController.patch);
+  .put('/:livesId([0-9]+)', livesController.update)
+  .patch('/:livesId([0-9]+)', livesController.patch);
 
 module.exports = route;
