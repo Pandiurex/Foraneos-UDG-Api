@@ -9,6 +9,6 @@ const route = express.Router();
 route
   .get('/', complaintsController.showAll)
   .post('/', complaintsController.create)
-  .delete('/:userId', complaintsController.remove);
+  .delete('/:userId([0-9]+)', complaintsController.remove);
 
 module.exports = route;
