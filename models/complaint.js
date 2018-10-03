@@ -1,9 +1,13 @@
 class Complaint {
   constructor(data) {
-    this.userId = data.userId;
-    this.locationId = data.locationId;
-    this.complaintType = data.complaintType;
-    this.comment = data.comment;
+    if (data.userId !== undefined) { this.userId = data.userId; }
+    if (data.locationId !== undefined) { this.locationId = data.locationId; }
+    if (data.complaintType !== undefined) { this.complaintType = data.complaintType; }
+    if (data.comment !== undefined) { this.comment = data.comment; }
+  }
+
+  setComplaintType(data) {
+    this.complaintType = data;
   }
 }
 
