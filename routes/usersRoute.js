@@ -8,15 +8,15 @@ const middlewaresErr = require('../middlewares');
 const route = express.Router();
 
 route
-// Login users.
+  // Login users.
   .post('/login', usersController.login)
   .get('/signoff', usersController.signOff)
-// Users.
+  // Users.
   .get('/', usersController.showAll)
-  .get('/:id', usersController.showOne)
+  .get('/:userId', usersController.showOne)
   .post('/', [middlewaresErr.errMid.nameValid, middlewaresErr.errMid.passwordValid, middlewaresErr.errMid.birthDateValid], usersController.create)
-  .put('/:id', usersController.update)
-  .delete('/:id', usersController.remove)
-  .patch('/:id', usersController.patch);
+  .put('/:userId', usersController.update)
+  .patch('/:userId', usersController.patch)
+  .delete('/:userId', usersController.remove);
 
 module.exports = route;
