@@ -6,10 +6,10 @@ const route = express.Router();
 
 route
   .get('/', locationsController.showAll)
-  .get('/:id', locationsController.showOne)
+  .get('/:locationId([0-9]+)', locationsController.showOne)
   .post('/', locationsController.create)
-  .put('/:id', locationsController.update)
-  .delete('/:id', locationsController.remove)
-  .patch('/:id', locationsController.patch);
+  .put('/:locationId([0-9]+)', locationsController.update)
+  .patch('/:locationId([0-9]+)', locationsController.patch)
+  .delete('/:locationId([0-9]+)', locationsController.remove);
 
 module.exports = route;

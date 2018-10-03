@@ -6,10 +6,8 @@ const route = express.Router();
 
 route
   .get('/', ratesController.showAll)
-  .get('/:id', ratesController.showOne)
+  .get('/:rateId([0-9]+)', ratesController.showOne)
   .post('/', ratesController.create)
-  .put('/:id', ratesController.update)
-  .delete('/:id', ratesController.remove)
-  .patch('/:id', ratesController.patch);
+  .delete('/:rateId([0-9]+)', ratesController.remove);
 
 module.exports = route;

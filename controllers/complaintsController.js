@@ -1,10 +1,6 @@
-// Controllers of rates.
+// Controllers of complaint.
 exports.showAll = (req, res) => {
-  res.send('Show all rates');
-};
-
-exports.showOne = (req, res) => {
-  res.send(req.params.id);
+  res.send('Show all Complaints');
 };
 
 exports.create = (req, res) => {

@@ -6,10 +6,7 @@ const route = express.Router();
 
 route
   .get('/', messagesController.showAll)
-  .get('/:id', messagesController.showOne)
-  .post('/', messagesController.create)
-  .put('/:id', messagesController.update)
-  .delete('/:id', messagesController.remove)
-  .patch('/:id', messagesController.patch);
+  .get('/:messageId([0-9]+)', messagesController.showOne)
+  .post('/', messagesController.create);
 
 module.exports = route;

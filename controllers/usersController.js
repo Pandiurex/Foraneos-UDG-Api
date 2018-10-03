@@ -1,18 +1,25 @@
-// Controllers of users.
-exports.showAll = (req, res) => {
-  res.send('Show all users');
+const {
+  users,
+} = require('../models');
+
+exports.showAll = async (req, res) => {
+  const result = await users.getAll();
+  res.send(result);
 };
 
-exports.showOne = (req, res) => {
-  res.send('Show one user').status(200);
+exports.showOne = async (req, res) => {
+  const result = await users.get(req.params.id);
+  res.send(result).status(200);
 };
 
-exports.create = (req, res) => {
-  res.send('Create user').status(201);
+exports.create = async (req, res) => {
+  const result = await users.create(req.body);
+  res.send(result).status(201);
 };
 
-exports.update = (req, res) => {
-  res.send('Update user').status(200);
+exports.update = async (req, res) => {
+  const result = await users.update(req.params.id, req.body);
+  res.send(result).status(200);
 };
 
 exports.remove = (req, res) => {
