@@ -37,21 +37,7 @@ class ratesMdl {
         date, servicesRate, securityRate, localizationRate,
         costBenefictRate, usefulCounter, 0]);
 
-
-    const rate = new Rate({
-      id: userId,
-      locationId,
-      commentTitle,
-      comment,
-      date,
-      servicesRate,
-      securityRate,
-      localizationRate,
-      costBenefictRate,
-      usefulCounter,
-    });
-
-    return JSON.stringify(rate);
+    return JSON.stringify(rateId);
   }
 
   static async remove(rateId) {
@@ -72,7 +58,6 @@ class ratesMdl {
       usefulCounter,
     }) {
 
-    }
   }
 
   static processResult(data) {

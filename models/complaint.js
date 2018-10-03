@@ -1,13 +1,29 @@
 class Complaint {
   constructor(data) {
-    if (data.userId !== undefined) { this.userId = data.userId; }
-    if (data.locationId !== undefined) { this.locationId = data.locationId; }
-    if (data.complaintType !== undefined) { this.complaintType = data.complaintType; }
-    if (data.comment !== undefined) { this.comment = data.comment; }
+    this.userId = data.userId;
+    this.locationId = data.locationId;
+    this.complaintTypeId = data.complaintTypeId;
+    this.comment = data.comment;
+
+    Object.keys(this).forEach((key) => {
+      if (this[key] === undefined) { delete this[key]; }
+    });
   }
 
-  setComplaintType(data) {
-    this.complaintType = data;
+  setComplaintDescription(complaintDescription) {
+    this.setComplaintDescription = complaintDescription;
+  }
+
+  setUserFullname(name, firstSurname, secondSurname) {
+    this.userFullname = `${name} ${firstSurname} ${secondSurname}`;
+  }
+
+  setLocationStreet(street) {
+    this.locationStreet = street;
+  }
+
+  setLocationExtNum(extNum) {
+    this.locationExtNum = extNum;
   }
 }
 

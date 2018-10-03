@@ -2,15 +2,35 @@ const db = require('../db');
 const Complaint = require('./complaint');
 
 class complaintsMdl {
-  static async get(complaintId) {
+  static async get(locationId, userId) {
     const complaintTbl = await db.select('complaint', '',
-      [{ col: 'id', oper: '=', val: complaintId }]);
+      [{ col: 'locationId', oper: '=', val: locationId },
+        {
+          logic: 'AND', col: 'userId', oper: '=', val: userId,
+        }]);
     const complaint = this.processResult(complaintTbl)[0];
 
-    const mainComplaintTypeTbl = await db.select('complaint_type',['complaint_type']),
-    [{ col: 'id' , oper: '=', val: complaint.complaintType}];
+    const complaintDescriptionTbl = await db.select('complaint_type', ['description'],
+      [{ col: 'id', oper: '=', val: complaint.complaintTypeId }]);
 
-    complaint.setComplaintType(mainComplaintTypeTbl[0].complaintType);
+    complaint.setComplaintDescription(complaintDescriptionTbl[0].description);
+
+    const userFullnameTbl = await db.select('user',
+      ['name', 'firstSurname', 'secondSurname'],
+      [{ col: 'id', oper: '=', val: complaint.userId }]);
+
+    complaint.setUserFullname(
+      userFullnameTbl[0].name,
+      userFullnameTbl[0].firstSurname,
+      userFullnameTbl[0].secondSurname,
+    );
+
+    const locationStreetTbl = await db.select('location',
+      ['street', 'extNum'],
+      [{ col: 'id', oper: '=', val: complaint.locationId }]);
+
+    complaint.setLocationStreet(locationStreetTbl[0].street);
+    complaint.setLocationExtNum(locationStreetTbl[0].extNum);
 
     return JSON.stringify(complaint);
   }
@@ -35,23 +55,14 @@ class complaintsMdl {
 
   static async create(
     {
-      userId, locationId, complaintType, comment,
+      userId, locationId, complaintTypeId, comment,
     },
   ) {
     const complaintId = await db.insert('complaint',
-      ['userId', 'locationId', 'complaintType', 'comment',],
-      [userId, locationId, complaintType, comment, 0]);
+      ['userId', 'locationId', 'complaintTypeId', 'comment'],
+      [userId, locationId, complaintTypeId, comment]);
 
-    const complaint = new Complaint({
-      userId,
-      locationId,
-      complaintType,
-      comment,
-    });
-
-    complaint.setComplaintType(complaintType);
-
-    return JSON.stringify(complaint);
+    return this.get(complaintId);
   }
 
   static async remove() {

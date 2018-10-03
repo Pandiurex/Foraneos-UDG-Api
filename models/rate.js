@@ -1,16 +1,20 @@
 class Rate {
   constructor(data) {
-    if (data.id !== undefined) { this.id = data.id; }
-    if (data.userId !== undefined) { this.userId = data.userId; }
-    if (data.locationId !== undefined) { this.locationId = data.locationId; }
-    if (data.commentTitle !== undefined) { this.commentTitle = data.commentTitle; }
-    if (data.comment !== undefined) { this.comment = data.comment; }
-    if (data.date !== undefined) { this.date = data.date; }
-    if (data.servicesRate !== undefined) { this.servicesRate = data.servicesRate; }
-    if (data.securityRate !== undefined) { this.securityRate = data.securityRate; }
-    if (data.localizationRate !== undefined) { this.localizationRate = data.localizationRate; }
-    if (data.costBenefictRate !== undefined) { this.costBenefictRate = data.costBenefictRate; }
-    if (data.usefulCounter !== undefined) { this.usefulCounter = data.usefulCounter; }
+    this.id = data.id;
+    this.userId = data.userId;
+    this.locationId = data.locationId;
+    this.commentTitle = data.commentTitle;
+    this.comment = data.comment;
+    this.date = data.date;
+    this.servicesRate = data.servicesRate;
+    this.securityRate = data.securityRate;
+    this.localizationRate = data.localizationRate;
+    this.costBenefictRate = data.costBenefictRate;
+    this.usefulCounter = data.usefulCounter;
+
+    Object.keys(this).forEach((key) => {
+      if (this[key] === undefined) { delete this[key]; }
+    });
   }
 }
 
