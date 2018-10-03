@@ -8,10 +8,7 @@ const route = express.Router();
 
 route
   .get('/', complaintsController.showAll)
-  .get('/:id', complaintsController.showOne)
   .post('/', complaintsController.create)
-  .put('/:id', complaintsController.update)
-  .delete('/:id', complaintsController.remove)
-  .patch('/:id', complaintsController.patch);
+  .delete('/:userId', complaintsController.remove);
 
 module.exports = route;
