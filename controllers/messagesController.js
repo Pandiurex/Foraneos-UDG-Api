@@ -10,15 +10,3 @@ exports.showOne = (req, res) => {
 exports.create = (req, res) => {
   res.send(req.body);
 };
-
-exports.update = (req, res) => {
-  res.send(req.body);
-};
-
-exports.remove = (req, res) => {
-  res.send(req.body);
-};
-
-exports.patch = (req, res) => {
-  res.send(req.body);
-};
