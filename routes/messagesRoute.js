@@ -6,7 +6,7 @@ const route = express.Router();
 
 route
   .get('/', messagesController.showAll)
-  .get('/:messageId', messagesController.showOne)
+  .get('/:messageId([0-9]+)', messagesController.showOne)
   .post('/', messagesController.create);
 
 module.exports = route;
