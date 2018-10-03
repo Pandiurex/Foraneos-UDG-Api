@@ -13,10 +13,10 @@ route
   .get('/signoff', usersController.signOff)
   // Users.
   .get('/', usersController.showAll)
-  .get('/:userId', usersController.showOne)
+  .get('/:userId([0-9]+)', usersController.showOne)
   .post('/', [middlewaresErr.errMid.nameValid, middlewaresErr.errMid.passwordValid, middlewaresErr.errMid.birthDateValid], usersController.create)
-  .put('/:userId', usersController.update)
-  .patch('/:userId', usersController.patch)
-  .delete('/:userId', usersController.remove);
+  .put('/:userId([0-9]+)', usersController.update)
+  .patch('/:userId([0-9]+)', usersController.patch)
+  .delete('/:userId([0-9]+)', usersController.remove);
 
 module.exports = route;
