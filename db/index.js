@@ -118,8 +118,19 @@ class DB {
     });
   }
 
-  async delete() {
+  async delete(table, filters) {
+    return new Promise((resolve, reject) => {
+      let queryStr = `DELETE FROM ${this.con.escape(table).replace(/'/g, '')} `;
 
+      queryStr += this.filtersToStr(filters);
+
+      console.log(queryStr);
+
+      this.con.query(queryStr, (err, result) => {
+        if (err) return reject(this.processError(err));
+        return resolve(result);
+      });
+    });
   }
 
   /**
