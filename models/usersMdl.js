@@ -3,8 +3,13 @@ const User = require('./user');
 
 class UsersMdl {
   static async get(userId) {
-    const userTbl = await db.select('user', '',
-      [{ col: 'id', oper: '=', val: userId }]);
+    let userTbl = '';
+    try {
+      userTbl = await db.select('user', '',
+        [{ col: 'id', oper: '=', val: userId }]);
+    } catch (e) {
+      return '';
+    }
     const user = this.processResult(userTbl)[0];
 
     const mainEmailTbl = await db.select('email', ['email'],
@@ -54,45 +59,36 @@ class UsersMdl {
   static async create(
     {
       userType, username, password, name,
-      firstSurname, secondSurname, profileImage, birthYear,
-      birthMonth, birthDay, gender, mainEmail,
+      firstSurname, secondSurname, profileImage, birthdate,
+      gender, mainEmail,
     },
   ) {
-    const birthdate = `${birthYear}-${birthMonth}-${birthDay}`;
+    let userId = 0;
+    try {
+      userId = await db.insert('user',
+        ['userType', 'username', 'password', 'name',
+          'firstSurname', 'secondSurname', 'profileImage', 'birthdate',
+          'gender'],
+        [userType, username, password, name,
+          firstSurname, secondSurname, profileImage, birthdate,
+          gender]);
+    } catch (e) {
+      return '';
+    }
 
-    const userId = await db.insert('user',
-      ['userType', 'username', 'password', 'name',
-        'firstSurname', 'secondSurname', 'profileImage', 'birthdate',
-        'gender'],
-      [userType, username, password, name,
-        firstSurname, secondSurname, profileImage, birthdate,
-        gender]);
-
-    const mainEmailId = await db.insert('email', ['userId', 'email'],
-      [userId, mainEmail]);
+    let mainEmailId = 0;
+    try {
+      mainEmailId = await db.insert('email', ['userId', 'email'],
+        [userId, mainEmail]);
+    } catch (e) {
+      db.delete('user', [{ col: 'id', oper: '=', val: userId }]);
+      return '';
+    }
 
     await db.update('user', [{ col: 'mainEmailId', val: mainEmailId }],
       [{ col: 'id', oper: '=', val: userId }]);
 
-    const user = new User({
-      id: userId,
-      mainEmailId,
-      userType,
-      username,
-      password,
-      name,
-      firstSurname,
-      secondSurname,
-      profileImage,
-      birthYear,
-      birthMonth,
-      birthDay,
-      gender,
-    });
-
-    user.setMainEmail(mainEmail);
-
-    return JSON.stringify(user);
+    return this.get(userId);
   }
 
   static async remove(userId) {
@@ -102,8 +98,8 @@ class UsersMdl {
   static async update(userId,
     {
       mainEmailId, userType, password, name,
-      firstSurname, secondSurname, profileImage, birthYear,
-      birthMonth, birthDay, gender,
+      firstSurname, secondSurname, profileImage, birthdate,
+      gender,
     }) {
     const columnsUpdate = [];
 
@@ -143,8 +139,7 @@ class UsersMdl {
       columnsUpdate.push({ col: 'profileImage', val: profileImage });
     }
 
-    if (birthDay !== undefined && birthMonth !== undefined && birt !== undefined) {
-      const birthdate = `${birthYear}-${birthMonth}-${birthDay}`;
+    if (birthdate !== undefined) {
       columnsUpdate.push({ col: 'birthdate', val: birthdate });
     }
 
