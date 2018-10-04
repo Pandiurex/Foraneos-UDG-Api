@@ -122,11 +122,11 @@ class LocationsMdl {
       ['ownerUserId', 'lattitude', 'longitude', 'street',
         'colony', 'postalCode', 'streetAcross1', 'streetAcross2',
         'extNum', 'intNum', 'numRooms', 'description',
-        'restrictions', 'cost', 'availableRooms', 'active'],
+        'restrictions', 'cost', 'availableRooms'],
       [ownerUserId, lattitude, longitude, street,
         colony, postalCode, streetAcross1, streetAcross2,
         extNum, intNum, numRooms, description,
-        restrictions, cost, numRooms, 0]);
+        restrictions, cost, numRooms]);
 
     const myPromises = images.map(async (data) => {
       await db.insert('location_image',

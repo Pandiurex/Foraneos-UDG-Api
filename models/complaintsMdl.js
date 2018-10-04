@@ -3,11 +3,17 @@ const Complaint = require('./complaint');
 
 class complaintsMdl {
   static async get(locationId, userId) {
-    const complaintTbl = await db.select('complaint', '',
-      [{ col: 'locationId', oper: '=', val: locationId },
-        {
-          logic: 'AND', col: 'userId', oper: '=', val: userId,
-        }]);
+    let complaintTbl = '';
+    try {
+      complaintTbl = await db.select('complaint', '',
+        [{ col: 'locationId', oper: '=', val: locationId },
+          {
+            logic: 'AND', col: 'userId', oper: '=', val: userId,
+          }]);
+    } catch (e) {
+      return '';
+    }
+
     const complaint = this.processResult(complaintTbl)[0];
 
     const complaintDescriptionTbl = await db.select('complaint_type', ['description'],
@@ -45,7 +51,24 @@ class complaintsMdl {
       const complaintType = await db.select('complaint_type', ['complaint_type'],
         [{ col: 'id', oper: '=', val: `${data.complaintType}` }]);
 
-      data.setComplaintType(complaint_type[0].complaintType);
+      data.setComplaintType(complaintType[0].complaintType);
+
+      const userFullnameTbl = await db.select('user',
+        ['name', 'firstSurname', 'secondSurname'],
+        [{ col: 'id', oper: '=', val: data.userId }]);
+
+      data.setUserFullname(
+        userFullnameTbl[0].name,
+        userFullnameTbl[0].firstSurname,
+        userFullnameTbl[0].secondSurname,
+      );
+
+      const locationStreetTbl = await db.select('location',
+        ['street', 'extNum'],
+        [{ col: 'id', oper: '=', val: data.locationId }]);
+
+      data.setLocationStreet(locationStreetTbl[0].street);
+      data.setLocationExtNum(locationStreetTbl[0].extNum);
     });
 
     await Promise.all(myPromises);
@@ -58,18 +81,19 @@ class complaintsMdl {
       userId, locationId, complaintTypeId, comment,
     },
   ) {
-    const complaintId = await db.insert('complaint',
-      ['userId', 'locationId', 'complaintTypeId', 'comment'],
-      [userId, locationId, complaintTypeId, comment]);
+    let complaintId = '';
+    try {
+      complaintId = await db.insert('complaint',
+        ['userId', 'locationId', 'complaintTypeId', 'comment'],
+        [userId, locationId, complaintTypeId, comment]);
+    } catch (e) {
+      return '';
+    }
 
     return this.get(complaintId);
   }
 
   static async remove() {
-
-  }
-
-  static async update(){
 
   }
 

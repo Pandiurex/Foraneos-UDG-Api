@@ -3,8 +3,13 @@ const ComplaintType = require('./complaintType');
 
 class complaintTypesMdl {
   static async get(complaintTypeId) {
-    const complaintTypesTbl = await db.select('complaint_type', '',
-      [{ col: 'id', oper: '=', val: complaintTypeId }]);
+    let complaintTypesTbl = '';
+    try {
+      complaintTypesTbl = await db.select('complaint_type', '',
+        [{ col: 'id', oper: '=', val: complaintTypeId }]);
+    } catch (e) {
+      return '';
+    }
 
     const complaintType = this.processResult(complaintTypesTbl)[0];
 
@@ -12,7 +17,12 @@ class complaintTypesMdl {
   }
 
   static async getAll() {
-    const complaintTypesTbl = await db.select('complaint');
+    let complaintTypesTbl = '';
+    try {
+      complaintTypesTbl = await db.select('complaint');
+    } catch (e) {
+      return '';
+    }
 
     const complaintTypes = this.processResult(complaintTypesTbl);
 
@@ -20,9 +30,14 @@ class complaintTypesMdl {
   }
 
   static async create({ description }) {
-    const complaintTypeId = await db.insert('complaint',
-      ['description'],
-      [description]);
+    let complaintTypeId = '';
+    try {
+      complaintTypeId = await db.insert('complaint_type',
+        ['description'],
+        [description]);
+    } catch (e) {
+      return '';
+    }
 
     return this.get(complaintTypeId);
   }

@@ -8,3 +8,4 @@ exports.livesController = require('./livesController');
 exports.complaintsController = require('./complaintsController');
 exports.complaintTypesController = require('./complaintTypesController');
 exports.servicesController = require('./servicesController');
+exports.factoryController = require('./factoryController');

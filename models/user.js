@@ -10,7 +10,7 @@ class User {
     this.firstSurname = data.firstSurname;
     this.secondSurname = data.secondSurname;
     this.profileImage = data.secondSurname;
-    this.birthdate = data.birthDay;
+    this.birthdate = data.birthdate;
     this.gender = data.gender;
 
     Object.keys(this).forEach((key) => {
