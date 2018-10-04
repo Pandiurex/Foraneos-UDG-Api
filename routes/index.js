@@ -9,6 +9,7 @@ const livesRoute = require('./livesRoute');
 const complaintsRoute = require('./complaintsRoute');
 const complaintTypesRoute = require('./complaintTypesRoute');
 const servicesRoute = require('./servicesRoute');
+const factoryRoute = require('./factoryRoute');
 
 route
   .get('/', (req, res) => res.send('Hello World!'))
@@ -20,6 +21,7 @@ route
   .use('/locations/:locationId/messages', messagesRoute)
   .use('/locations/:locationId/complaints', complaintsRoute)
   .use('/complaitTypes', complaintTypesRoute)
-  .use('/services', servicesRoute);
+  .use('/services', servicesRoute)
+  .use('/factory', factoryRoute);
 
 module.exports = route;
