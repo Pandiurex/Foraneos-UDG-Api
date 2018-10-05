@@ -4,8 +4,24 @@ class LivesIn {
     this.userId = data.userId;
     this.locationId = data.locationId;
     this.active = data.active;
-    this.startDate = data.startDate;
-    this.endDate = data.endDate;
+    if (data.startDate.getFullYear() !== undefined) {
+      const year = data.startDate.getFullYear();
+      const month = data.startDate.getMonth();
+      const day = data.startDate.getDay();
+
+      this.startDate = [year, month, day].join('-');
+    } else {
+      this.startDate = data.startDate;
+    }
+    if (data.endDate.getFullYear() !== undefined) {
+      const year = data.endDate.getFullYear();
+      const month = data.endDate.getMonth();
+      const day = data.endDate.getDay();
+
+      this.endDate = [year, month, day].join('-');
+    } else {
+      this.endDate = data.endDate;
+    }
     this.rated = data.rated;
 
     Object.keys(this).forEach((key) => {

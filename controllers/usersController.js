@@ -8,7 +8,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  const result = await users.get(req.params.id);
+  const result = await users.get(req.params.userId);
   res.send(result).status(200);
 };
 
@@ -18,7 +18,7 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const result = await users.update(req.params.id, req.body);
+  const result = await users.update(req.params.userId, req.body);
   res.send(result).status(200);
 };
 

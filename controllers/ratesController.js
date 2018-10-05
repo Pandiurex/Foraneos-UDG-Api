@@ -1,6 +1,15 @@
-// Controllers of rates.
-exports.showAll = (req, res) => {
-  res.send('Show all rates');
+const {
+  rates,
+} = require('../models');
+
+exports.showAll = async (req, res) => {
+  const result = await rates.getAll(req.params.locationId);
+
+  if (result.length === 0) {
+    res.status(204);
+  }
+
+  res.send(result);
 };
 
 exports.showOne = (req, res) => {

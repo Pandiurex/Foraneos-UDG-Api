@@ -28,7 +28,7 @@ class Service {
   static async getAll() {
     let servicesTbl = '';
     try {
-      servicesTbl = await db.select('service');
+      servicesTbl = await db.selectAll('service');
     } catch (e) {
       return '';
     }

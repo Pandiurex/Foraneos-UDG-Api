@@ -17,7 +17,7 @@ route
   .use('/users/:userId/livesIn', livesInRoute)
   .use('/locations', locationsRoute)
   .use('/locations/:locationId/lives', livesRoute)
-  .use('/locations/:locationId/rates', ratesRoute)
+  .use('/locations', ratesRoute)
   .use('/locations/:locationId/messages', messagesRoute)
   .use('/locations/:locationId/complaints', complaintsRoute)
   .use('/complaitTypes', complaintTypesRoute)

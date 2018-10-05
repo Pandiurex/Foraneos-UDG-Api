@@ -81,16 +81,15 @@ class complaintsMdl {
       userId, locationId, complaintTypeId, comment,
     },
   ) {
-    let complaintId = '';
     try {
-      complaintId = await db.insert('complaint',
+      await db.insert('complaint',
         ['userId', 'locationId', 'complaintTypeId', 'comment'],
         [userId, locationId, complaintTypeId, comment]);
     } catch (e) {
       return '';
     }
 
-    return this.get(complaintId);
+    return this.get(locationId, userId);
   }
 
   static async remove() {

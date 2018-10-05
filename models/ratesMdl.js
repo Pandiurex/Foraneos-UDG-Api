@@ -12,10 +12,7 @@ class ratesMdl {
   }
 
   static async getAll() {
-    const ratesTbl = await db.select('rate',
-      ['id', 'userId', 'locationId', 'commentTitle',
-        'comment', 'date', 'servicesRate', 'securityRate',
-        'localizationRate', 'costBenefictRate', 'usefulCounter']);
+    const ratesTbl = await db.selectAll('rate');
 
     const rates = this.processResult(ratesTbl);
 
@@ -26,16 +23,16 @@ class ratesMdl {
     {
       userId, locationId, commentTitle, comment,
       date, servicesRate, securityRate, localizationRate,
-      costBenefictRate, usefulCounter,
+      costBenefictRate,
     },
   ) {
     const rateId = await db.insert('rate',
       ['userId', 'locationId', 'commentTitle', 'comment',
         'date', 'servicesRate', 'securityRate', 'localizationRate',
-        'costBenefictRate', 'usefulCounter'],
+        'costBenefictRate'],
       [userId, locationId, commentTitle, comment,
         date, servicesRate, securityRate, localizationRate,
-        costBenefictRate, usefulCounter, 0]);
+        costBenefictRate]);
 
     return JSON.stringify(rateId);
   }

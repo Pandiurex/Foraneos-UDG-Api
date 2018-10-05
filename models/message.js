@@ -7,7 +7,20 @@ class Message {
     this.locationId = data.locationId;
     this.viewed = data.viewed;
     this.message = data.message;
-    this.time = data.time;
+    if (data.time.getFullYear() !== undefined) {
+      const year = data.time.getFullYear();
+      const month = data.time.getMonth();
+      const day = data.time.getDay();
+      const hour = data.time.getHours();
+      const minute = data.time.getMinutes();
+      const second = data.time.getSeconds();
+
+      this.time = [year, month, day].join('-');
+      this.time += ' ';
+      this.time = [hour, minute, second].join(':');
+    } else {
+      this.time = data.time;
+    }
 
     Object.keys(this).forEach((key) => {
       if (this[key] === undefined) { delete this[key]; }
@@ -60,7 +73,7 @@ class Message {
   static async getAll() {
     let messagesTbl = '';
     try {
-      messagesTbl = await db.select('service');
+      messagesTbl = await db.select('message');
     } catch (e) {
       return '';
     }
@@ -93,14 +106,14 @@ class Message {
 
   static async create(
     {
-      senderUserId, locationId, message, iconRef,
+      senderUserId, locationId, message, time,
     },
   ) {
     let messageId = '';
     try {
-      messageId = await db.insert('service',
-        ['senderUserId', 'locationId', 'message', 'iconRef'],
-        [senderUserId, locationId, message, iconRef]);
+      messageId = await db.insert('message',
+        ['senderUserId', 'locationId', 'message', 'time'],
+        [senderUserId, locationId, message, time]);
     } catch (e) {
       return '';
     }
