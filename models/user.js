@@ -10,7 +10,15 @@ class User {
     this.firstSurname = data.firstSurname;
     this.secondSurname = data.secondSurname;
     this.profileImage = data.secondSurname;
-    this.birthdate = data.birthdate;
+    if (data.birthdate.getFullYear() !== undefined) {
+      const year = data.birthdate.getFullYear();
+      const month = data.birthdate.getMonth();
+      const day = data.birthdate.getDay();
+
+      this.birthdate = [year, month, day].join('-');
+    } else {
+      this.birthdate = data.birthdate;
+    }
     this.gender = data.gender;
 
     Object.keys(this).forEach((key) => {
