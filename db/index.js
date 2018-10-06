@@ -118,6 +118,13 @@ class DB {
     });
   }
 
+
+  /**
+   * Deletes the rows that meet the filters
+   * @param  {String} table   Name of the table
+   * @param  {[Obj]} filters Array of objects with the filters to apply
+   * @return {[type]}         Returns the result
+   */
   async delete(table, filters) {
     return new Promise((resolve, reject) => {
       let queryStr = `DELETE FROM ${this.con.escape(table).replace(/'/g, '')} `;
