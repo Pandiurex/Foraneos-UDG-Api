@@ -123,11 +123,15 @@ class Complaint {
       return 0;
     }
 
-    const numComplaints = db.select('location', ['numComplaints'],
+    const numComplaintsTbl = await db.select('location', ['numComplaints'],
       [{ col: 'id', oper: '=', val: locationId }]);
 
+    let { numComplaints } = numComplaintsTbl[0];
+
+    numComplaints += 1;
+
     await db.update('location',
-      [{ col: 'numComplaints', val: numComplaints + 1 }],
+      [{ col: 'numComplaints', val: numComplaints }],
       [{ col: 'id', oper: '=', val: locationId }]);
 
     return this.get(locationId, userId);

@@ -77,7 +77,7 @@ class Rate {
       return 0;
     }
 
-    const rates = this.getAll(locationId);
+    const rates = await this.getAll(locationId);
 
     let i = 0;
     let avgServicesRate = 0;
@@ -111,7 +111,7 @@ class Rate {
   }
 
   static async remove(rateId) {
-    const rate = this.get(rateId);
+    const rate = await this.get(rateId);
 
     try {
       await db.delete('rate',
@@ -120,7 +120,7 @@ class Rate {
       return 0;
     }
 
-    const rates = this.getAll(rate.locationId);
+    const rates = await this.getAll(rate.locationId);
 
     let i = 0;
     let avgServicesRate = 0;
