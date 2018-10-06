@@ -1,9 +1,9 @@
 const {
-  complaintTypes,
+  complaintType,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  const result = await complaintTypes.getAll();
+  const result = await complaintType.getAll();
 
   if (result === '') {
     res.status(204);

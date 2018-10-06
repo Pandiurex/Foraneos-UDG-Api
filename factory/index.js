@@ -86,7 +86,7 @@ class Factory {
 
     try {
       myPromises = users.map(async (data) => {
-        await models.users.create(data);
+        await models.user.create(data);
       });
     } catch (e) {
       return false;
@@ -134,7 +134,7 @@ class Factory {
 
     try {
       myPromises = locations.map(async (data) => {
-        await models.locations.create(data);
+        await models.location.create(data);
       });
     } catch (e) {
       return false;
@@ -161,7 +161,7 @@ class Factory {
 
     try {
       myPromises = complaints.map(async (data) => {
-        await models.complaints.create(data);
+        await models.complaint.create(data);
       });
     } catch (e) {
       return false;
@@ -250,7 +250,7 @@ class Factory {
 
     try {
       myPromises = rates.map(async (data) => {
-        await models.rates.create(data);
+        await models.rate.create(data);
       });
     } catch (e) {
       return false;

@@ -4,7 +4,7 @@ exports.showAll = (req, res) => {
 };
 
 exports.showOne = (req, res) => {
-  res.send(req.params.id);
+  res.send(req.params.messageId);
 };
 
 exports.create = (req, res) => {

@@ -1,9 +1,9 @@
 const {
-  rates,
+  rate,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  const result = await rates.getAll(req.params.locationId);
+  const result = await rate.getAll(req.params.locationId);
 
   if (result.length === 0) {
     res.status(204);
