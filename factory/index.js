@@ -28,7 +28,7 @@ class Factory {
 
     try {
       myPromises = complaintTypes.map(async (data) => {
-        await models.complaintTypes.create(data);
+        await models.complaintType.create(data);
       });
     } catch (e) {
       return false;
