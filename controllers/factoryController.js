@@ -2,11 +2,25 @@ const factory = require('../factory');
 
 // Controller of factory.
 exports.fillUpDB = async (req, res) => {
-  const result = await factory.fillUpDB(req.query.num);
+  let result = await factory.fillUpDB(req.query.num);
 
   if (result === 0) {
-    res.send('Error filling up the database').status(202);
+    result = {
+      error: {
+        status: 409,
+        message: 'Error filling up the database',
+      },
+    };
+    res.status(409);
+  } else {
+    result = {
+      factory: {
+        status: 201,
+        message: `${result} tables filled up with ${req.query.num} elements`,
+      },
+    };
+    res.status(201);
   }
 
-  res.send(`${result} tables filled up with ${req.query.num} elements`).status(201);
+  res.send(result);
 };
