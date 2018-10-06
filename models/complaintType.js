@@ -12,29 +12,31 @@ class ComplaintType {
 
   static async get(complaintTypeId) {
     let complaintTypesTbl = '';
+
     try {
       complaintTypesTbl = await db.select('complaint_type', '',
         [{ col: 'id', oper: '=', val: complaintTypeId }]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     const complaintType = this.processResult(complaintTypesTbl)[0];
 
-    return JSON.stringify(complaintType);
+    return complaintType;
   }
 
   static async getAll() {
     let complaintTypesTbl = '';
+
     try {
       complaintTypesTbl = await db.select('complaint');
     } catch (e) {
-      return '';
+      return 0;
     }
 
     const complaintTypes = this.processResult(complaintTypesTbl);
 
-    return JSON.stringify(complaintTypes);
+    return complaintTypes;
   }
 
   static async create({ description }) {
@@ -44,7 +46,7 @@ class ComplaintType {
         ['description'],
         [description]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     return this.get(complaintTypeId);

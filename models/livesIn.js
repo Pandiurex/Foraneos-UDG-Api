@@ -44,8 +44,14 @@ class LivesIn {
   }
 
   static async get(livesInId) {
-    const livesInTbl = await db.select('lives_in', '',
-      [{ col: 'id', oper: '=', val: livesInId }]);
+    let livesInTbl = '';
+
+    try {
+      livesInTbl = await db.select('lives_in', '',
+        [{ col: 'id', oper: '=', val: livesInId }]);
+    } catch (e) {
+      return 0;
+    }
 
     const livesIn = this.processResult(livesInTbl)[0];
 
@@ -66,20 +72,24 @@ class LivesIn {
     livesIn.setLocationStreet(locationStreetTbl[0].street);
     livesIn.setLocationExtNum(locationStreetTbl[0].extNum);
 
-    return JSON.stringify(livesIn);
+    return livesIn;
   }
 
   static async getAll(userId = '', locationId = '') {
     let livesInTbl = '';
 
-    if (userId !== '') {
-      livesInTbl = await db.select('lives_in', '',
-        [{ col: 'userId', oper: '=', val: userId }]);
-    } else if (locationId !== '') {
-      livesInTbl = await db.select('lives_in', '',
-        [{ col: 'locationId', oper: '=', val: locationId }]);
-    } else {
-      livesInTbl = await db.select('lives_in');
+    try {
+      if (userId !== '') {
+        livesInTbl = await db.select('lives_in', '',
+          [{ col: 'userId', oper: '=', val: userId }]);
+      } else if (locationId !== '') {
+        livesInTbl = await db.select('lives_in', '',
+          [{ col: 'locationId', oper: '=', val: locationId }]);
+      } else {
+        livesInTbl = await db.select('lives_in');
+      }
+    } catch (e) {
+      return 0;
     }
 
     const livesIn = this.processResult(livesInTbl);
@@ -105,7 +115,7 @@ class LivesIn {
 
     await Promise.all(myPromises);
 
-    return JSON.stringify(livesIn);
+    return livesIn;
   }
 
   static async create(
@@ -113,14 +123,20 @@ class LivesIn {
       userId, locationId, startDate, endDate,
     },
   ) {
-    const livesInId = await db.insert('lives_in',
-      ['userId', 'locationId', 'startDate', 'endDate'],
-      [userId, locationId, startDate, endDate]);
+    let livesInId = '';
+
+    try {
+      livesInId = await db.insert('lives_in',
+        ['userId', 'locationId', 'startDate', 'endDate'],
+        [userId, locationId, startDate, endDate]);
+    } catch (e) {
+      return 0;
+    }
 
     return this.get(livesInId);
   }
 
-  static async updatePut(livesInId, { active, endDate }) {
+  static async update(livesInId, { active, endDate }) {
     const columnsUpdate = [];
 
     if (active !== undefined) {
@@ -129,36 +145,36 @@ class LivesIn {
 
     if (endDate !== undefined) {
       columnsUpdate.push({ col: 'endDate', val: endDate });
+    }
+
+    try {
+      await db.update('lives_ind', columnsUpdate,
+        [{ col: 'id', oper: '=', val: livesInId }]);
+    } catch (e) {
+      return 0;
+    }
+
+    return this.get(livesInId);
+  }
+
+  static async patch(livesInId, { active, endDate }) {
+    const columnsUpdate = [];
+    let updated = '';
+
+    if (active !== undefined) {
+      columnsUpdate.push({ col: 'active', val: active });
+      updated = { active };
+    }
+
+    if (endDate !== undefined) {
+      columnsUpdate.push({ col: 'endDate', val: endDate });
+      updated = { endDate };
     }
 
     await db.update('lives_ind', columnsUpdate,
       [{ col: 'id', oper: '=', val: livesInId }]);
 
-    return this.get(livesInId);
-  }
-
-  static async updatePatch(livesInId, { active, endDate }) {
-    const columnsUpdate = [];
-
-    if (active !== undefined) {
-      columnsUpdate.push({ col: 'active', val: active });
-
-      await db.update('lives_ind', columnsUpdate,
-        [{ col: 'id', oper: '=', val: livesInId }]);
-
-      return JSON.stringify({ active });
-    }
-
-    if (endDate !== undefined) {
-      columnsUpdate.push({ col: 'endDate', val: endDate });
-
-      await db.update('lives_ind', columnsUpdate,
-        [{ col: 'id', oper: '=', val: livesInId }]);
-
-      return JSON.stringify({ endDate });
-    }
-
-    return '';
+    return updated;
   }
 
   static processResult(data) {

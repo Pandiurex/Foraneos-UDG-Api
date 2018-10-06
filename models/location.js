@@ -48,8 +48,15 @@ class Location {
   }
 
   static async get(locationId) {
-    const locationTbl = await db.select('location', '',
-      [{ col: 'id', oper: '=', val: locationId }]);
+    let locationTbl = '';
+
+    try {
+      locationTbl = await db.select('location', '',
+        [{ col: 'id', oper: '=', val: locationId }]);
+    } catch (e) {
+      return 0;
+    }
+
     const location = this.processResult(locationTbl)[0];
 
     const ownerFullnameTbl = await db.select('user',
@@ -104,15 +111,21 @@ class Location {
 
     location.setServices(services);
 
-    return JSON.stringify(location);
+    return location;
   }
 
   static async getAll() {
-    const locationsTbl = await db.select('location',
-      ['id', 'ownerUserId', 'active', 'lattitude',
-        'longitude', 'colony', 'numRooms', 'availableRooms',
-        'cost', 'avgRate', 'avgServicesRate', 'avgSecurityRate',
-        'avgLocalizationRate', 'avgCostBenefictRate']);
+    let locationsTbl = '';
+
+    try {
+      locationsTbl = await db.select('location',
+        ['id', 'ownerUserId', 'active', 'lattitude',
+          'longitude', 'colony', 'numRooms', 'availableRooms',
+          'cost', 'avgRate', 'avgServicesRate', 'avgSecurityRate',
+          'avgLocalizationRate', 'avgCostBenefictRate']);
+    } catch (e) {
+      return 0;
+    }
 
     const locations = this.processResult(locationsTbl);
 
@@ -163,15 +176,21 @@ class Location {
       restrictions, cost, images, services,
     },
   ) {
-    const locationId = await db.insert('location',
-      ['ownerUserId', 'lattitude', 'longitude', 'street',
-        'colony', 'postalCode', 'streetAcross1', 'streetAcross2',
-        'extNum', 'intNum', 'numRooms', 'description',
-        'restrictions', 'cost', 'availableRooms'],
-      [ownerUserId, lattitude, longitude, street,
-        colony, postalCode, streetAcross1, streetAcross2,
-        extNum, intNum, numRooms, description,
-        restrictions, cost, numRooms]);
+    let locationId = '';
+
+    try {
+      locationId = await db.insert('location',
+        ['ownerUserId', 'lattitude', 'longitude', 'street',
+          'colony', 'postalCode', 'streetAcross1', 'streetAcross2',
+          'extNum', 'intNum', 'numRooms', 'description',
+          'restrictions', 'cost', 'availableRooms'],
+        [ownerUserId, lattitude, longitude, street,
+          colony, postalCode, streetAcross1, streetAcross2,
+          extNum, intNum, numRooms, description,
+          restrictions, cost, numRooms]);
+    } catch (e) {
+      return 0;
+    }
 
     const myPromises = images.map(async (data) => {
       await db.insert('location_image',
@@ -192,67 +211,116 @@ class Location {
     return this.get(locationId);
   }
 
-  static async remove(userId) {
+  static async remove(locationId) {
+    const location = this.get(locationId);
 
+    if (location === 0) {
+      return location;
+    }
+
+    if (location.numRooms === location.availableRooms) {
+      return 1;
+    }
+
+    await db.update('location',
+      [{ col: 'active', val: 0 }],
+      [{ col: 'id', oper: '=', val: locationId }]);
+
+    return location;
   }
 
-  static async update(userId,
+  static async update(locationId,
     {
-      mainEmailId, userType, password, name,
-      firstSurname, secondSurname, profileImage, birthYear,
-      birthMonth, birthDay, gender,
+      postalCode, numRooms, description, restrictions,
+      cost,
     }) {
+    const location = this.get(locationId);
+
+    if (location === 0) {
+      return 0;
+    }
+
     const columnsUpdate = [];
 
-    if (mainEmailId !== undefined) {
-      const emailTbl = await db.selectAll('email',
-        [{ col: 'userId', oper: '=', val: userId }]);
+    if (postalCode !== undefined) {
+      columnsUpdate.push({ col: 'postalCode', val: postalCode });
+    }
 
-      if (emailTbl.some(data => data.id === mainEmailId)) {
-        columnsUpdate.push({ col: 'mainEmailId', val: mainEmailId });
-      } else {
-        // Aqui va un error todo chido
-        return this.get(userId);
+    if (numRooms !== undefined) {
+      if (numRooms - location.numRooms + location.availableRooms < 2) {
+        return 2;
       }
+      columnsUpdate.push({ col: 'numRooms', val: numRooms });
     }
 
-    if (userType !== undefined) {
-      columnsUpdate.push({ col: 'userType', val: userType });
+    if (description !== undefined) {
+      columnsUpdate.push({ col: 'description', val: description });
     }
 
-    if (password !== undefined) {
-      columnsUpdate.push({ col: 'password', val: password });
+    if (restrictions !== undefined) {
+      columnsUpdate.push({ col: 'restrictions', val: restrictions });
     }
 
-    if (name !== undefined) {
-      columnsUpdate.push({ col: 'name', val: name });
+    if (cost !== undefined) {
+      columnsUpdate.push({ col: 'cost', val: cost });
     }
 
-    if (firstSurname !== undefined) {
-      columnsUpdate.push({ col: 'firstSurname', val: firstSurname });
+    try {
+      await db.update('location', columnsUpdate,
+        [{ col: 'id', oper: '=', val: locationId }]);
+    } catch (e) {
+      return 1;
     }
 
-    if (secondSurname !== undefined) {
-      columnsUpdate.push({ col: 'secondSurname', val: secondSurname });
+    return this.get(locationId);
+  }
+
+  static async patch(locationId,
+    {
+      postalCode, numRooms, description, restrictions,
+      cost,
+    }) {
+    const location = this.get(locationId);
+
+    const columnsUpdate = [];
+    let updated = '';
+
+    if (postalCode !== undefined) {
+      columnsUpdate.push({ col: 'postalCode', val: postalCode });
+      updated = { postalCode };
     }
 
-    if (profileImage !== undefined) {
-      columnsUpdate.push({ col: 'profileImage', val: profileImage });
+    if (numRooms !== undefined) {
+      if (numRooms - location.numRooms + location.availableRooms < 0) {
+        return 1;
+      }
+      columnsUpdate.push({ col: 'numRooms', val: numRooms });
+      updated = { numRooms };
     }
 
-    if (birthDay !== undefined && birthMonth !== undefined && birt !== undefined) {
-      const birthdate = `${birthYear}-${birthMonth}-${birthDay}`;
-      columnsUpdate.push({ col: 'birthdate', val: birthdate });
+    if (description !== undefined) {
+      columnsUpdate.push({ col: 'description', val: description });
+      updated = { description };
     }
 
-    if (gender !== undefined) {
-      columnsUpdate.push({ col: 'gender', val: gender });
+    if (restrictions !== undefined) {
+      columnsUpdate.push({ col: 'restrictions', val: restrictions });
+      updated = { restrictions };
     }
 
-    await db.update('user', columnsUpdate,
-      [{ col: 'id', oper: '=', val: userId }]);
+    if (cost !== undefined) {
+      columnsUpdate.push({ col: 'cost', val: cost });
+      updated = { cost };
+    }
 
-    return this.get(userId);
+    try {
+      await db.update('location', columnsUpdate,
+        [{ col: 'id', oper: '=', val: locationId }]);
+    } catch (e) {
+      return 0;
+    }
+
+    return updated;
   }
 
   static processResult(data) {

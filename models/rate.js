@@ -28,21 +28,33 @@ class Rate {
   }
 
   static async get(rateId) {
-    const rateTbl = await db.select('rate', '',
-      [{ col: 'id', oper: '=', val: rateId }]);
+    let rateTbl = '';
+
+    try {
+      rateTbl = await db.select('rate', '',
+        [{ col: 'id', oper: '=', val: rateId }]);
+    } catch (e) {
+      return 0;
+    }
 
     const rate = this.processResult(rateTbl)[0];
 
-    return JSON.stringify(rate);
+    return rate;
   }
 
   static async getAll(locationId) {
-    const ratesTbl = await db.selectAll('rate',
-      [{ col: 'locationId', oper: '=', val: locationId }]);
+    let ratesTbl = '';
+
+    try {
+      ratesTbl = await db.selectAll('rate',
+        [{ col: 'locationId', oper: '=', val: locationId }]);
+    } catch (e) {
+      return 0;
+    }
 
     const rates = this.processResult(ratesTbl);
 
-    return JSON.stringify(rates);
+    return rates;
   }
 
   static async create(
@@ -52,35 +64,93 @@ class Rate {
       costBenefictRate,
     },
   ) {
-    const rateId = await db.insert('rate',
-      ['userId', 'locationId', 'commentTitle', 'comment',
-        'date', 'servicesRate', 'securityRate', 'localizationRate',
-        'costBenefictRate'],
-      [userId, locationId, commentTitle, comment,
-        date, servicesRate, securityRate, localizationRate,
-        costBenefictRate]);
+    let rateId = '';
+    try {
+      rateId = await db.insert('rate',
+        ['userId', 'locationId', 'commentTitle', 'comment',
+          'date', 'servicesRate', 'securityRate', 'localizationRate',
+          'costBenefictRate'],
+        [userId, locationId, commentTitle, comment,
+          date, servicesRate, securityRate, localizationRate,
+          costBenefictRate]);
+    } catch (e) {
+      return 0;
+    }
 
-    return JSON.stringify(rateId);
+    const rates = this.getAll(locationId);
+
+    let i = 0;
+    let avgServicesRate = 0;
+    let avgSecurityRate = 0;
+    let avgLocalizationRate = 0;
+    let avgCostBenefictRate = 0;
+
+    rates.forEach((data) => {
+      avgServicesRate += data.servicesRate;
+      avgSecurityRate += data.securityRate;
+      avgLocalizationRate += data.localizationRate;
+      avgCostBenefictRate += data.costBenefictRate;
+      i += 1;
+    });
+
+    avgServicesRate /= i;
+    avgSecurityRate /= i;
+    avgLocalizationRate /= i;
+    avgCostBenefictRate /= i;
+
+    const columnsUpdate = [];
+    columnsUpdate.push({ col: 'avgServicesRate', val: avgServicesRate });
+    columnsUpdate.push({ col: 'avgSecurityRate', val: avgSecurityRate });
+    columnsUpdate.push({ col: 'avgLocalizationRate', val: avgLocalizationRate });
+    columnsUpdate.push({ col: 'avgCostBenefictRate', val: avgCostBenefictRate });
+
+    await db.update('location', columnsUpdate,
+      [{ col: 'id', oper: '=', val: locationId }]);
+
+    return this.get(rateId);
   }
 
   static async remove(rateId) {
+    const rate = this.get(rateId);
 
-  }
+    try {
+      await db.delete('rate',
+        [{ col: 'id', oper: '=', val: rateId }]);
+    } catch (e) {
+      return 0;
+    }
 
-  static async update(rateId,
-    {
-      userId,
-      locationId,
-      commentTitle,
-      comment,
-      date,
-      servicesRate,
-      securityRate,
-      localizationRate,
-      costBenefictRate,
-      usefulCounter,
-    }) {
+    const rates = this.getAll(rate.locationId);
 
+    let i = 0;
+    let avgServicesRate = 0;
+    let avgSecurityRate = 0;
+    let avgLocalizationRate = 0;
+    let avgCostBenefictRate = 0;
+
+    rates.forEach((data) => {
+      avgServicesRate += data.servicesRate;
+      avgSecurityRate += data.securityRate;
+      avgLocalizationRate += data.localizationRate;
+      avgCostBenefictRate += data.costBenefictRate;
+      i += 1;
+    });
+
+    avgServicesRate /= i;
+    avgSecurityRate /= i;
+    avgLocalizationRate /= i;
+    avgCostBenefictRate /= i;
+
+    const columnsUpdate = [];
+    columnsUpdate.push({ col: 'avgServicesRate', val: avgServicesRate });
+    columnsUpdate.push({ col: 'avgSecurityRate', val: avgSecurityRate });
+    columnsUpdate.push({ col: 'avgLocalizationRate', val: avgLocalizationRate });
+    columnsUpdate.push({ col: 'avgCostBenefictRate', val: avgCostBenefictRate });
+
+    await db.update('location', columnsUpdate,
+      [{ col: 'id', oper: '=', val: rate.locationId }]);
+
+    return rate;
   }
 
   static processResult(data) {

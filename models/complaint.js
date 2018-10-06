@@ -30,6 +30,7 @@ class Complaint {
 
   static async get(locationId, userId) {
     let complaintTbl = '';
+
     try {
       complaintTbl = await db.select('complaint', '',
         [{ col: 'locationId', oper: '=', val: locationId },
@@ -37,7 +38,7 @@ class Complaint {
             logic: 'AND', col: 'userId', oper: '=', val: userId,
           }]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     const complaint = this.processResult(complaintTbl)[0];
@@ -64,12 +65,19 @@ class Complaint {
     complaint.setLocationStreet(locationStreetTbl[0].street);
     complaint.setLocationExtNum(locationStreetTbl[0].extNum);
 
-    return JSON.stringify(complaint);
+    return complaint;
   }
 
-  static async getAll() {
-    const complaintsTbl = await db.select('complaint',
-      ['userId', 'locationId', 'complaintType', 'comment']);
+  static async getAll(locationId) {
+    let complaintsTbl = '';
+
+    try {
+      complaintsTbl = await db.select('complaint',
+        ['userId', 'locationId', 'complaintType', 'comment'],
+        [{ col: 'locationId', oper: '=', val: locationId }]);
+    } catch (e) {
+      return 0;
+    }
 
     const complaints = this.processResult(complaintsTbl);
 
@@ -112,14 +120,40 @@ class Complaint {
         ['userId', 'locationId', 'complaintTypeId', 'comment'],
         [userId, locationId, complaintTypeId, comment]);
     } catch (e) {
-      return '';
+      return 0;
     }
+
+    const numComplaints = db.select('location', ['numComplaints'],
+      [{ col: 'id', oper: '=', val: locationId }]);
+
+    await db.update('location',
+      [{ col: 'numComplaints', val: numComplaints + 1 }],
+      [{ col: 'id', oper: '=', val: locationId }]);
 
     return this.get(locationId, userId);
   }
 
-  static async remove() {
+  static async remove(locationId, userId) {
+    const complaint = this.get(locationId, userId);
 
+    try {
+      await db.delete('complaint',
+        [{ col: 'locationId', oper: '=', val: locationId },
+          {
+            logic: 'AND', col: 'userId', oper: '=', val: userId,
+          }]);
+    } catch (e) {
+      return 0;
+    }
+
+    const numComplaints = db.select('location', ['numComplaints'],
+      [{ col: 'id', oper: '=', val: locationId }]);
+
+    await db.update('location',
+      [{ col: 'numComplaints', val: numComplaints - 1 }],
+      [{ col: 'id', oper: '=', val: locationId }]);
+
+    return complaint;
   }
 
   static processResult(data) {

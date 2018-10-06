@@ -45,7 +45,7 @@ class Message {
       messageTbl = await db.select('message', '',
         [{ col: 'id', oper: '=', val: messageId }]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     const message = this.processResult(messageTbl)[0];
@@ -67,15 +67,16 @@ class Message {
     message.setLocationStreet(locationStreetTbl[0].street);
     message.setLocationExtNum(locationStreetTbl[0].extNum);
 
-    return JSON.stringify(message);
+    return message;
   }
 
-  static async getAll() {
+  static async getAll(locationId) {
     let messagesTbl = '';
     try {
-      messagesTbl = await db.select('message');
+      messagesTbl = await db.select('message',
+        { col: 'locationId', oper: '=', val: locationId });
     } catch (e) {
-      return '';
+      return 0;
     }
 
     const messages = this.processResult(messagesTbl);
@@ -101,7 +102,7 @@ class Message {
 
     await Promise.all(myPromises);
 
-    return JSON.stringify(messages);
+    return messages;
   }
 
   static async create(
@@ -115,7 +116,7 @@ class Message {
         ['senderUserId', 'locationId', 'message', 'time'],
         [senderUserId, locationId, message, time]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     return this.get(messageId);
