@@ -45,7 +45,7 @@ exports.create = async (req, res) => {
       },
     };
     res.status(409);
-  } if (result === 1) {
+  } else if (result === 1) {
     result = {
       error: {
         status: 409,
@@ -63,8 +63,6 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   let result = await user.update(req.params.userId, req.body);
 
-  console.log('Llega');
-
   if (result === 0) {
     result = {
       error: {
@@ -73,7 +71,7 @@ exports.update = async (req, res) => {
       },
     };
     res.status(409);
-  } if (result === 1) {
+  } else if (result === 1) {
     result = {
       error: {
         status: 409,
@@ -97,7 +95,7 @@ exports.patch = async (req, res) => {
       },
     };
     res.status(409);
-  } if (result === 1) {
+  } else if (result === 1) {
     result = {
       error: {
         status: 409,
@@ -105,7 +103,7 @@ exports.patch = async (req, res) => {
       },
     };
     res.status(409);
-  } if (result === 2) {
+  } else if (result === 2) {
     result = {
       error: {
         status: 409,
