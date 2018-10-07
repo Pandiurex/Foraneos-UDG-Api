@@ -1,11 +1,14 @@
 // Routes of location_image.
 const express = require('express');
-const { locationImageController } = require('../controllers');
+const {
+  locationImageController,
+} = require('../controllers');
+const middlewaresErr = require('../middlewares');
 
 const route = express.Router();
 
 route
   .post('/', locationImageController.create)
-  .delete('/:userId([0-9]+)', locationImageController.remove);
+  .delete('/:id', middlewaresErr.errMid.paramsValid, locationImageController.remove);
 
 module.exports = route;

@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await locationImage.remove(req.params.locationImageId);
+  let result = await locationImage.remove(req.params.id);
 
   if (result === 0) {
     result = {

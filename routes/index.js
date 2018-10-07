@@ -15,15 +15,15 @@ const locationImageRoute = require('./locationImageRoute');
 const locationServiceRoute = require('./locationServiceRoute');
 
 route
-  .get('/', (req, res) => res.send('Hello World!'))
+  .get('/', (req, res) => res.send('Welcome to Our System!'))
   .use('/users', usersRoute)
-  .use('/users/:userId/livesIn', livesInRoute)
+  .use('/users/:id/livesIn', livesInRoute)
   .use('/locations', locationsRoute)
-  .use('/locations/:locationId/lives', livesRoute)
+  .use('/locations/:id/lives', livesRoute)
   .use('/locations', ratesRoute)
-  .use('/locations/:locationId/messages', messagesRoute)
-  .use('/locations/:locationId/complaints', complaintsRoute)
-  .use('/locations/:locationId/locationService', locationServiceRoute)
+  .use('/locations/:id/messages', messagesRoute)
+  .use('/locations/:id/complaints', complaintsRoute)
+  .use('/locations/:id/locationService', locationServiceRoute)
   .use('/complaitTypes', complaintTypesRoute)
   .use('/services', servicesRoute)
   .use('/factory', factoryRoute)

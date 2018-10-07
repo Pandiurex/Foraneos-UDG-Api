@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  let result = await message.get(req.params.messageId);
+  let result = await message.get(req.params.id);
 
   if (result === 0) {
     result = {

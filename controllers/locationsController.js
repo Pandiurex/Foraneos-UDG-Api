@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  let result = await location.get(req.params.locationId);
+  let result = await location.get(req.params.id);
 
   if (result === 0) {
     result = {
@@ -53,7 +53,7 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  let result = await location.update(req.params.locationId, req.body);
+  let result = await location.update(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -85,7 +85,7 @@ exports.update = async (req, res) => {
 };
 
 exports.patch = async (req, res) => {
-  let result = await location.patch(req.params.locationId, req.body);
+  let result = await location.patch(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -109,7 +109,7 @@ exports.patch = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await location.remove(req.params.locationId);
+  let result = await location.remove(req.params.id);
 
   if (result === 0) {
     result = {

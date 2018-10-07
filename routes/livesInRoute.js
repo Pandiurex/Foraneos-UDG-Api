@@ -3,13 +3,16 @@ const express = require('express');
 const {
   livesInController,
 } = require('../controllers');
+const middlewaresErr = require('../middlewares');
 
 const route = express.Router();
 
 route
   .get('/', livesInController.showAll)
-  .post('/', livesInController.create)
-  .put('/:livesInId([0-9]+)', livesInController.update)
-  .patch('/:livesInId([0-9]+)', livesInController.patch);
+  .post('/', [middlewaresErr.errMid.startDateValid,
+    middlewaresErr.errMid.endDateValid,
+  ], livesInController.create)
+  .put('/:id', livesInController.update)
+  .patch('/:id', livesInController.patch);
 
 module.exports = route;

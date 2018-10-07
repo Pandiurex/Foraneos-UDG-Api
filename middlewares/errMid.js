@@ -4,7 +4,7 @@ function getCompare() {
     email: /\S+@\S+\.\S+/,
     password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
     number: /^([0-9])+$/,
-    decimal: /^(\d|-)?(\d|,)*\.?\d*$/,
+    decimal: /^\d+\.\d{0,2}$/,
     login: true,
   };
 }
@@ -23,7 +23,7 @@ function isValidDate(bDay, bMonth, bYear) {
   if (month < 1 || month > 12) valid = false;
   else if ((day < 1) || (day > 31)) valid = false;
   else if (((month === 4) || (month === 6) || (month === 9) || (month === 11))
-        && (day > 30)) valid = false;
+    && (day > 30)) valid = false;
   else if ((month === 2) && ((year % 4) === 0) && ((year % 100) !== 0)) valid = true;
   else if ((month === 2) && ((year % 100) === 0) && (day > 29)) valid = false;
   else if ((month === 2) && (day > 28)) valid = false;
@@ -82,7 +82,7 @@ const nameValid = (req, res, next) => {
 };
 const surnameValid = (req, res, next) => {
   if (getCompare().word.test(req.body.firstSurnameValid) === false
-        || getCompare().word.test(req.body.secondSurnameValid) === false) {
+    || getCompare().word.test(req.body.secondSurnameValid) === false) {
     res.status(406).send('Surname cant contain numbers, try Again');
   }
   next();
@@ -122,7 +122,7 @@ const userTypeValid = (req, res, next) => {
 
 const lattLongValid = (req, res, next) => {
   if (getCompare().decimal.test(req.body.lattitude) === false
-        || getCompare().decimal.test(req.body.longitude) === false) {
+    || getCompare().decimal.test(req.body.longitude) === false) {
     res.status(406).send('Lattitude Or Longitude are invalid, Try again');
   }
   next();
@@ -130,9 +130,9 @@ const lattLongValid = (req, res, next) => {
 
 const streetValid = (req, res, next) => {
   if (getCompare().word.test(req.body.street) === false
-        || getCompare().word.test(req.body.colony) === false
-        || getCompare().word.test(req.body.streetAcross1) === false
-        || getCompare().word.test(req.body.streetAcross2) === false) {
+    || getCompare().word.test(req.body.colony) === false
+    || getCompare().word.test(req.body.streetAcross1) === false
+    || getCompare().word.test(req.body.streetAcross2) === false) {
     res.status(406).send('Streets cant contain numbers, try Again');
   }
   next();
@@ -140,8 +140,8 @@ const streetValid = (req, res, next) => {
 
 const numLocationsValid = (req, res, next) => {
   if (getCompare().number.test(req.body.postalCode) === false
-        || getCompare().number.test(req.body.extNum) === false
-        || getCompare().number.test(req.body.intNum) === false) {
+    || getCompare().number.test(req.body.extNum) === false
+    || getCompare().number.test(req.body.intNum) === false) {
     res.status(406).send('Error at Postal Code, ext Num or Int Num, Try again');
   }
   next();
@@ -169,7 +169,7 @@ const roomValid = (req, res, next) => {
 };
 const availableRoomValid = (req, res, next) => {
   if (getCompare().number.test(req.body.availableRooms) === false
-        || req.body.availableRooms > req.body.numRooms) {
+    || req.body.availableRooms > req.body.numRooms) {
     res.status(406).send('Must be number or available Rooms cannot be higher than numRooms, Try again');
   }
   next();
@@ -187,13 +187,13 @@ const validDate = (req, res, next) => {
 
 const numberRateValid = (req, res, next) => {
   if (getCompare().number.test(req.body.servicesRate) === false
-        || getCompare().number.test(req.body.securityRate) === false
-        || getCompare().number.test(req.body.costBenefictRate) === false
-        || getCompare().number.test(req.body.localizationRate) === false
-        || req.body.servicesRate > 5 || req.body.servicesRate < 0
-        || req.body.securityRate > 5 || req.body.securityRate < 0
-        || req.body.costBenefictRate > 5 || req.body.costBenefictRate < 0
-        || req.body.localizationRate > 5 || req.body.localizationRate < 0) {
+    || getCompare().number.test(req.body.securityRate) === false
+    || getCompare().number.test(req.body.costBenefictRate) === false
+    || getCompare().number.test(req.body.localizationRate) === false
+    || req.body.servicesRate > 5 || req.body.servicesRate < 0
+    || req.body.securityRate > 5 || req.body.securityRate < 0
+    || req.body.costBenefictRate > 5 || req.body.costBenefictRate < 0
+    || req.body.localizationRate > 5 || req.body.localizationRate < 0) {
     res.status(406).send('Error at Rates Values, Try again');
   }
   next();
@@ -218,6 +218,14 @@ const startDateValid = (req, res, next) => {
 const endDateValid = (req, res, next) => {
   if (isValidDate(req.body.endDay, req.body.endMonth, req.body.endYear) === false) {
     res.status(406).send('Date invalid, Try again');
+  } else {
+    next();
+  }
+};
+
+const paramsValid = (req, res, next) => {
+  if (getCompare().number.test(req.params.id) === false) {
+    res.status(406).send('URL contains invalid request, Try again');
   } else {
     next();
   }
@@ -249,4 +257,5 @@ module.exports = {
   numberRateValid,
   startDateValid,
   endDateValid,
+  paramsValid,
 };
