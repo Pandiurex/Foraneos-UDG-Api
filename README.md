@@ -12,6 +12,63 @@ Se implementarán las herramientas adecuados para la interacción del cliente co
 
 ### 3-Módulos y funcionalidad de cada uno
 
+Este proyecto consta de varias entidades las cuales son:
+
+#### 1-Usuarios
+En nuestro sistema existen dos tipos de usuarios:
+Inquilinos: son aquellos que se hospedaran en algun lugar que se encuentre en renta
+Dueño: aquel usuario que ofertara un lugar donde los demas usuarios podran hospedarse 
+
+Los datos que se les solicitaran a los usuarios seran los siguientes:
+-Tipo de usuario
+-Correo Principal
+-Nombre de Usuario
+-Contraseña
+-Nombre o Nombres
+-Primer Apellido
+-Segundo Apellido
+-Imagen de Perfil
+-Genero
+-Fecha de Nacimiento 
+
+Los usuarios cuentan con caracteristicas y permisos unicos dependiendo el tipo que se desea manejar, estas caracteristicas se mencionaran mas adelante.
+
+#### 2-Lugares
+Los lugares son aquellas pulicaciones que los usuarios dueños publicaran, y el usuario comun o inquilino tendra acceso a esa publicacion para decidir si le parece conveniente hospedarse ahi o simplemente seguir buscando su lugar deseado.
+Para poder realizar una publicacion de un lugar se solicitaran los siguientes datos:
+-Nombre de la calle
+-Colonia
+-Numero de habitaciones
+-Habitaciones Disponibles
+-Precio
+-Imagenes del Lugar
+-Servicios con los que cuenta
+
+Este apartado estara relacionado con la API de google maps lo cual nos permite acceder a la ubicacion exacta **SIEMPRE Y CUANDO EL DUEÑO QUIERA**, de no ser asi, se pondra una ubicacion aproximada del sitio publicado.
+
+#### 3-Valoraciones o Calificaciones
+Siempre que un usuario se hospede en algun lugar que se publico en la pagina, tendra la oportunidad de calificar este lugar de acuerdo a su experiencia, lo cual les facilitara a los demas usuarios la toma de decisiones a la hora de escoger un lugar para hospedarse.
+Podra contar con los siguientes aspectos:
+
+-Titulo de la evaluacion
+-Comentarios
+-Evaluacion de Servicios
+-Evaluacion de Seguridad
+-Evaluacion de Localizacion
+-Evaluacion de relacion Costo-Beneficio
+
+Todas las evaluaciones se manejan con un numero que va desde el 1 al 5
+Cada vez que se realiza una valoracion, se realiza un promedio de todas las evaluaciones disponibles que se muestra en la publicacion, lo cual le facilita al usuario a la hora de realizar filtros al momento de buscar publicaciones y para conocer la experiencica de los demas usuarios a la hora de hospedarse en ese lugar.
+
+Tambien existe un sistema de quejas o reportes para aquellas publicaciones que no son adecuadas, el usuario tendra la posibilidad de levantar una queja donde podra seleccionar el tipo o la causa de esta incoformidad, lo cual les permitira a los administradores revisar y realizar acciones para resolver este tipo de problemas.
+
+#### 4-Mensajes
+La pagina cuenta con un apartado de mensajes, este servicio funciona de la siguiente manera:
+Cada que vez que se crea una nueva publicacion de un lugar, se tiene la oportunidad de que los usuarios que esten interesados puedan contactar con el dueño de esa publicacion, facilitandose la comunicacion entre ambos individuos para poder llegar a acuerdos o simplemente para obtener mas informacion de dicho lugar.
+
+Se administra una "bandeja de entrada" donde se almacenaran todos los mensajes recibidos, facilitandole al usuario un solo lugar disponible para manejar las conversaciones.
+
+
 ### 4-Usuarios, permisos, etc
 
 
@@ -89,9 +146,9 @@ Esto lo que hara es instalar todos los paquetes necesarios que se encuentran en 
 
 ### 6-URLs 
 
-Este es el URL donde el proyecto se encuentra
+Este es el URL donde el proyecto se encuentra:
 
-**LINK**
+[Foraneos-UDG](https://api.foraneos-udg.tk/api)
 
 
 ### 7-Usuarios demos (en caso de requerirse)
