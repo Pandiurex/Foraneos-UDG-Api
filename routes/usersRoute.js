@@ -15,8 +15,8 @@ route
   .get('/', usersController.showAll)
   .get('/:id', middlewaresErr.errMid.paramsValid, usersController.showOne)
   .post('/', [middlewaresErr.errMid.nameValid,
-    middlewaresErr.errMid.passwordValid,
-    middlewaresErr.errMid.birthDateValid,
+    // middlewaresErr.errMid.passwordValid,
+    // middlewaresErr.errMid.birthDateValid,
     middlewaresErr.errMid.userTypeValid,
     middlewaresErr.errMid.genderValid,
     middlewaresErr.errMid.emailValid,

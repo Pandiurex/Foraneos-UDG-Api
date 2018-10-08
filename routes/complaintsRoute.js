@@ -7,8 +7,8 @@ const {
 const route = express.Router();
 
 route
-  .get('/', complaintsController.showAll)
-  .post('/', complaintsController.create)
-  .delete('/:id', complaintsController.remove);
+  .get('/:locationId/complaints', complaintsController.showAll)
+  .post('/:locationId/complaints', complaintsController.create)
+  .delete('/:locationId/complaints/:id', complaintsController.remove);
 
 module.exports = route;

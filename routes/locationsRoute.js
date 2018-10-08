@@ -14,9 +14,9 @@ route
     middlewaresErr.errMid.streetValid,
     middlewaresErr.errMid.numLocationsValid,
     middlewaresErr.errMid.decimalLocationValid,
-    middlewaresErr.errMid.activeValid,
+    // middlewaresErr.errMid.activeValid,
     middlewaresErr.errMid.roomValid,
-    middlewaresErr.errMid.availableRoomValid,
+    // middlewaresErr.errMid.availableRoomValid,
   ], locationsController.create)
   .put('/:id', middlewaresErr.errMid.paramsValid, locationsController.update)
   .patch('/:id', middlewaresErr.errMid.paramsValid, locationsController.patch)

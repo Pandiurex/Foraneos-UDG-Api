@@ -8,7 +8,7 @@ const middlewaresErr = require('../middlewares');
 const route = express.Router();
 
 route
-  .post('/', locationServiceController.create)
-  .delete('/:id', middlewaresErr.errMid.paramsValid, locationServiceController.remove);
+  .post('/:locationId/locationService', locationServiceController.create)
+  .delete('/:locationId/locationService/:id', middlewaresErr.errMid.paramsValid, locationServiceController.remove);
 
 module.exports = route;
