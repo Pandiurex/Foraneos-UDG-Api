@@ -149,7 +149,7 @@ const numLocationsValid = (req, res, next) => {
 
 const decimalLocationValid = (req, res, next) => {
   if (getCompare().decimal.test(req.body.cost) === false) {
-    res.status(406).send('Yhe Cost can only be numerical, Try again');
+    res.status(406).send('The Cost can only be numerical, Try again');
   }
   next();
 };
