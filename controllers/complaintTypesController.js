@@ -3,10 +3,16 @@ const {
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  const result = await complaintType.getAll();
+  let result = await complaintType.getAll();
 
-  if (result === '') {
-    res.status(204);
+  if (result === 0) {
+    result = {
+      error: {
+        status: 404,
+        message: 'Resource not found',
+      },
+    };
+    res.status(404);
   }
 
   res.send(result);

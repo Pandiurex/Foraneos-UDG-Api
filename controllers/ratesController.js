@@ -3,7 +3,7 @@ const {
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await rate.getAll(req.params.id);
+  let result = await rate.getAll(req.params.locationId);
 
   if (result === 0) {
     result = {

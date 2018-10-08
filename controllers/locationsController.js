@@ -45,6 +45,14 @@ exports.create = async (req, res) => {
       },
     };
     res.status(409);
+  } else if (result === 1) {
+    result = {
+      error: {
+        status: 404,
+        message: 'Service not found',
+      },
+    };
+    res.status(404);
   } else {
     res.status(201);
   }

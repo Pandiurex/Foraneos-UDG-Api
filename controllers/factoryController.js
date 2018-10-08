@@ -1,6 +1,6 @@
 const factory = require('../factory');
 
-// Controller of factory.
+
 exports.fillUpDB = async (req, res) => {
   let result = await factory.fillUpDB(req.query.num);
 
