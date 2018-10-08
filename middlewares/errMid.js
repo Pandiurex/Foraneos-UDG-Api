@@ -10,33 +10,17 @@ function getCompare() {
 }
 
 function isValidDate(birthdate) {
-  let valid = true;
-
   const arr = birthdate.split('-');
 
   const year = arr[0];
   const month = arr[1];
   const day = arr[2];
 
-  console.log(year);
-  console.log(month);
-  console.log(day);
-
-  if (getCompare().number.test(day) === false) valid = false;
-  if (getCompare().number.test(month) === false) valid = false;
-  if (getCompare().number.test(year) === false) valid = false;
-
-  if (month < 1 || month > 12) valid = false;
-  else if ((day < 1) || (day > 31)) valid = false;
-  else if (((month === 4) || (month === 6) || (month === 9) || (month === 11))
-    && (day > 30)) valid = false;
-  else if ((month === 2) && ((year % 4) === 0) && ((year % 100) !== 0)) valid = true;
-  else if ((month === 2) && ((year % 100) === 0) && (day > 29)) valid = false;
-  else if ((month === 2) && (day > 28)) valid = false;
-
-  console.log(valid);
-
-  return valid;
+  const date = new Date(year, month, '0');
+  if ((day - 0) > (date.getDate() - 0)) {
+    return false;
+  }
+  return true;
 }
 
 const birthDateValid = (req, res, next) => {
