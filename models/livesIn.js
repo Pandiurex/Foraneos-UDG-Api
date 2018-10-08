@@ -27,7 +27,9 @@ class LivesIn {
     this.rated = data.rated;
 
     Object.keys(this).forEach((key) => {
-      if (this[key] === undefined) { delete this[key]; }
+      if (this[key] === undefined) {
+        delete this[key];
+      }
     });
   }
 
@@ -48,7 +50,11 @@ class LivesIn {
 
     try {
       livesInTbl = await db.select('lives_in', '',
-        [{ col: 'id', oper: '=', val: livesInId }]);
+        [{
+          col: 'id',
+          oper: '=',
+          val: livesInId,
+        }]);
     } catch (e) {
       return 0;
     }
@@ -57,7 +63,11 @@ class LivesIn {
 
     const userFullnameTbl = await db.select('user',
       ['name', 'firstSurname', 'secondSurname'],
-      [{ col: 'id', oper: '=', val: livesIn.userId }]);
+      [{
+        col: 'id',
+        oper: '=',
+        val: livesIn.userId,
+      }]);
 
     livesIn.setUserFullname(
       userFullnameTbl[0].name,
@@ -67,7 +77,11 @@ class LivesIn {
 
     const locationStreetTbl = await db.select('location',
       ['street', 'extNum'],
-      [{ col: 'id', oper: '=', val: livesIn.locationId }]);
+      [{
+        col: 'id',
+        oper: '=',
+        val: livesIn.locationId,
+      }]);
 
     livesIn.setLocationStreet(locationStreetTbl[0].street);
     livesIn.setLocationExtNum(locationStreetTbl[0].extNum);
@@ -81,10 +95,18 @@ class LivesIn {
     try {
       if (userId !== '') {
         livesInTbl = await db.select('lives_in', '',
-          [{ col: 'userId', oper: '=', val: userId }]);
+          [{
+            col: 'userId',
+            oper: '=',
+            val: userId,
+          }]);
       } else if (locationId !== '') {
         livesInTbl = await db.select('lives_in', '',
-          [{ col: 'locationId', oper: '=', val: locationId }]);
+          [{
+            col: 'locationId',
+            oper: '=',
+            val: locationId,
+          }]);
       } else {
         livesInTbl = await db.select('lives_in');
       }
@@ -97,7 +119,11 @@ class LivesIn {
     const myPromises = livesIn.map(async (data) => {
       const userFullnameTbl = await db.select('user',
         ['name', 'firstSurname', 'secondSurname'],
-        [{ col: 'id', oper: '=', val: data.userId }]);
+        [{
+          col: 'id',
+          oper: '=',
+          val: data.userId,
+        }]);
 
       data.setUserFullname(
         userFullnameTbl[0].name,
@@ -107,7 +133,11 @@ class LivesIn {
 
       const locationStreetTbl = await db.select('location',
         ['street', 'extNum'],
-        [{ col: 'id', oper: '=', val: data.locationId }]);
+        [{
+          col: 'id',
+          oper: '=',
+          val: data.locationId,
+        }]);
 
       data.setLocationStreet(locationStreetTbl[0].street);
       data.setLocationExtNum(locationStreetTbl[0].extNum);
@@ -118,11 +148,12 @@ class LivesIn {
     return livesIn;
   }
 
-  static async create(
-    {
-      userId, locationId, startDate, endDate,
-    },
-  ) {
+  static async create({
+    userId,
+    locationId,
+    startDate,
+    endDate,
+  }) {
     let livesInId = '';
 
     try {
@@ -132,36 +163,30 @@ class LivesIn {
     } catch (e) {
       return 0;
     }
-
-    const availableRoomsTbl = await db.select('location',
-      ['availableRooms'],
-      [{ col: 'id', oper: '=', val: 'locationId' }]);
-
-    let { availableRooms } = availableRoomsTbl[0];
-
-    availableRooms -= 1;
-
-    await db.update('location',
-      [{ col: 'availableRooms', val: availableRooms }],
-      [{ col: 'id', oper: '=', val: 'locationId' }]);
-
-    return this.get(livesInId);
-  }
-
-  static async update(livesInId, { active, endDate }) {
-    const columnsUpdate = [];
-
-    if (active !== undefined) {
-      columnsUpdate.push({ col: 'active', val: active });
-    }
-
-    if (endDate !== undefined) {
-      columnsUpdate.push({ col: 'endDate', val: endDate });
-    }
-
     try {
-      await db.update('lives_ind', columnsUpdate,
-        [{ col: 'id', oper: '=', val: livesInId }]);
+      const availableRoomsTbl = await db.select('location',
+        ['availableRooms'],
+        [{
+          col: 'id',
+          oper: '=',
+          val: 'locationId',
+        }]);
+
+      let availableRooms = availableRoomsTbl[0];
+
+      availableRooms -= 1;
+
+
+      await db.update('location',
+        [{
+          col: 'availableRooms',
+          val: availableRooms,
+        }],
+        [{
+          col: 'id',
+          oper: '=',
+          val: 'locationId',
+        }]);
     } catch (e) {
       return 0;
     }
@@ -169,23 +194,74 @@ class LivesIn {
     return this.get(livesInId);
   }
 
-  static async patch(livesInId, { active, endDate }) {
+  static async update(livesInId, {
+    active,
+    endDate,
+  }) {
     const columnsUpdate = [];
-    let updated = '';
 
     if (active !== undefined) {
-      columnsUpdate.push({ col: 'active', val: active });
-      updated = { active };
+      columnsUpdate.push({
+        col: 'active',
+        val: active,
+      });
     }
 
     if (endDate !== undefined) {
-      columnsUpdate.push({ col: 'endDate', val: endDate });
-      updated = { endDate };
+      columnsUpdate.push({
+        col: 'endDate',
+        val: endDate,
+      });
     }
 
     try {
       await db.update('lives_ind', columnsUpdate,
-        [{ col: 'id', oper: '=', val: livesInId }]);
+        [{
+          col: 'id',
+          oper: '=',
+          val: livesInId,
+        }]);
+    } catch (e) {
+      return 0;
+    }
+
+    return this.get(livesInId);
+  }
+
+  static async patch(livesInId, {
+    active,
+    endDate,
+  }) {
+    const columnsUpdate = [];
+    let updated = '';
+
+    if (active !== undefined) {
+      columnsUpdate.push({
+        col: 'active',
+        val: active,
+      });
+      updated = {
+        active,
+      };
+    }
+
+    if (endDate !== undefined) {
+      columnsUpdate.push({
+        col: 'endDate',
+        val: endDate,
+      });
+      updated = {
+        endDate,
+      };
+    }
+
+    try {
+      await db.update('lives_ind', columnsUpdate,
+        [{
+          col: 'id',
+          oper: '=',
+          val: livesInId,
+        }]);
     } catch (e) {
       return 0;
     }

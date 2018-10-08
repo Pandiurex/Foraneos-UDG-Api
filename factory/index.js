@@ -69,9 +69,9 @@ class Factory {
 
     for (let i = 1; i <= num; i += 1) {
       users.push({
-        userType: i,
+        userType: `${i % 3}`,
         username: `username${i}`,
-        password: `password${i}`,
+        password: `PassWord${i}`,
         name: `name${i}`,
         firstSurname: `fSurname${i}`,
         secondSurname: `sSurname${i}`,
@@ -116,15 +116,14 @@ class Factory {
         description: `description${i}`,
         restrictions: `restriction${i}`,
         cost: i,
-        images: [
-          {
-            image: `image1 - ${i}`,
-            description: `description1 - ${i}`,
-          },
-          {
-            image: `image2 - ${i}`,
-            description: `description2 - ${i}`,
-          },
+        images: [{
+          image: `image1 - ${i}`,
+          description: `description1 - ${i}`,
+        },
+        {
+          image: `image2 - ${i}`,
+          description: `description2 - ${i}`,
+        },
         ],
         services: [i, 1 + ((i + 1) % num), 1 + ((i + 2) % num)],
       });

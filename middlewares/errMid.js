@@ -9,16 +9,22 @@ function getCompare() {
   };
 }
 
-function isValidDate(bDay, bMonth, bYear) {
+function isValidDate(birthdate) {
   let valid = true;
 
-  const month = bMonth;
-  const day = bDay;
-  const year = bYear;
+  const arr = birthdate.split('-');
 
-  if (getCompare().number.test(bDay) === false) valid = false;
-  if (getCompare().number.test(bMonth) === false) valid = false;
-  if (getCompare().number.test(bYear) === false) valid = false;
+  const year = arr[0];
+  const month = arr[1];
+  const day = arr[2];
+
+  console.log(year);
+  console.log(month);
+  console.log(day);
+
+  if (getCompare().number.test(day) === false) valid = false;
+  if (getCompare().number.test(month) === false) valid = false;
+  if (getCompare().number.test(year) === false) valid = false;
 
   if (month < 1 || month > 12) valid = false;
   else if ((day < 1) || (day > 31)) valid = false;
@@ -28,21 +34,37 @@ function isValidDate(bDay, bMonth, bYear) {
   else if ((month === 2) && ((year % 100) === 0) && (day > 29)) valid = false;
   else if ((month === 2) && (day > 28)) valid = false;
 
+  console.log(valid);
+
   return valid;
 }
 
 const birthDateValid = (req, res, next) => {
-  if (isValidDate(req.body.birthDay, req.body.birthMonth, req.body.birthYear) === false) {
-    res.status(406).send('Date invalid, Try again');
+  let result = isValidDate(req.body.birthdate);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Date invalid, Try again',
+      },
+    };
+    res.status(406).send(result);
   } else {
     next();
   }
 };
 
 const genderValid = (req, res, next) => {
-  if (req.body.gender === 0 || req.body.gender === 1) next();
+  let result = req.body.gender;
+  if (result === 0 || result === 1) next();
   else {
-    res.status(406).send('Gender attribute can only be 1 or 0, Try Again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Gender attribute can only be 1 or 0, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
 };
 
