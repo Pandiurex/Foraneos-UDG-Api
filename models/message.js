@@ -17,7 +17,7 @@ class Message {
 
       this.time = [year, month, day].join('-');
       this.time += ' ';
-      this.time = [hour, minute, second].join(':');
+      this.time += [hour, minute, second].join(':');
     } else {
       this.time = data.time;
     }
@@ -72,10 +72,14 @@ class Message {
 
   static async getAll(locationId) {
     let messagesTbl = '';
+
     try {
-      messagesTbl = await db.select('message',
-        { col: 'locationId', oper: '=', val: locationId });
+      console.log('Cerca');
+      messagesTbl = await db.selectAll('message',
+        [{ col: 'locationId', oper: '=', val: locationId }]);
+      console.log('Ya paso');
     } catch (e) {
+      console.log('Murio');
       return 0;
     }
 
@@ -84,20 +88,23 @@ class Message {
     const myPromises = messages.map(async (data) => {
       const userFullnameTbl = await db.select('user',
         ['name', 'firstSurname', 'secondSurname'],
-        [{ col: 'id', oper: '=', val: data.userId }]);
+        [{ col: 'id', oper: '=', val: data.senderUserId }]);
 
-      data.setUserFullname(
-        userFullnameTbl[0].name,
-        userFullnameTbl[0].firstSurname,
-        userFullnameTbl[0].secondSurname,
-      );
+      const { name } = userFullnameTbl[0];
+      const { firstSurname } = userFullnameTbl[0];
+      const { secondSurname } = userFullnameTbl[0];
+
+      data.setUserFullname(name, firstSurname, secondSurname);
 
       const locationStreetTbl = await db.select('location',
         ['street', 'extNum'],
         [{ col: 'id', oper: '=', val: data.locationId }]);
 
-      data.setLocationStreet(locationStreetTbl[0].street);
-      data.setLocationExtNum(locationStreetTbl[0].extNum);
+      const { street } = locationStreetTbl[0];
+      const { extNum } = locationStreetTbl[0];
+
+      data.setLocationStreet(street);
+      data.setLocationExtNum(extNum);
     });
 
     await Promise.all(myPromises);

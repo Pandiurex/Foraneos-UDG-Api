@@ -29,7 +29,7 @@ class ComplaintType {
     let complaintTypesTbl = '';
 
     try {
-      complaintTypesTbl = await db.select('complaint');
+      complaintTypesTbl = await db.selectAll('complaint_type');
     } catch (e) {
       return 0;
     }

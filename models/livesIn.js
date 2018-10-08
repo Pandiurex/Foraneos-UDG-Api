@@ -133,6 +133,18 @@ class LivesIn {
       return 0;
     }
 
+    const availableRoomsTbl = await db.select('location',
+      ['availableRooms'],
+      [{ col: 'id', oper: '=', val: 'locationId' }]);
+
+    let { availableRooms } = availableRoomsTbl[0];
+
+    availableRooms -= 1;
+
+    await db.update('location',
+      [{ col: 'availableRooms', val: availableRooms }],
+      [{ col: 'id', oper: '=', val: 'locationId' }]);
+
     return this.get(livesInId);
   }
 
@@ -171,8 +183,12 @@ class LivesIn {
       updated = { endDate };
     }
 
-    await db.update('lives_ind', columnsUpdate,
-      [{ col: 'id', oper: '=', val: livesInId }]);
+    try {
+      await db.update('lives_ind', columnsUpdate,
+        [{ col: 'id', oper: '=', val: livesInId }]);
+    } catch (e) {
+      return 0;
+    }
 
     return updated;
   }

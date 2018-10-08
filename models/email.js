@@ -44,15 +44,15 @@ class Email {
   static async remove(emailId) {
     const email = this.get(emailId);
 
-    if (email === 1) {
-      return email;
+    if (email === 0) {
+      return 0;
     }
 
     try {
       await db.delete('email',
         [{ col: 'id', oper: '=', val: emailId }]);
     } catch (e) {
-      return 0;
+      return 1;
     }
 
     return email;

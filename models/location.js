@@ -72,9 +72,10 @@ class Location {
     const images = [];
 
     try {
+      console.log('antes');
       const imagesTbl = await db.select('location_image',
         ['id', 'image', 'description'],
-        [{ col: 'userId', oper: '=', val: location.id }]);
+        [{ col: 'locationId', oper: '=', val: location.id }]);
 
 
       imagesTbl.forEach((data) => {
@@ -200,13 +201,24 @@ class Location {
 
     await Promise.all(myPromises);
 
-    const myPromises2 = services.map(async (serviceId) => {
-      await db.insert('location_service',
-        ['locationId', 'serviceId'],
-        [locationId, serviceId]);
-    });
+    try {
+      const myPromises2 = services.map(async (serviceId) => {
+        await db.insert('location_service',
+          ['locationId', 'serviceId'],
+          [locationId, serviceId]);
+      });
 
-    await Promise.all(myPromises2);
+      await Promise.all(myPromises2);
+    } catch (e) {
+      await db.delete('location',
+        [{ col: 'id', oper: '=', val: locationId }]);
+
+      await db.delete('location_image',
+        [{ col: 'locationId', oper: '=', val: locationId }]);
+
+      return 1;
+    }
+
 
     return this.get(locationId);
   }
@@ -311,6 +323,10 @@ class Location {
     if (cost !== undefined) {
       columnsUpdate.push({ col: 'cost', val: cost });
       updated = { cost };
+    }
+
+    if (columnsUpdate.length !== 1) {
+      return 1;
     }
 
     try {
