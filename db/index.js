@@ -85,6 +85,8 @@ class DB {
       queryStr += this.orderToStr(order);
       queryStr += this.limitToStr(limit);
 
+      console.log(queryStr);
+
       this.con.query(queryStr, (err, result) => {
         if (err) return reject(this.processError(err));
         return resolve(result);
