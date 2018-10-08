@@ -163,33 +163,37 @@ class LivesIn {
     } catch (e) {
       return 0;
     }
-    try {
-      const availableRoomsTbl = await db.select('location',
-        ['availableRooms'],
-        [{
-          col: 'id',
-          oper: '=',
-          val: 'locationId',
-        }]);
 
-      let availableRooms = availableRoomsTbl[0];
+    const availableRoomsTbl = await db.select('location',
+      ['availableRooms'],
+      [{
+        col: 'id',
+        oper: '=',
+        val: locationId,
+      }]);
 
-      availableRooms -= 1;
+    console.log(availableRoomsTbl);
 
+    let { availableRooms } = availableRoomsTbl[0];
 
-      await db.update('location',
-        [{
-          col: 'availableRooms',
-          val: availableRooms,
-        }],
-        [{
-          col: 'id',
-          oper: '=',
-          val: 'locationId',
-        }]);
-    } catch (e) {
-      return 0;
+    availableRooms -= 1;
+
+    if (availableRooms < 0) {
+      await db.delete('lives_in',
+        [{ col: 'id', oper: '=', val: livesInId }]);
+      return 1;
     }
+
+    await db.update('location',
+      [{
+        col: 'availableRooms',
+        val: availableRooms,
+      }],
+      [{
+        col: 'id',
+        oper: '=',
+        val: locationId,
+      }]);
 
     return this.get(livesInId);
   }

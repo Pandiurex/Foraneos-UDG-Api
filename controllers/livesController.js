@@ -29,6 +29,14 @@ exports.create = async (req, res) => {
       },
     };
     res.status(409);
+  } else if (result === 1) {
+    result = {
+      error: {
+        status: 409,
+        message: 'Location doesn\'t have suficcient Rooms',
+      },
+    };
+    res.status(409);
   } else {
     res.status(201);
   }
