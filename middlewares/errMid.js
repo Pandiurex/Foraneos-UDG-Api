@@ -1,11 +1,13 @@
 function getCompare() {
   return {
     word: /^[a-zA-Z_áéíóúñ\s]*$/,
-    email: /\S+@\S+\.\S+/,
-    password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+    email: /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/,
+    password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,20}$/,
     number: /^([0-9])+$/,
     decimal: /^\d+\.\d{0,2}$/,
+    latLon: /^(\d*\.)?\d+$/,
     login: true,
+    postal: /^([0-9]){1,5}$/,
   };
 }
 
@@ -81,29 +83,57 @@ const checkLogin = (req, res, next) => {
 };
 
 const nameValid = (req, res, next) => {
-  if (getCompare().word.test(req.body.name) === false) {
-    res.status(406).send('Name cant contain numbers, try Again');
+  let result = getCompare().word.test(req.body.name);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Name cant contain numbers, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 const surnameValid = (req, res, next) => {
-  if (getCompare().word.test(req.body.firstSurnameValid) === false
-    || getCompare().word.test(req.body.secondSurnameValid) === false) {
-    res.status(406).send('Surname cant contain numbers, try Again');
+  let result;
+  if (getCompare().word.test(req.body.firstSurname) === false
+    || getCompare().word.test(req.body.secondSurname) === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Surnames cant contains numbers, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 
 const passwordValid = (req, res, next) => {
-  if (getCompare().password.test(req.body.password) === false) {
-    res.status(406).send('Password invalid, Try again');
+  let result = getCompare().password.test(req.body.password);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Password must contain letters (Lower Case and Upper Case) and numbers and be 6-20 characters, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 
 const emailValid = (req, res, next) => {
-  if (getCompare().email.test(req.body.mainEmail) === false) {
-    res.status(406).send('Email invalid, Try again');
+  let result = getCompare().email.test(req.body.mainEmail);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Email Invalid, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
@@ -118,65 +148,121 @@ const ensureAuth = (req, res, next) => {
 };
 
 const userTypeValid = (req, res, next) => {
-  if (getCompare().number.test(req.body.userType) === false) {
-    res.status(406).send('UserType invalid, Try again');
+  let result = req.body.userType;
+  if (result === 0 || result === 1 || result === 2) next();
+  else {
+    result = {
+      error: {
+        status: 406,
+        message: 'User Type Invalid, can only be 0, 1, 2, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
-  next();
 };
 
 // Location Valids
 
 const lattLongValid = (req, res, next) => {
-  if (getCompare().decimal.test(req.body.lattitude) === false
-    || getCompare().decimal.test(req.body.longitude) === false) {
-    res.status(406).send('Lattitude Or Longitude are invalid, Try again');
+  let result;
+  if (getCompare().latLon.test(req.body.lattitude) === false
+    || getCompare().latLon.test(req.body.longitude) === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Lattitude or Longitud are Invalid, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 
 const streetValid = (req, res, next) => {
+  let result;
   if (getCompare().word.test(req.body.street) === false
     || getCompare().word.test(req.body.colony) === false
     || getCompare().word.test(req.body.streetAcross1) === false
     || getCompare().word.test(req.body.streetAcross2) === false) {
-    res.status(406).send('Streets cant contain numbers, try Again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Street, Colony, Acrros1 or Across2 cant contain numbers, try Again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 
 const numLocationsValid = (req, res, next) => {
-  if (getCompare().number.test(req.body.postalCode) === false
+  let result;
+  if (getCompare().postal.test(req.body.postalCode) === false
     || getCompare().number.test(req.body.extNum) === false
     || getCompare().number.test(req.body.intNum) === false) {
-    res.status(406).send('Error at Postal Code, ext Num or Int Num, Try again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Error at Postal Code, ext Num or Int Num, Try again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 
 const decimalLocationValid = (req, res, next) => {
+  let result;
   if (getCompare().decimal.test(req.body.cost) === false) {
-    res.status(406).send('The Cost can only be numerical, Try again');
+    result = {
+      error: {
+        status: 406,
+        message: 'The Cost can only be numerical and must have 2 decimals after . , Try again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 
 const activeValid = (req, res, next) => {
+  let result;
   if (req.body.active === 0 || req.body.active === 1) next();
   else {
-    res.status(406).send('Active Status attribute can only be 1 or 0, Try Again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Active Status attribute can only be 1 or 0, Try Again',
+      },
+    };
+    res.status(406).send(result);
   }
 };
 
 const roomValid = (req, res, next) => {
+  let result;
   if (getCompare().number.test(req.body.numRooms) === false) {
-    res.status(406).send('Error at numRooms, Try again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Error at numRooms, Try again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
 const availableRoomValid = (req, res, next) => {
+  let result;
   if (getCompare().number.test(req.body.availableRooms) === false
     || req.body.availableRooms > req.body.numRooms) {
-    res.status(406).send('Must be number or available Rooms cannot be higher than numRooms, Try again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Must be number and available Rooms cannot be higher than numRooms, Try again',
+      },
+    };
+    res.status(406).send(result);
   }
   next();
 };
@@ -184,14 +270,22 @@ const availableRoomValid = (req, res, next) => {
 // Rates Middlewares
 
 const validDate = (req, res, next) => {
-  if (isValidDate(req.body.rateDay, req.body.rateMonth, req.body.rateYear) === false) {
-    res.status(406).send('Date invalid, Try again');
+  let result = isValidDate(req.body.date);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Date invalid, Try again',
+      },
+    };
+    res.status(406).send(result);
   } else {
     next();
   }
 };
 
 const numberRateValid = (req, res, next) => {
+  let result;
   if (getCompare().number.test(req.body.servicesRate) === false
     || getCompare().number.test(req.body.securityRate) === false
     || getCompare().number.test(req.body.costBenefictRate) === false
@@ -200,9 +294,16 @@ const numberRateValid = (req, res, next) => {
     || req.body.securityRate > 5 || req.body.securityRate < 0
     || req.body.costBenefictRate > 5 || req.body.costBenefictRate < 0
     || req.body.localizationRate > 5 || req.body.localizationRate < 0) {
-    res.status(406).send('Error at Rates Values, Try again');
+    result = {
+      error: {
+        status: 406,
+        message: 'Error at rates values, Try again',
+      },
+    };
+    res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 // Message Middlewares
@@ -215,15 +316,29 @@ const requestTime = (req, res, next) => {
 // / Lives In Middlewares
 
 const startDateValid = (req, res, next) => {
-  if (isValidDate(req.body.startDay, req.body.startMonth, req.body.startYear) === false) {
-    res.status(406).send('Date invalid, Try again');
+  let result = isValidDate(req.body.startDate);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Date invalid, Try again',
+      },
+    };
+    res.status(406).send(result);
   } else {
     next();
   }
 };
 const endDateValid = (req, res, next) => {
-  if (isValidDate(req.body.endDay, req.body.endMonth, req.body.endYear) === false) {
-    res.status(406).send('Date invalid, Try again');
+  let result = isValidDate(req.body.endDate);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'Date invalid, Try again',
+      },
+    };
+    res.status(406).send(result);
   } else {
     next();
   }
