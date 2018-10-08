@@ -14,8 +14,8 @@ class User {
     this.profileImage = data.secondSurname;
     if (data.birthdate.getFullYear() !== undefined) {
       const year = data.birthdate.getFullYear();
-      const month = data.birthdate.getMonth();
-      const day = data.birthdate.getDay();
+      const month = data.birthdate.getMonth() + 1;
+      const day = data.birthdate.getDate();
 
       this.birthdate = [year, month, day].join('-');
     } else {
