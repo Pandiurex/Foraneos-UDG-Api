@@ -1,8 +1,11 @@
-exports.complaintTypes = require('./complaintTypesMdl');
-exports.complaints = require('./complaintsMdl');
-exports.livesIn = require('./livesInMdl');
-exports.locations = require('./locationsMdl');
+exports.complaintType = require('./complaintType');
+exports.complaint = require('./complaint');
+exports.email = require('./email');
+exports.livesIn = require('./livesIn');
+exports.location = require('./location');
+exports.locationImage = require('./locationImage');
+exports.locationService = require('./locationService');
 exports.message = require('./message');
-exports.rates = require('./ratesMdl');
+exports.rate = require('./rate');
 exports.service = require('./service');
-exports.users = require('./usersMdl');
+exports.user = require('./user');

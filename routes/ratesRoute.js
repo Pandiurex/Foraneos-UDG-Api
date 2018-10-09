@@ -1,13 +1,18 @@
 // Routes of rates.
 const express = require('express');
-const { ratesController } = require('../controllers');
+const {
+  ratesController,
+} = require('../controllers');
+const middlewaresErr = require('../middlewares');
 
 const route = express.Router();
 
 route
-  .get('/', ratesController.showAll)
-  .get('/:rateId([0-9]+)', ratesController.showOne)
-  .post('/', ratesController.create)
-  .delete('/:rateId([0-9]+)', ratesController.remove);
+  .get('/:locationId/rates', ratesController.showAll)
+  .get('/:locationId/rates/:id', middlewaresErr.errMid.paramsValid, ratesController.showOne)
+  .post('/:locationId/rates', [ // middlewaresErr.errMid.validDate,
+    middlewaresErr.errMid.numberRateValid,
+  ], ratesController.create)
+  .delete('/:locationId/rates/:id', ratesController.remove);
 
 module.exports = route;

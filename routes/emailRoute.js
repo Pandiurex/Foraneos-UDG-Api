@@ -1,12 +1,13 @@
-// Routes of Lives-In.
+// Routes of email.
 const express = require('express');
 const {
-  livesInController,
+  emailController,
 } = require('../controllers');
 
 const route = express.Router();
 
 route
-  .get('/:userId/livesIn', livesInController.showAll);
+  .post('/', emailController.create)
+  .delete('/:id', emailController.remove);
 
 module.exports = route;

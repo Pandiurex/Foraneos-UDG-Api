@@ -1,12 +1,15 @@
 // Routes of messages.
 const express = require('express');
-const { messagesController } = require('../controllers');
+const {
+  messagesController,
+} = require('../controllers');
+const middlewaresErr = require('../middlewares');
 
 const route = express.Router();
 
 route
-  .get('/', messagesController.showAll)
-  .get('/:messageId([0-9]+)', messagesController.showOne)
-  .post('/', messagesController.create);
+  .get('/:locationId/messages/', messagesController.showAll)
+  .get('/:locationId/messages/:id', middlewaresErr.errMid.paramsValid, messagesController.showOne)
+  .post('/:locationId/messages/', messagesController.create);
 
 module.exports = route;

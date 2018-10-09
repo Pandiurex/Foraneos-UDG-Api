@@ -7,7 +7,20 @@ class Message {
     this.locationId = data.locationId;
     this.viewed = data.viewed;
     this.message = data.message;
-    this.time = data.time;
+    if (data.time.getFullYear() !== undefined) {
+      const year = data.time.getFullYear();
+      const month = data.time.getMonth() + 1;
+      const day = data.time.getDate();
+      const hour = data.time.getHours();
+      const minute = data.time.getMinutes();
+      const second = data.time.getSeconds();
+
+      this.time = [year, month, day].join('-');
+      this.time += ' ';
+      this.time += [hour, minute, second].join(':');
+    } else {
+      this.time = data.time;
+    }
 
     Object.keys(this).forEach((key) => {
       if (this[key] === undefined) { delete this[key]; }
@@ -32,8 +45,10 @@ class Message {
       messageTbl = await db.select('message', '',
         [{ col: 'id', oper: '=', val: messageId }]);
     } catch (e) {
-      return '';
+      return 0;
     }
+
+    if (messageTbl.length === 0) { return 0; }
 
     const message = this.processResult(messageTbl)[0];
 
@@ -54,15 +69,17 @@ class Message {
     message.setLocationStreet(locationStreetTbl[0].street);
     message.setLocationExtNum(locationStreetTbl[0].extNum);
 
-    return JSON.stringify(message);
+    return message;
   }
 
-  static async getAll() {
+  static async getAll(locationId) {
     let messagesTbl = '';
+
     try {
-      messagesTbl = await db.select('service');
+      messagesTbl = await db.selectAll('message',
+        [{ col: 'locationId', oper: '=', val: locationId }]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     const messages = this.processResult(messagesTbl);
@@ -70,39 +87,42 @@ class Message {
     const myPromises = messages.map(async (data) => {
       const userFullnameTbl = await db.select('user',
         ['name', 'firstSurname', 'secondSurname'],
-        [{ col: 'id', oper: '=', val: data.userId }]);
+        [{ col: 'id', oper: '=', val: data.senderUserId }]);
 
-      data.setUserFullname(
-        userFullnameTbl[0].name,
-        userFullnameTbl[0].firstSurname,
-        userFullnameTbl[0].secondSurname,
-      );
+      const { name } = userFullnameTbl[0];
+      const { firstSurname } = userFullnameTbl[0];
+      const { secondSurname } = userFullnameTbl[0];
+
+      data.setUserFullname(name, firstSurname, secondSurname);
 
       const locationStreetTbl = await db.select('location',
         ['street', 'extNum'],
         [{ col: 'id', oper: '=', val: data.locationId }]);
 
-      data.setLocationStreet(locationStreetTbl[0].street);
-      data.setLocationExtNum(locationStreetTbl[0].extNum);
+      const { street } = locationStreetTbl[0];
+      const { extNum } = locationStreetTbl[0];
+
+      data.setLocationStreet(street);
+      data.setLocationExtNum(extNum);
     });
 
     await Promise.all(myPromises);
 
-    return JSON.stringify(messages);
+    return messages;
   }
 
   static async create(
     {
-      senderUserId, locationId, message, iconRef,
+      senderUserId, locationId, message, time,
     },
   ) {
     let messageId = '';
     try {
-      messageId = await db.insert('service',
-        ['senderUserId', 'locationId', 'message', 'iconRef'],
-        [senderUserId, locationId, message, iconRef]);
+      messageId = await db.insert('message',
+        ['senderUserId', 'locationId', 'message', 'time'],
+        [senderUserId, locationId, message, time]);
     } catch (e) {
-      return '';
+      return 0;
     }
 
     return this.get(messageId);

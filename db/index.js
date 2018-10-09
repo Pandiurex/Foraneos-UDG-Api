@@ -55,8 +55,6 @@ class DB {
       queryStr += this.orderToStr(order);
       queryStr += this.limitToStr(limit);
 
-      console.log(queryStr);
-
       this.con.query(queryStr, (err, result) => {
         if (err) return reject(this.processError(err));
         return resolve(result);
@@ -109,22 +107,25 @@ class DB {
       queryStr += this.valuesToStr(values);
       queryStr += ')';
 
-      console.log(queryStr);
-
       this.con.query(queryStr, (err, result) => {
-        if (err) return reject(this.processError(err));
+        if (err) return reject(err);
         return resolve(result.insertId);
       });
     });
   }
 
+
+  /**
+   * Deletes the rows that meet the filters
+   * @param  {String} table   Name of the table
+   * @param  {[Obj]} filters Array of objects with the filters to apply
+   * @return {[type]}         Returns the result
+   */
   async delete(table, filters) {
     return new Promise((resolve, reject) => {
       let queryStr = `DELETE FROM ${this.con.escape(table).replace(/'/g, '')} `;
 
       queryStr += this.filtersToStr(filters);
-
-      console.log(queryStr);
 
       this.con.query(queryStr, (err, result) => {
         if (err) return reject(this.processError(err));
@@ -151,8 +152,6 @@ class DB {
       queryStr += ' SET';
       queryStr += this.columnsUpdateToStr(columnsUpdate);
       queryStr += this.filtersToStr(filters);
-
-      console.log(queryStr);
 
       this.con.query(queryStr, (err, result) => {
         if (err) return reject(this.processError(err));
@@ -209,10 +208,6 @@ class DB {
 
     let string = ' ORDER BY';
 
-    console.log(order);
-    console.log(this.con.escape(order.col));
-    console.log(this.con.escape(order.sense));
-
     string += ` ${this.con.escape(order.col).replace(/'/g, '')}`;
     string += ` ${this.con.escape(order.sense).replace(/'/g, '')}`;
 
@@ -233,8 +228,6 @@ class DB {
   }
 
   valuesToStr(values) {
-    // if (values === '') { return ''; }
-
     let string = '';
 
     values.forEach((data) => {

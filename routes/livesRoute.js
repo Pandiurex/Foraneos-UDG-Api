@@ -1,13 +1,16 @@
 // Routes of Lives.
 const express = require('express');
 const { livesController } = require('../controllers');
+const middlewaresErr = require('../middlewares');
 
 const route = express.Router();
 
 route
-  .get('/', livesController.showAll)
-  .post('/', livesController.create)
-  .put('/:livesId([0-9]+)', livesController.update)
-  .patch('/:livesId([0-9]+)', livesController.patch);
+  .get('/:locationId/lives', livesController.showAll)
+  .post('/:locationId/lives', [middlewaresErr.errMid.startDateValid,
+    middlewaresErr.errMid.endDateValid,
+  ], livesController.create)
+  .put('/:locationId/lives/:id', livesController.update)
+  .patch('/:locationId/lives/:id', livesController.patch);
 
 module.exports = route;

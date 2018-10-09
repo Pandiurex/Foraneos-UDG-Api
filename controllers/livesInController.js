@@ -1,16 +1,19 @@
-// Controllers of Lives-In.
-exports.showAll = (req, res) => {
-  res.send('Show all Lives In');
-};
+const {
+  livesIn,
+} = require('../models');
 
-exports.create = (req, res) => {
-  res.send(req.body);
-};
+exports.showAll = async (req, res) => {
+  let result = await livesIn.getAll(req.params.userId);
 
-exports.update = (req, res) => {
-  res.send(req.body);
-};
+  if (result === 0) {
+    result = {
+      error: {
+        status: 404,
+        message: 'Resource not found',
+      },
+    };
+    res.status(404);
+  }
 
-exports.patch = (req, res) => {
-  res.send(req.body);
+  res.send(result);
 };

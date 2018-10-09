@@ -20,6 +20,8 @@ class Service {
       return '';
     }
 
+    if (serviceTbl.length === 0) { return 0; }
+
     const service = this.processResult(serviceTbl)[0];
 
     return JSON.stringify(service);
@@ -28,7 +30,7 @@ class Service {
   static async getAll() {
     let servicesTbl = '';
     try {
-      servicesTbl = await db.select('service');
+      servicesTbl = await db.selectAll('service');
     } catch (e) {
       return '';
     }
