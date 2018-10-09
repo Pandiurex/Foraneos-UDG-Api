@@ -208,10 +208,6 @@ class DB {
 
     let string = ' ORDER BY';
 
-    console.log(order);
-    console.log(this.con.escape(order.col));
-    console.log(this.con.escape(order.sense));
-
     string += ` ${this.con.escape(order.col).replace(/'/g, '')}`;
     string += ` ${this.con.escape(order.sense).replace(/'/g, '')}`;
 
