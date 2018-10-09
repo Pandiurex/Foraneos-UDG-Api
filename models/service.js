@@ -20,6 +20,8 @@ class Service {
       return '';
     }
 
+    if (serviceTbl.length === 0) { return 0; }
+
     const service = this.processResult(serviceTbl)[0];
 
     return JSON.stringify(service);
