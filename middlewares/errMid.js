@@ -134,8 +134,9 @@ const emailValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const ensureAuth = (req, res, next) => {
