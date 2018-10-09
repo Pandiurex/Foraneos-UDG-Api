@@ -22,6 +22,8 @@ class LocationImage {
       return 0;
     }
 
+    if (locationImageTbl.length === 0) { return 0; }
+
     const locationImage = this.processResult(locationImageTbl)[0];
 
     return locationImage;
