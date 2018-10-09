@@ -3,7 +3,13 @@ const {
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await location.getAll();
+  const { orderBy } = req.query;
+  const { orderSense } = req.query;
+  const { limitOffset } = req.query;
+  const { limitCount } = req.query;
+
+  let result = await location.getAll(orderBy,
+    orderSense, limitOffset, limitCount);
 
   if (result === 0) {
     result = {

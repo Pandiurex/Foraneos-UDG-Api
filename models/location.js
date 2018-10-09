@@ -57,6 +57,8 @@ class Location {
       return 0;
     }
 
+    if (locationTbl.length === 0) { return 0; }
+
     const location = this.processResult(locationTbl)[0];
 
     const ownerFullnameTbl = await db.select('user',
@@ -115,15 +117,33 @@ class Location {
     return location;
   }
 
-  static async getAll() {
+  static async getAll(orderBy = '', orderSense = '',
+    limitOffset = '', limitCount = '') {
     let locationsTbl = '';
+
+    let order = '';
+    if (orderBy !== '' || orderSense !== '') {
+      order = {
+        col: orderBy,
+        sense: orderSense,
+      };
+    }
+
+    let limit = '';
+    if (limitOffset !== '' || limitCount !== '') {
+      limit = {
+        start: limitOffset,
+        quantity: limitCount,
+      };
+    }
 
     try {
       locationsTbl = await db.select('location',
         ['id', 'ownerUserId', 'active', 'lattitude',
           'longitude', 'colony', 'numRooms', 'availableRooms',
           'cost', 'avgRate', 'avgServicesRate', 'avgSecurityRate',
-          'avgLocalizationRate', 'avgCostBenefictRate']);
+          'avgLocalizationRate', 'avgCostBenefictRate'], '',
+        order, limit);
     } catch (e) {
       return 0;
     }
@@ -141,7 +161,7 @@ class Location {
       } catch (e) { console.log('No images'); }
       data.setImage(imageAux);
 
-      const services = [];
+      const servicesArray = [];
 
       const locationServiceTbl = await db.select('location_service',
         ['serviceId'],
@@ -152,7 +172,7 @@ class Location {
         const service = await db.select('service', '',
           [{ col: 'id', oper: '=', val: `${data2.serviceId}` }]);
 
-        services.push({
+        servicesArray.push({
           id: service[0].id,
           description: service[0].description,
           iconRef: service[0].iconRef,
@@ -161,7 +181,7 @@ class Location {
 
       await Promise.all(myPromises2);
 
-      data.setServices(services);
+      data.setServices(servicesArray);
     });
 
     await Promise.all(myPromises);
@@ -174,7 +194,7 @@ class Location {
       ownerUserId, lattitude, longitude, street,
       colony, postalCode, streetAcross1, streetAcross2,
       extNum, intNum, numRooms, description,
-      restrictions, cost, images, services,
+      restrictions, cost, images = [], services = [],
     },
   ) {
     let locationId = '';
@@ -227,10 +247,10 @@ class Location {
     const location = this.get(locationId);
 
     if (location === 0) {
-      return location;
+      return 0;
     }
 
-    if (location.numRooms === location.availableRooms) {
+    if (location.availableRooms === 0) {
       return 1;
     }
 
