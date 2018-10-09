@@ -13,6 +13,14 @@ exports.create = async (req, res) => {
       },
     };
     res.status(409);
+  } else if (result === 1) {
+    result = {
+      error: {
+        status: 409,
+        message: 'Service already exists',
+      },
+    };
+    res.status(409);
   } else {
     res.status(201);
   }
@@ -21,7 +29,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await locationService.remove(req.params.id,
+  let result = await locationService.remove(req.params.locationId,
     req.params.id);
 
   if (result === 0) {

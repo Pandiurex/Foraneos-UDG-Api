@@ -23,14 +23,22 @@ class LocationService {
       return 0;
     }
 
+    if (locationServiceTbl.length === 0) { return 0; }
+
     const locationService = this.processResult(locationServiceTbl)[0];
 
     return locationService;
   }
 
   static async create({ locationId, serviceId }) {
+    const locationService = await this.get(locationId, serviceId);
+
+    if (locationService !== 0) {
+      return 1;
+    }
+
     try {
-      await db.insert('location_image',
+      await db.insert('location_service',
         ['locationId', 'serviceId'],
         [locationId, serviceId]);
     } catch (e) {
@@ -41,7 +49,7 @@ class LocationService {
   }
 
   static async remove(locationId, serviceId) {
-    const locationService = this.get(locationId, serviceId);
+    const locationService = await this.get(locationId, serviceId);
 
     try {
       await db.delete('location_service',
