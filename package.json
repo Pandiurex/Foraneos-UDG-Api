@@ -28,8 +28,11 @@
   "homepage": "https://github.com/Pandiurex/Foraneos-UDG-Api#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "nodemon": "^1.18.4"
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.4",
+    "npm": "^6.4.1"
   },
   "devDependencies": {
     "eslint": "^5.5.0",
