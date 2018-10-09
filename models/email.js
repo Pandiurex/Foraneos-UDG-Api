@@ -16,11 +16,13 @@ class Email {
     let emailTbl = '';
 
     try {
-      emailTbl = await db.select('email', '',
+      emailTbl = await db.selectAll('email',
         [{ col: 'id', oper: '=', val: emailId }]);
     } catch (e) {
       return 0;
     }
+
+    if (emailTbl.length === 0) { return 0; }
 
     const email = this.processResult(emailTbl)[0];
 

@@ -35,7 +35,7 @@ exports.remove = async (req, res) => {
     result = {
       error: {
         status: 409,
-        message: 'Error updating resource',
+        message: 'Error deleting resource',
       },
     };
     res.status(409);
