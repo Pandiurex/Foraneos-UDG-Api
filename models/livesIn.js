@@ -174,8 +174,6 @@ class LivesIn {
         val: locationId,
       }]);
 
-    console.log(availableRoomsTbl);
-
     let { availableRooms } = availableRoomsTbl[0];
 
     availableRooms -= 1;
@@ -219,9 +217,6 @@ class LivesIn {
         val: endDate,
       });
     }
-
-    console.log(active);
-    console.log(endDate);
 
     try {
       await db.update('lives_in', columnsUpdate,

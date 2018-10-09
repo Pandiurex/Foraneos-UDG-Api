@@ -74,7 +74,6 @@ class Location {
     const images = [];
 
     try {
-      console.log('antes');
       const imagesTbl = await db.select('location_image',
         ['id', 'image', 'description'],
         [{ col: 'locationId', oper: '=', val: location.id }]);

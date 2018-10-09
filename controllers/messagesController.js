@@ -5,8 +5,6 @@ const {
 exports.showAll = async (req, res) => {
   let result = await message.getAll(req.params.locationId);
 
-  console.log(result);
-
   if (result === 0) {
     result = {
       error: {

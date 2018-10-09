@@ -76,12 +76,9 @@ class Message {
     let messagesTbl = '';
 
     try {
-      console.log('Cerca');
       messagesTbl = await db.selectAll('message',
         [{ col: 'locationId', oper: '=', val: locationId }]);
-      console.log('Ya paso');
     } catch (e) {
-      console.log('Murio');
       return 0;
     }
 
