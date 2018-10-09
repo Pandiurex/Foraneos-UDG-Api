@@ -9,8 +9,8 @@ class Message {
     this.message = data.message;
     if (data.time.getFullYear() !== undefined) {
       const year = data.time.getFullYear();
-      const month = data.time.getMonth();
-      const day = data.time.getDay();
+      const month = data.time.getMonth() + 1;
+      const day = data.time.getDate();
       const hour = data.time.getHours();
       const minute = data.time.getMinutes();
       const second = data.time.getSeconds();
@@ -47,6 +47,8 @@ class Message {
     } catch (e) {
       return 0;
     }
+
+    if (messageTbl.length === 0) { return 0; }
 
     const message = this.processResult(messageTbl)[0];
 
