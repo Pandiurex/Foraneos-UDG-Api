@@ -3,14 +3,19 @@ const models = require('../models');
 class Factory {
   static async fillUpDB(num) {
     let n = 0;
-    n += await this.createComplaintTypes(num) ? 1 : 0;
-    n += await this.createServices(num) ? 1 : 0;
-    n += await this.createUsers(num) ? 1 : 0;
-    n += await this.createLocations(num) ? 1 : 0;
-    n += await this.createComplaints(num) ? 1 : 0;
-    n += await this.createLivesIn(num) ? 1 : 0;
-    n += await this.createMessage(num) ? 1 : 0;
-    n += await this.createRate(num) ? 1 : 0;
+
+    try {
+      n += await this.createUsers(num) ? 1 : 0;
+      n += await this.createComplaintTypes(num) ? 1 : 0;
+      n += await this.createServices(num) ? 1 : 0;
+      n += await this.createLocations(num) ? 1 : 0;
+      n += await this.createComplaints(num) ? 1 : 0;
+      n += await this.createLivesIn(num) ? 1 : 0;
+      n += await this.createMessage(num) ? 1 : 0;
+      n += await this.createRate(num) ? 1 : 0;
+    } catch (e) {
+      return 0;
+    }
 
     return n;
   }
