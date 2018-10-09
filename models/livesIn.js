@@ -8,8 +8,8 @@ class LivesIn {
     this.active = data.active;
     if (data.startDate.getFullYear() !== undefined) {
       const year = data.startDate.getFullYear();
-      const month = data.startDate.getMonth();
-      const day = data.startDate.getDay();
+      const month = data.startDate.getMonth() + 1;
+      const day = data.startDate.getDate();
 
       this.startDate = [year, month, day].join('-');
     } else {
@@ -17,8 +17,8 @@ class LivesIn {
     }
     if (data.endDate.getFullYear() !== undefined) {
       const year = data.endDate.getFullYear();
-      const month = data.endDate.getMonth();
-      const day = data.endDate.getDay();
+      const month = data.endDate.getMonth() + 1;
+      const day = data.endDate.getDate();
 
       this.endDate = [year, month, day].join('-');
     } else {
@@ -59,6 +59,8 @@ class LivesIn {
       return 0;
     }
 
+    if (livesInTbl.length === 0) { return 0; }
+
     const livesIn = this.processResult(livesInTbl)[0];
 
     const userFullnameTbl = await db.select('user',
@@ -94,21 +96,21 @@ class LivesIn {
 
     try {
       if (userId !== '') {
-        livesInTbl = await db.select('lives_in', '',
+        livesInTbl = await db.selectAll('lives_in',
           [{
             col: 'userId',
             oper: '=',
             val: userId,
           }]);
       } else if (locationId !== '') {
-        livesInTbl = await db.select('lives_in', '',
+        livesInTbl = await db.selectAll('lives_in',
           [{
             col: 'locationId',
             oper: '=',
             val: locationId,
           }]);
       } else {
-        livesInTbl = await db.select('lives_in');
+        livesInTbl = await db.selectAll('lives_in');
       }
     } catch (e) {
       return 0;
@@ -218,8 +220,11 @@ class LivesIn {
       });
     }
 
+    console.log(active);
+    console.log(endDate);
+
     try {
-      await db.update('lives_ind', columnsUpdate,
+      await db.update('lives_in', columnsUpdate,
         [{
           col: 'id',
           oper: '=',
@@ -259,8 +264,12 @@ class LivesIn {
       };
     }
 
+    if (columnsUpdate.length !== 1) {
+      return 1;
+    }
+
     try {
-      await db.update('lives_ind', columnsUpdate,
+      await db.update('lives_in', columnsUpdate,
         [{
           col: 'id',
           oper: '=',

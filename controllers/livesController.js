@@ -3,7 +3,7 @@ const {
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await livesIn.getAll(req.params.locationId);
+  let result = await livesIn.getAll('', req.params.locationId);
 
   if (result === 0) {
     result = {
@@ -71,7 +71,15 @@ exports.patch = async (req, res) => {
       },
     };
     res.status(409);
+  } else if (result === 1) {
+    result = {
+      error: {
+        status: 409,
+        message: 'Patch only receive one attribute',
+      },
+    };
+    res.status(409);
   }
 
   res.send(result);
-}
+};
