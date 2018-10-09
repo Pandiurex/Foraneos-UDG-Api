@@ -63,6 +63,14 @@ exports.remove = async (req, res) => {
       },
     };
     res.status(404);
+  } else if (result === 1) {
+    result = {
+      error: {
+        status: 409,
+        message: 'Conflict deleting resource',
+      },
+    };
+    res.status(409);
   }
 
   res.send(result);

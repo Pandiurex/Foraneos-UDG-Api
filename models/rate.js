@@ -9,8 +9,8 @@ class Rate {
     this.comment = data.comment;
     if (data.date.getFullYear() !== undefined) {
       const year = data.date.getFullYear();
-      const month = data.date.getMonth();
-      const day = data.date.getDay();
+      const month = data.date.getMonth() + 1;
+      const day = data.date.getDate();
 
       this.date = [year, month, day].join('-');
     } else {
@@ -36,6 +36,8 @@ class Rate {
     } catch (e) {
       return 0;
     }
+
+    if (rateTbl.length === 0) { return 0; }
 
     const rate = this.processResult(rateTbl)[0];
 
@@ -113,11 +115,15 @@ class Rate {
   static async remove(rateId) {
     const rate = await this.get(rateId);
 
+    if (rate === 0) {
+      return 0;
+    }
+
     try {
       await db.delete('rate',
         [{ col: 'id', oper: '=', val: rateId }]);
     } catch (e) {
-      return 0;
+      return 1;
     }
 
     const rates = await this.getAll(rate.locationId);
