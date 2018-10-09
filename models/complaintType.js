@@ -20,6 +20,8 @@ class ComplaintType {
       return 0;
     }
 
+    if (complaintTypesTbl.length === 0) { return 0; }
+
     const complaintType = this.processResult(complaintTypesTbl)[0];
 
     return complaintType;
