@@ -37,7 +37,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await complaint.remove(req.params.id);
+  let result = await complaint.remove(req.params.locationId, req.params.id);
 
   if (result === 0) {
     result = {

@@ -41,6 +41,8 @@ class Complaint {
       return 0;
     }
 
+    if (complaintTbl.length === 0) { return 0; }
+
     const complaint = this.processResult(complaintTbl)[0];
 
     const complaintDescriptionTbl = await db.select('complaint_type', ['description'],
