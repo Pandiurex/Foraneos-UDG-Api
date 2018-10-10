@@ -92,8 +92,9 @@ const nameValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 const surnameValid = (req, res, next) => {
   let result;
@@ -106,8 +107,9 @@ const surnameValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const passwordValid = (req, res, next) => {
@@ -120,8 +122,9 @@ const passwordValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const emailValid = (req, res, next) => {
@@ -144,8 +147,9 @@ const ensureAuth = (req, res, next) => {
     res.status(403).send({
       message: 'There is no authentication header in request.',
     });
+  } else {
+    next();
   }
-  next();
 };
 
 const userTypeValid = (req, res, next) => {
@@ -175,8 +179,9 @@ const lattLongValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const streetValid = (req, res, next) => {
@@ -192,8 +197,9 @@ const streetValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const numLocationsValid = (req, res, next) => {
@@ -208,8 +214,9 @@ const numLocationsValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const decimalLocationValid = (req, res, next) => {
@@ -222,8 +229,9 @@ const decimalLocationValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const activeValid = (req, res, next) => {
@@ -250,8 +258,9 @@ const roomValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 const availableRoomValid = (req, res, next) => {
   let result;
@@ -264,8 +273,9 @@ const availableRoomValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 // Rates Middlewares
