@@ -131,12 +131,3 @@ exports.remove = async (req, res) => {
 
   res.send(result);
 };
-
-// Login users.
-exports.login = (req, res) => {
-  res.send('Login user').status(200);
-};
-
-exports.signOff = (req, res) => {
-  res.send('Sign Off user').status(200);
-};
