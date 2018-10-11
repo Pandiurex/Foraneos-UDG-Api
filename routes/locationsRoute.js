@@ -8,15 +8,16 @@ const middlewaresErr = require('../middlewares');
 const route = express.Router();
 
 route
-  .get('/', locationsController.showAll)
+  .get('/', [ // middlewaresErr.errMid.orderByValid,
+    // middlewaresErr.errMid.limitValid,
+    middlewaresErr.errMid.queryValid,
+  ], locationsController.showAll)
   .get('/:id', middlewaresErr.errMid.paramsValid, locationsController.showOne)
   .post('/', [middlewaresErr.errMid.lattLongValid,
     middlewaresErr.errMid.streetValid,
     middlewaresErr.errMid.numLocationsValid,
     middlewaresErr.errMid.decimalLocationValid,
-    // middlewaresErr.errMid.activeValid,
     middlewaresErr.errMid.roomValid,
-    // middlewaresErr.errMid.availableRoomValid,
   ], locationsController.create)
   .put('/:id', middlewaresErr.errMid.paramsValid, locationsController.update)
   .patch('/:id', middlewaresErr.errMid.paramsValid, locationsController.patch)
