@@ -11,6 +11,14 @@ function getCompare() {
   };
 }
 
+function orderSense(query) {
+  if (query === 'DESC'
+    || query === 'ASC') {
+    return true;
+  }
+  return false;
+}
+
 function isValidDate(birthdate) {
   const arr = birthdate.split('-');
 
@@ -92,8 +100,9 @@ const nameValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 const surnameValid = (req, res, next) => {
   let result;
@@ -106,8 +115,9 @@ const surnameValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const passwordValid = (req, res, next) => {
@@ -120,8 +130,9 @@ const passwordValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const emailValid = (req, res, next) => {
@@ -144,8 +155,9 @@ const ensureAuth = (req, res, next) => {
     res.status(403).send({
       message: 'There is no authentication header in request.',
     });
+  } else {
+    next();
   }
-  next();
 };
 
 const userTypeValid = (req, res, next) => {
@@ -175,8 +187,9 @@ const lattLongValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const streetValid = (req, res, next) => {
@@ -192,8 +205,9 @@ const streetValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const numLocationsValid = (req, res, next) => {
@@ -208,8 +222,9 @@ const numLocationsValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const decimalLocationValid = (req, res, next) => {
@@ -222,8 +237,9 @@ const decimalLocationValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 const activeValid = (req, res, next) => {
@@ -250,8 +266,9 @@ const roomValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 const availableRoomValid = (req, res, next) => {
   let result;
@@ -264,8 +281,9 @@ const availableRoomValid = (req, res, next) => {
       },
     };
     res.status(406).send(result);
+  } else {
+    next();
   }
-  next();
 };
 
 // Rates Middlewares
@@ -346,12 +364,118 @@ const endDateValid = (req, res, next) => {
 };
 
 const paramsValid = (req, res, next) => {
-  if (getCompare().number.test(req.params.id) === false) {
-    res.status(406).send('URL contains invalid request, Try again');
+  let result = getCompare().number.test(req.params.id);
+  if (result === false) {
+    result = {
+      error: {
+        status: 406,
+        message: 'URL contains invalid request, Try again',
+      },
+    };
+    res.status(406).send(result);
   } else {
     next();
   }
 };
+
+const orderByValid = (req, res, next) => {
+  let result;
+  if (req.query.orderBy === 'cost'
+    || req.query.orderBy === 'avgRate'
+    || req.query.orderBy === 'avgServicesRate'
+    || req.query.orderBy === 'avgSecurityRate'
+    || req.query.orderBy === 'avgLocalizationRate'
+    || req.query.orderBy === 'avgCostBenefictRate') {
+    const query = orderSense(req.query.orderSense);
+    if (query === true) {
+      next();
+    } else {
+      result = {
+        error: {
+          status: 406,
+          message: 'Query is invalid at OrderBy, it needs OrderSense too, Try again',
+
+        },
+      };
+      res.status(406).send(result);
+    }
+  } else {
+    result = {
+      error: {
+        status: 406,
+        message: 'Query is invalid at orderSense, it needs OrderBy too Try again',
+      },
+    };
+    res.status(406).send(result);
+  }
+};
+const limitValid = (req, res, next) => {
+  let result;
+  if (getCompare().number.test(req.query.limitOffset) === true
+    && req.query.limitOffset >= 0) {
+    if (getCompare().number.test(req.query.limitCount) === true
+      && req.query.limitOffset < req.query.limitCount) {
+      next();
+    } else {
+      result = {
+        error: {
+          status: 406,
+          message: 'Query is invalid at limitOffset, it needs limitCount too Try again',
+
+        },
+      };
+      res.status(406).send(result);
+    }
+  } else {
+    result = {
+      error: {
+        status: 406,
+        message: 'Query is invalid at limitCount, it needs limitOffset too Try again',
+      },
+    };
+    res.status(406).send(result);
+  }
+};
+
+const queryValid = (req, res, next) => {
+  let result = true;
+  if (req.query.orderBy === undefined) {
+    if (req.query.limitOffset !== undefined || req.query.limitCount !== undefined) {
+      if (req.query.limitCount === undefined) {
+        result = {
+          error: {
+            status: 406,
+            message: 'Query is invalid at limitOffset, it needs limitCount too Try again',
+          },
+        };
+        res.status(406).send(result);
+      } else {
+        limitValid(req, res, next);
+        result = false;
+      }
+    }
+  }
+  if (req.query.limitOffset === undefined) {
+    if (req.query.orderBy !== undefined || req.query.orderSense !== undefined) {
+      if (req.query.orderSense === undefined) {
+        result = {
+          error: {
+            status: 406,
+            message: 'Query is invalid at orderBy, it needs OrderSense too Try again',
+          },
+        };
+        res.status(406).send(result);
+      } else {
+        orderByValid(req, res, next);
+        result = false;
+      }
+    }
+  }
+  if (result === true) {
+    next();
+  }
+};
+
 
 module.exports = {
   checkLogin,
@@ -380,4 +504,7 @@ module.exports = {
   startDateValid,
   endDateValid,
   paramsValid,
+  orderByValid,
+  limitValid,
+  queryValid,
 };
