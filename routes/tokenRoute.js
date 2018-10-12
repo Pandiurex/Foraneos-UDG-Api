@@ -13,3 +13,5 @@ route
   // Token iniciar sesión.
   .post('/logInUser')
   .get('/singOffUser');
+
+module.exports = route;
