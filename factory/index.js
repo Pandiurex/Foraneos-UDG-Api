@@ -12,6 +12,7 @@ class Factory {
       n += await this.createComplaints(num) ? 1 : 0;
       n += await this.createLivesIn(num) ? 1 : 0;
       n += await this.createMessage(num) ? 1 : 0;
+      console.log('vamos a llamar rate');
       n += await this.createRate(num) ? 1 : 0;
     } catch (e) {
       return 0;
@@ -237,6 +238,7 @@ class Factory {
     const rates = [];
 
     for (let i = 1; i <= num; i += 1) {
+      console.log('Estas insertando');
       rates.push({
         userId: 1 + ((i + 3) % num),
         locationId: i,
@@ -257,6 +259,7 @@ class Factory {
         await models.rate.create(data);
       });
     } catch (e) {
+      console.log(`error try: ${e}`);
       return false;
     }
 
