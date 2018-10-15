@@ -8,6 +8,10 @@ class Token {
     this.expire = data.expires;
     this.status = data.status;
     this.userId = data.userId;
+
+    Object.keys(this).forEach((key) => {
+      if (this[key] === undefined) { delete this[key]; }
+    });
   }
 
   static async get(tokenId) {
@@ -26,7 +30,24 @@ class Token {
     return JSON.stringify(token);
   }
 
-  static async create({id, nToken, creatAt, expires, status, userId }) {
+  static async getAll() {
+    let tokenTbl = '';
+    try {
+      tokenTbl = await db.selectAll('token');
+    } catch (e) {
+      return '';
+    }
+
+    const token = this.processResult(tokenTbl);
+
+    return JSON.stringify(token);
+  }
+
+  static async create(
+    {
+      nToken, creatAt, expires, status, userId,
+    },
+  ) {
     let tokenId = '';
     try {
       tokenId = await db.insert('token',
@@ -46,7 +67,6 @@ class Token {
     });
     return this.result;
   }
-
 }
 
 module.exports = Token;
