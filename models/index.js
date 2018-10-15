@@ -8,4 +8,5 @@ exports.locationService = require('./locationService');
 exports.message = require('./message');
 exports.rate = require('./rate');
 exports.service = require('./service');
+exports.token = require('./token');
 exports.user = require('./user');

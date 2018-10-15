@@ -1,4 +1,28 @@
+const bcrypt = require('bcrypt');
+const {
+  token,
+} = require('../models');
+const {
+  usersController,
+} = require('../controllers');
+
+
 const register = (req, res, next) => {
+
+  //Crear usuario
+  //user = usersController.create(req);
+
+  // Crear el token
+    bcrypt.hash(`${user.name}${date}`, process.env.SECRET, (err, hash) => {
+
+    token.create({
+      nToken: 'aws',
+      createdAt: new Date(),
+      expires: 12,
+      status: 1,
+      userId: user.id
+    })
+});
 
 };
 
@@ -14,7 +38,7 @@ const logout = (req, res, next) => {
 const session = (req, res, next) => {
   let result;
   if (token === req) {
-    Token.active(token);
+    token.active(token);
     next();
   } else {
     result = {
