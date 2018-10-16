@@ -2,6 +2,9 @@ const {
   location,
 } = require('../models');
 
+// FIXME Todas las funciones deben estar documentadas
+// FIXME Los objetos de error podrian estar generados a traves de codigos y armados para solo ser usados como constantes
+
 exports.showAll = async (req, res) => {
   const { orderBy } = req.query;
   const { orderSense } = req.query;

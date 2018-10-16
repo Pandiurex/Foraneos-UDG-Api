@@ -2,6 +2,9 @@ const {
   locationService,
 } = require('../models');
 
+// FIXME Todas las funciones deben estar documentadas
+// FIXME Los objetos de error podrian estar generados a traves de codigos y armados para solo ser usados como constantes
+
 exports.create = async (req, res) => {
   let result = await locationService.create(req.body);
 

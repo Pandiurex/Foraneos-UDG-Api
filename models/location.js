@@ -1,5 +1,8 @@
 const db = require('../db');
 
+// FIXME Todas las funciones deben estar documentadas
+// FIXME En lugar de regresar un numero sin significado (cero cuando hay error), minimo una constante para codigos de errores y dejarlo documentado
+
 class Location {
   constructor(data) {
     this.id = data.id;
@@ -26,6 +29,7 @@ class Location {
     this.avgLocalizationRate = data.avgLocalizationRate;
     this.avgCostBenefictRate = data.avgCostBenefictRate;
 
+    // FIXME Para que estan quitando los keys undefined? no seria mas bien responsabilidad no definirlos o dejar un valor default desde aqui en el constructor?
     Object.keys(this).forEach((key) => {
       if (this[key] === undefined) { delete this[key]; }
     });

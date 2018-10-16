@@ -8,6 +8,7 @@ const middlewaresErr = require('../middlewares');
 const route = express.Router();
 
 route
+// FIXME Falta validar cuerpo del request
   .post('/', locationImageController.create)
   .delete('/:id', middlewaresErr.errMid.paramsValid, locationImageController.remove);
 

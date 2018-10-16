@@ -19,6 +19,7 @@ route
     middlewaresErr.errMid.decimalLocationValid,
     middlewaresErr.errMid.roomValid,
   ], locationsController.create)
+  // FIXME Falta validar cuerpo del request para el put y patch
   .put('/:id', middlewaresErr.errMid.paramsValid, locationsController.update)
   .patch('/:id', middlewaresErr.errMid.paramsValid, locationsController.patch)
   .delete('/:id', middlewaresErr.errMid.paramsValid, locationsController.remove);
