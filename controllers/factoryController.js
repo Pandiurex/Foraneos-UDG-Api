@@ -1,5 +1,7 @@
 const factory = require('../factory');
 
+// FIXME Todas las funciones deben estar documentadas
+// FIXME Los objetos de error podrian estar generados a traves de codigos y armados para solo ser usados como constantes
 
 exports.fillUpDB = async (req, res) => {
   let result = await factory.fillUpDB(req.query.num);

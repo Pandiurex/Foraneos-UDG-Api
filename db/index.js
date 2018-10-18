@@ -1,5 +1,7 @@
 const mysql = require('mysql');
 
+// FIXME Todas las funciones deben estar documentadas
+
 class DB {
   constructor() {
     this.con = mysql.createConnection({

@@ -1,5 +1,7 @@
 const models = require('../models');
 
+// FIXME Pueden usar faker.js para la generacion de datos "random"
+
 class Factory {
   static async fillUpDB(num) {
     let n = 0;

@@ -7,6 +7,7 @@ const {
 const route = express.Router();
 
 route
+// FIXME Falta validar los params de :userId
   .get('/:userId/livesIn', livesInController.showAll);
 
 module.exports = route;

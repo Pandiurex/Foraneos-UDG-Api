@@ -16,6 +16,7 @@ app
   }))
   .use('/api', routes)
   .use(errorHandler)
+  // FIXME El puerto deberia ser una variable tomada de las variables de entorno
   .listen(3000, () => console.log('App listening on port 3000!'));
 
 module.exports = app;
