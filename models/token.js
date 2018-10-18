@@ -3,9 +3,10 @@ const db = require('../db');
 class Token {
   constructor(data) {
     this.id = data.id;
-    this.nToken = data.nToken;
-    this.createAt = data.ceateAt;
+    this.nToken = data.token;
+    this.createAt = data.ceatedAt;
     this.expire = data.expires;
+    this.expire = data.type;
     this.status = data.status;
     this.userId = data.userId;
 
@@ -45,19 +46,35 @@ class Token {
 
   static async create(
     {
-      nToken, creatAt, expires, status, userId,
+      token, createdAt, expires, type, status, userId,
     },
   ) {
     let tokenId = '';
     try {
       tokenId = await db.insert('token',
-        ['nToken', 'creatAt', 'expires', 'status', 'userId'],
-        [nToken, creatAt, expires, status, userId]);
+        ['token', 'createdAt', 'type', 'expires', 'status', 'userId'],
+        [token, createdAt, type, expires, status, userId]);
     } catch (e) {
       return '';
     }
 
     return this.get(tokenId);
+  }
+
+  static async active(ntoken) {
+    let tokenTbl = '';
+    try {
+      tokenTbl = await db.select('token', '',
+        [{ col: 'token', oper: '=', val: ntoken }]);
+    } catch (e) {
+      return '';
+    }
+
+    if (tokenTbl.length === 0) { return 0; }
+
+    const token = this.processResult(tokenTbl)[0];
+
+    return token.status;
   }
 
   static processResult(data) {
