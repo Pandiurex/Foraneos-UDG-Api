@@ -1,0 +1,6 @@
+PORT=3000
+DB_USER=root
+DB_PASS=root
+DB_NAME=foraneos_udg
+DB_HOST=localhost
+SECRET=trestristestigres
