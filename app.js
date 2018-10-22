@@ -16,6 +16,6 @@ app
   }))
   .use('/api', routes)
   .use(errorHandler)
-  .listen(3000, () => console.log('App listening on port 3000!'));
+  .listen(process.env.PORT, () => console.log('App listening!'));
 
 module.exports = app;
