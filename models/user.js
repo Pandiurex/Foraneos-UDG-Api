@@ -275,6 +275,10 @@ class User {
     return this.get(userId);
   }
 
+  static async haveaccess(method, url) {
+
+  }
+
   static processResult(data) {
     this.result = [];
     data.forEach((obj) => {

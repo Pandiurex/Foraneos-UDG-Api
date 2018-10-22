@@ -95,7 +95,7 @@ class Auth {
     if (req.session.User.haveaccess(this.method, req.originalUrl)) {
       next();
     } else {
-      res.send('NO tienes permiso man');
+      res.send('NON authorization');
     }
   }
 
@@ -113,8 +113,9 @@ class Auth {
     return this.bearer.split(' ')[1];
   }
 }
-
-module.exports = Auth;
+module.exports = {
+  Auth,
+};
 
 //
 // class Auth {
