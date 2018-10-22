@@ -3,10 +3,10 @@ const db = require('../db');
 class Token {
   constructor(data) {
     this.id = data.id;
-    this.nToken = data.token;
-    this.createAt = data.ceatedAt;
-    this.expire = data.expires;
-    this.expire = data.type;
+    this.token = data.token;
+    this.createdAt = data.ceatedAt;
+    this.expires = new Date(data.createdAt.getTime() + data.duration * 60);
+    this.type = data.type;
     this.status = data.status;
     this.userId = data.userId;
 
@@ -15,20 +15,20 @@ class Token {
     });
   }
 
-  static async get(tokenId) {
+  static async get(token) {
     let tokenTbl = '';
     try {
       tokenTbl = await db.select('token', '',
-        [{ col: 'id', oper: '=', val: tokenId }]);
+        [{ col: 'token', oper: '=', val: token }]);
     } catch (e) {
       return '';
     }
 
     if (tokenTbl.length === 0) { return 0; }
 
-    const token = this.processResult(tokenTbl)[0];
+    const ntoken = this.processResult(tokenTbl)[0];
 
-    return JSON.stringify(token);
+    return JSON.stringify(ntoken);
   }
 
   static async getAll() {
