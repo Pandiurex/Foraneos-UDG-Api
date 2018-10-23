@@ -50,11 +50,11 @@ class Auth {
 
     // Hasheo de pass
     //
-    // users.checkUsernamePass
+    // users.checkUsernamePass(username, password)
     //
     // Si es diferente de -1 buscamos ese id (User) en los tokens
     //
-    // tokens.get(id)
+    // existActive(id)
 
 
     const user = JSON.parse(JSON.stringify(await User.get(req.query.userId)));

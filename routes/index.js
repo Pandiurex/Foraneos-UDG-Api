@@ -13,6 +13,7 @@ const factoryRoute = require('./factoryRoute');
 const emailRoute = require('./emailRoute');
 const locationImageRoute = require('./locationImageRoute');
 const locationServiceRoute = require('./locationServiceRoute');
+const emailerRoute = require('./emailerRoute');
 // const tokenRoute = require('./tokenRoute');
 
 route
@@ -30,6 +31,9 @@ route
   .use('/services', servicesRoute)
   .use('/factory', factoryRoute)
   .use('/email', emailRoute)
-  .use('/locationImage', locationImageRoute);
+  .use('/locationImage', locationImageRoute)
+
+
+  .use('/emailer', emailerRoute);
 
 module.exports = route;
