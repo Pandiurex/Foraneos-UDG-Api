@@ -11,7 +11,8 @@ route
   // Users.
   .get('/', usersController.showAll)
   .get('/:id', middlewaresErr.errMid.paramsValid, usersController.showOne)
-  .post('/', [middlewaresErr.errMid.nameValid,
+  .post('/', [middlewaresErr.auth.register,
+    middlewaresErr.errMid.nameValid,
     middlewaresErr.errMid.passwordValid,
     middlewaresErr.errMid.birthDateValid,
     middlewaresErr.errMid.userTypeValid,

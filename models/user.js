@@ -38,7 +38,6 @@ class User {
 
   static async get(userId) {
     let userTbl = '';
-
     try {
       userTbl = await db.select('user', '',
         [{ col: 'id', oper: '=', val: userId }]);
@@ -277,6 +276,23 @@ class User {
 
   static async haveaccess(method, url) {
 
+  }
+
+  /**
+   * Receives the username and password to check in the database,
+   * if they are equals returns the user id, otherwise returns -1
+   * @param  {[type]} options.username [description]
+   * @param  {[type]} options.password [description]
+   * @return {[type]}                  [description]
+   */
+  static async checkUsernamePass({ username, password }) {
+    let userTbl = '';
+    try {
+      userTbl = await db.select('user', '',
+        [{ col: 'id', oper: '=', val: userId }]);
+    } catch (e) {
+      return 0;
+    }
   }
 
   static processResult(data) {

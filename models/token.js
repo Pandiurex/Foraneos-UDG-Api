@@ -15,13 +15,25 @@ class Token {
     });
   }
 
-  static async get(token) {
+  static async get(userId) {
     let tokenTbl = '';
     try {
-      tokenTbl = await db.select('token', '',
-        [{ col: 'token', oper: '=', val: token }]);
+      tokenTbl = await db.select('token', ['token'],
+        [{ col: 'userId', oper: '=', val: userId },
+          {
+            logic: 'AND',
+            col: 'status',
+            oper: '=',
+            val: '1',
+          }]);
     } catch (e) {
       return '';
+    }
+
+    if (tokenTbl.length === 0) {
+      // Crear token
+    } else {
+      // Retornar el token obtenido
     }
 
     if (tokenTbl.length === 0) { return 0; }
@@ -61,6 +73,11 @@ class Token {
     return this.get(tokenId);
   }
 
+  /**
+   * Check the column status and returns its value
+   * @param  {[type]} ntoken [description]
+   * @return {[type]}        status
+   */
   static async active(ntoken) {
     let tokenTbl = '';
     try {

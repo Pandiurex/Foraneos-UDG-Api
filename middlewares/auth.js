@@ -45,7 +45,19 @@ class Auth {
   }
 
   static async login(req, res, next) {
-    const user = JSON.parse(JSON.stringify(await User.get('*', `${req.body.username}`)));
+    const { username } = req.body;
+    const { password } = req.body;
+
+    // Hasheo de pass
+    //
+    // users.checkUsernamePass
+    //
+    // Si es diferente de -1 buscamos ese id (User) en los tokens
+    //
+    // tokens.get(id)
+
+
+    const user = JSON.parse(JSON.stringify(await User.get(req.query.userId)));
     if (user.username !== undefined) {
       const data = {
         user: user.username,
@@ -113,9 +125,8 @@ class Auth {
     return this.bearer.split(' ')[1];
   }
 }
-module.exports = {
-  Auth,
-};
+
+module.exports = new Auth();
 
 //
 // class Auth {
