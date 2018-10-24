@@ -31,16 +31,12 @@ class Token {
     }
 
     if (tokenTbl.length === 0) {
-      // Crear token
-    } else {
-      // Retornar el token obtenido
+      // //Crear token
+      return 0;
     }
-
-    if (tokenTbl.length === 0) { return 0; }
-
-    const ntoken = this.processResult(tokenTbl)[0];
-
-    return JSON.stringify(ntoken);
+    const token = this.processResult(tokenTbl)[0];
+    // Retornar el token obtenido
+    return JSON.stringify(token);
   }
 
   static async getAll() {
