@@ -289,11 +289,23 @@ class User {
     let userTbl = '';
     try {
       userTbl = await db.select('user', '',
-        [{ col: 'id', oper: '=', val: userId }]);
+        [{ col: 'username', oper: '=', val: username },
+          {
+            logic: 'AND',
+            col: 'password',
+            oper: '=',
+            val: password,
+          }]);
     } catch (e) {
       return 0;
     }
+
+    if (userTbl.length === 0) { return 0; }
+
+    const user = this.processResult(userTbl)[0];
+    return user.id;
   }
+
 
   static processResult(data) {
     this.result = [];
