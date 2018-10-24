@@ -48,30 +48,60 @@ class Auth {
     const { username } = req.body;
     const { password } = req.body;
 
-    // Hasheo de pass
-    //
-    // users.checkUsernamePass
-    //
-    // Si es diferente de -1 buscamos ese id (User) en los tokens
-    //
-    // tokens.get(id)
+    // hasheamos el pass
+    const hashPass = bcrypt.hash(`${password}`, process.env.SECRET, (err, hash) => hash);
+    // buscamos coincidencia del user con el pass
+    let userId = await User.checkUsernamePass(username, hashPass);
 
-
-    const user = JSON.parse(JSON.stringify(await User.get(req.query.userId)));
-    if (user.username !== undefined) {
-      const data = {
-        user: user.username,
-        token: null,
+    if (userId === 0) {
+      userId = {
+        message: 'user not found',
       };
-      const active = await Token.active(data);
-      if (active === 0) {
-        res.send(await Auth.generateToken(user));
-        next();
+      res.send(userId);
+    } else {
+      // obtenemos el token de ese id del usuario
+      const token = await Token.get(userId);
+      // validamos si esta activo
+      if (token === 0) {
+        // obtenemos el objeto usuario de ese id para generar token
+        const user = await User.get(userId);
+        this.token = Auth.generateToken(user);
+        res.send(token);
+        next({
+          token: this.token,
+          user: this.user,
+        });
       } else {
+        // obtenemos el token activo de ese usuario
+        res.send(token);
         next();
       }
     }
   }
+
+  // Hasheo de pass
+  //
+  // users.checkUsernamePass
+  //
+  // Si es diferente de -1 buscamos ese id (User) en los tokens
+  //
+  // tokens.get(id)
+  //
+  // const user = JSON.parse(JSON.stringify(await User.get(req.query.userId)));
+  //   if (user.username !== undefined) {
+  //     const data = {
+  //       user: user.username,
+  //       token: null,
+  //     };
+  //     const active = await Token.active(data);
+  //     if (active === 0) {
+  //       res.send(await Auth.generateToken(user));
+  //       next();
+  //     } else {
+  //       next();
+  //     }
+  //   }
+  // }
 
   logout(token, next) {
     this.statusToken = Token.get(token);
