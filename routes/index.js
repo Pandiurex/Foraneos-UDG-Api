@@ -13,11 +13,11 @@ const factoryRoute = require('./factoryRoute');
 const emailRoute = require('./emailRoute');
 const locationImageRoute = require('./locationImageRoute');
 const locationServiceRoute = require('./locationServiceRoute');
-// const tokenRoute = require('./tokenRoute');
+const authRoute = require('./authRoute');
 
 route
   .get('/', (req, res) => res.send('Welcome to Our System!'))
-  // .use('/token', tokenRoute)
+  .use('/auth', authRoute)
   .use('/users', usersRoute)
   .use('/users', livesInRoute)
   .use('/locations', locationsRoute)
