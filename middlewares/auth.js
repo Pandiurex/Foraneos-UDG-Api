@@ -1,162 +1,153 @@
 const bcrypt = require('bcrypt');
-const { Token } = require('../models');
-const { User } = require('../models');
+const { token } = require('../models');
+const { user } = require('../models');
+
+const CONFIRM_EMAIL_TYPE = 'ce';
+const SESSION_TYPE = 's';
+const RECOVER_PASS_TYPE = 'r';
 
 class Auth {
-  static async generateToken(user) {
-    this.key = `${user.username}`;
-    console.log(this.key);
-    await bcrypt.genSalt(5, (err, salt) => {
-      bcrypt.hash(this.key, salt, (hashErr, hash) => {
-        Token.create({
-          token: hash,
-          createdAt: new Date(),
-          expires: new Date(),
-          type: 's',
-          status: 1,
-          userId: user.id,
-        })
-          .then(() => hash)
-          .catch((e) => {
-            console.error(`.catch(${hashErr})`);
-            throw e;
-          });
-      });
-    }).catch((err) => { throw err; });
-  }
+  static async generateToken({ username, id }, type) {
+    let hash = '';
 
-  async register(req, res, next) {
-    bcrypt(`${req.body.password}`, process.env.SECRET, (err, hash) => {
-      req.body.password = hash;
-    });
-    this.newUser = new User({ ...req.body });
-    try {
-      await this.newUser.create();
-      this.token = Auth.generateToken(this.newUser);
-      res.send(this.token);
-      next({
-        token: this.token,
-        user: this.newUser,
-      });
-    } catch (e) {
-      console.error(`.catch(${e})`);
-      next(e);
+    const createdAt = new Date();
+    const expires = createdAt;
+
+    if (type === CONFIRM_EMAIL_TYPE) {
+      expires.setYear((expires.getYear() + 10));
+    } else if (type === SESSION_TYPE) {
+      expires.setHours((expires.getHours() + 1));
+    } else if (type === RECOVER_PASS_TYPE) {
+      expires.setMinutes((expires.getMinutes() + 10));
     }
+
+    const key = `INCIO ${username}${createdAt} FINAL`;
+
+    hash = bcrypt.hashSync(key, Number(process.env.SECRET));
+
+    await token.create({
+      hash,
+      createdAt,
+      expires,
+      type,
+      userId: id,
+    });
+
+    return hash;
   }
 
-  static async login(req, res, next) {
-    const { username } = req.body;
-    const { password } = req.body;
+  static async register(req, res) {
+    const hash = this.generateToken(req.body, CONFIRM_EMAIL_TYPE);
 
-    // hasheamos el pass
-    const hashPass = bcrypt.hash(`${password}`, process.env.SECRET, (err, hash) => hash);
-    // buscamos coincidencia del user con el pass
-    let userId = await User.checkUsernamePass(username, hashPass);
+    res.send({
+      hash,
+      user: req.body,
+    });
+
+    // Enviar por email la url con el hash de confirmacion de correo
+  }
+
+  static async recoverPassByUsername(req, res) {
+    const hash = this.generateToken(user.getByUsername(req.query),
+      CONFIRM_EMAIL_TYPE);
+
+    res.send({
+      hash,
+      user: req.body,
+    });
+
+    // Enviar por email la url con el hash de confirmacion de correo
+  }
+
+  static async login(req, res) {
+    const userId = await user.checkUsernamePass(req.query);
 
     if (userId === 0) {
-      userId = {
-        message: 'user not found',
+      const result = {
+        error: {
+          status: 400,
+          message: 'Username or Password incorrect',
+        },
       };
-      res.send(userId);
+      res.status(400).send(result);
     } else {
-      // obtenemos el token de ese id del usuario
-      const token = await Token.get(userId);
-      // validamos si esta activo
-      if (token === 0) {
+      const token1 = await token.getActiveToken(userId, SESSION_TYPE);
+
+      // Falta comprobar si el token no ha expirado
+
+      if (token1 === 0) {
         // obtenemos el objeto usuario de ese id para generar token
-        const user = await User.get(userId);
-        this.token = Auth.generateToken(user);
-        res.send(token);
-        next({
-          token: this.token,
-          user: this.user,
+        const newUser = await user.get(userId);
+
+        const hash = await Auth.generateToken(newUser,
+          SESSION_TYPE);
+
+        res.send({
+          hash,
         });
       } else {
         // obtenemos el token activo de ese usuario
-        res.send(token);
-        next();
+        res.send({
+          hash: token1.hash,
+        });
       }
     }
   }
 
-  // Hasheo de pass
-  //
-  // users.checkUsernamePass
-  //
-  // Si es diferente de -1 buscamos ese id (User) en los tokens
-  //
-  // tokens.get(id)
-  //
-  // const user = JSON.parse(JSON.stringify(await User.get(req.query.userId)));
-  //   if (user.username !== undefined) {
-  //     const data = {
-  //       user: user.username,
-  //       token: null,
-  //     };
-  //     const active = await Token.active(data);
-  //     if (active === 0) {
-  //       res.send(await Auth.generateToken(user));
-  //       next();
-  //     } else {
-  //       next();
-  //     }
+  // logout(token, next) {
+  //   this.statusToken = Token.get(token);
+  //   if (this.statusToken) {
+  //     Token.destroy(token)
+  //       .then(() => next())
+  //       .catch((e) => {
+  //         console.error(`.catch(${e})`);
+  //         next(e);
+  //       });
   //   }
   // }
 
-  logout(token, next) {
-    this.statusToken = Token.get(token);
-    if (this.statusToken) {
-      Token.destroy(token)
-        .then(() => next())
-        .catch((e) => {
-          console.error(`.catch(${e})`);
-          next(e);
-        });
-    }
-  }
+  // haveSession(req, res, next) {
+  //   const token = this.getHeaderToken(req.headers.authorization);
+  //   this.token = Token.get(token);
+  //   if (this.isActive()) {
+  //     req.session = {
+  //       token: this.token,
+  //       user: User.get(this.token.userId),
+  //     };
+  //     next();
+  //   } else {
+  //     next({
+  //       status: 403,
+  //       message: 'You need to loggin',
+  //     });
+  //   }
+  // }
 
-  haveSession(req, res, next) {
-    const token = this.getHeaderToken(req.headers.authorization);
-    this.token = Token.get(token);
-    if (this.isActive()) {
-      req.session = {
-        token: this.token,
-        user: User.get(this.token.userId),
-      };
-      next();
-    } else {
-      next({
-        status: 403,
-        message: 'You need to loggin',
-      });
-    }
-  }
+  // havePermission(req, res, next) {
+  //   this.method = req.method;
+  //   if (req.session.User.haveaccess(this.method, req.originalUrl)) {
+  //     next();
+  //   } else {
+  //     res.send('NON authorization');
+  //   }
+  // }
 
-  havePermission(req, res, next) {
-    this.method = req.method;
-    if (req.session.User.haveaccess(this.method, req.originalUrl)) {
-      next();
-    } else {
-      res.send('NON authorization');
-    }
-  }
+  // isActive() {
+  //   const time = new Date();
+  //   if (time > this.token.createdAt + this.token.expires) {
+  //     this.token.destroy();
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
-  isActive() {
-    const time = new Date();
-    if (time > this.token.createdAt + this.token.expires) {
-      this.token.destroy();
-      return false;
-    }
-    return true;
-  }
-
-  getHeaderToken(bearer) {
-    //  obtenemos token
-    return this.bearer.split(' ')[1];
-  }
+  // getHeaderToken(bearer) {
+  //   //  obtenemos token
+  //   return this.bearer.split(' ')[1];
+  // }
 }
 
-module.exports = new Auth();
+module.exports = Auth;
 
 //
 // class Auth {
