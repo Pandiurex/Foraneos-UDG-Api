@@ -3,25 +3,26 @@ const express = require('express');
 const {
   usersController,
 } = require('../controllers');
-const middlewaresErr = require('../middlewares');
+const { errMid, authMid } = require('../middlewares');
 
 const route = express.Router();
 
 route
   // Users.
   .get('/', usersController.showAll)
-  .get('/:id', middlewaresErr.errMid.paramsValid, usersController.showOne)
-  .post('/', [middlewaresErr.auth.register,
-    middlewaresErr.errMid.nameValid,
-    middlewaresErr.errMid.passwordValid,
-    middlewaresErr.errMid.birthDateValid,
-    middlewaresErr.errMid.userTypeValid,
-    middlewaresErr.errMid.genderValid,
-    middlewaresErr.errMid.emailValid,
-    middlewaresErr.errMid.surnameValid,
-  ], usersController.create)
-  .put('/:id', middlewaresErr.errMid.paramsValid, usersController.update)
-  .patch('/:id', middlewaresErr.errMid.paramsValid, usersController.patch)
-  .delete('/:id', middlewaresErr.errMid.paramsValid, usersController.remove);
+  .get('/:id', errMid.paramsValid, usersController.showOne)
+  .post('/', [errMid.nameValid,
+    errMid.passwordValid,
+    errMid.birthDateValid,
+    errMid.userTypeValid,
+    errMid.genderValid,
+    errMid.emailValid,
+    errMid.surnameValid,
+    errMid.hashPassword,
+    usersController.create,
+  ], authMid.register)
+  .put('/:id', errMid.paramsValid, usersController.update)
+  .patch('/:id', errMid.paramsValid, usersController.patch)
+  .delete('/:id', errMid.paramsValid, usersController.remove);
 
 module.exports = route;
