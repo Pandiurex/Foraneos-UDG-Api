@@ -34,7 +34,7 @@ exports.showOne = async (req, res) => {
   res.send(result);
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   let result = await user.create(req.body);
 
   if (result === 0) {
@@ -44,7 +44,7 @@ exports.create = async (req, res) => {
         message: 'Conflict creating resource',
       },
     };
-    res.status(409);
+    res.status(409).send(result);
   } else if (result === 1) {
     result = {
       error: {
@@ -52,12 +52,11 @@ exports.create = async (req, res) => {
         message: 'Email already exists',
       },
     };
-    res.status(409);
+    res.status(409).send(result);
   } else {
-    res.status(201);
+    req.body = result;
+    next();
   }
-
-  res.send(result);
 };
 
 exports.update = async (req, res) => {
