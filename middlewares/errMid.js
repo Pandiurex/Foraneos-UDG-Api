@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 function getCompare() {
   return {
     word: /^[a-zA-Z_áéíóúñ\s]*$/,
@@ -173,6 +175,14 @@ const userTypeValid = (req, res, next) => {
     res.status(406).send(result);
   }
 };
+
+const hashPassword = (req, res, next) => {
+  bcrypt.hash(`${req.body.password}`, Number(process.env.SECRET), (err, hash) => {
+    req.body.password = hash;
+  });
+  next();
+};
+
 
 // Location Valids
 
@@ -507,4 +517,5 @@ module.exports = {
   orderByValid,
   limitValid,
   queryValid,
+  hashPassword,
 };
