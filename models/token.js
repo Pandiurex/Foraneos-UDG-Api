@@ -3,22 +3,27 @@ const db = require('../db');
 class Token {
   constructor(data) {
     this.id = data.id;
-    this.token = data.token;
+    this.userId = data.userId;
+    this.hash = data.hash;
     this.createdAt = data.ceatedAt;
-    this.expires = new Date(data.createdAt.getTime() + data.duration * 60);
+    this.expires = data.expires;
     this.type = data.type;
     this.status = data.status;
-    this.userId = data.userId;
 
     Object.keys(this).forEach((key) => {
       if (this[key] === undefined) { delete this[key]; }
     });
   }
 
+  /**
+   * [get description]
+   * @param  {[type]} userId [description]
+   * @return {[type]}        [description]
+   */
   static async get(userId) {
     let tokenTbl = '';
     try {
-      tokenTbl = await db.select('token', ['token'],
+      tokenTbl = await db.selectAll('token',
         [{ col: 'userId', oper: '=', val: userId },
           {
             logic: 'AND',
@@ -36,7 +41,37 @@ class Token {
     }
     const token = this.processResult(tokenTbl)[0];
     // Retornar el token obtenido
-    return JSON.stringify(token);
+    return token;
+  }
+
+  static async getActiveToken(userId, tokenType) {
+    let tokenTbl = '';
+    try {
+      tokenTbl = await db.selectAll('token',
+        [{ col: 'userId', oper: '=', val: userId },
+          {
+            logic: 'AND',
+            col: 'status',
+            oper: '=',
+            val: '1',
+          },
+          {
+            logic: 'AND',
+            col: 'type',
+            oper: '=',
+            val: tokenType,
+          }]);
+    } catch (e) {
+      return '';
+    }
+
+    if (tokenTbl.length === 0) {
+      // //Crear token
+      return 0;
+    }
+    const token = this.processResult(tokenTbl)[0];
+    // Retornar el token obtenido
+    return token;
   }
 
   static async getAll() {
@@ -49,24 +84,24 @@ class Token {
 
     const token = this.processResult(tokenTbl);
 
-    return JSON.stringify(token);
+    return token;
   }
 
   static async create(
     {
-      token, createdAt, expires, type, status, userId,
+      hash, createdAt, expires, type, userId,
     },
   ) {
     let tokenId = '';
     try {
       tokenId = await db.insert('token',
-        ['token', 'createdAt', 'type', 'expires', 'status', 'userId'],
-        [token, createdAt, type, expires, status, userId]);
+        ['hash', 'createdAt', 'type', 'expires', 'userId'],
+        [hash, createdAt, type, expires, userId]);
     } catch (e) {
       return '';
     }
 
-    return this.get(tokenId);
+    return tokenId;
   }
 
   /**
@@ -77,8 +112,8 @@ class Token {
   static async active(ntoken) {
     let tokenTbl = '';
     try {
-      tokenTbl = await db.select('token', '',
-        [{ col: 'token', oper: '=', val: ntoken }]);
+      tokenTbl = await db.selectAll('token',
+        [{ col: 'hash', oper: '=', val: ntoken }]);
     } catch (e) {
       return '';
     }
