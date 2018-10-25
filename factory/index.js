@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const models = require('../models');
 
 class Factory {
@@ -74,10 +75,18 @@ class Factory {
     const users = [];
 
     for (let i = 1; i <= num; i += 1) {
+      const pass = `PassWord${i}`;
+
+      console.log(pass);
+
+      const hash = bcrypt.hashSync(pass, Number(process.env.SECRET));
+
+      console.log(hash);
+
       users.push({
         userType: `${i % 3}`,
         username: `username${i}`,
-        password: `PassWord${i}`,
+        password: hash,
         name: `name${i}`,
         firstSurname: `fSurname${i}`,
         secondSurname: `sSurname${i}`,
