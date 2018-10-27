@@ -177,9 +177,8 @@ const userTypeValid = (req, res, next) => {
 };
 
 const hashPassword = (req, res, next) => {
-  bcrypt.hash(`${req.body.password}`, Number(process.env.SECRET), (err, hash) => {
-    req.body.password = hash;
-  });
+  req.query.password = bcrypt.hashSync(`${req.query.password}`,
+    Number(process.env.SECRET));
   next();
 };
 
