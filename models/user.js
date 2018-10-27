@@ -275,10 +275,6 @@ class User {
     return this.get(userId);
   }
 
-  static async haveaccess(method, url) {
-
-  }
-
   /**
    * Receives the username and password to check in the database,
    * if they are equals returns the user id, otherwise returns -1
