@@ -5,7 +5,7 @@ class Token {
     this.id = data.id;
     this.userId = data.userId;
     this.hash = data.hash;
-    this.createdAt = data.ceatedAt;
+    this.createdAt = data.createdAt;
     this.expires = data.expires;
     this.type = data.type;
     this.status = data.status;
@@ -74,6 +74,36 @@ class Token {
     return token;
   }
 
+  static async getActiveTokenByHash(hash, tokenType) {
+    let tokenTbl = '';
+    try {
+      tokenTbl = await db.selectAll('token',
+        [{ col: 'hash', oper: '=', val: hash },
+          {
+            logic: 'AND',
+            col: 'status',
+            oper: '=',
+            val: '1',
+          },
+          {
+            logic: 'AND',
+            col: 'type',
+            oper: '=',
+            val: tokenType,
+          }]);
+    } catch (e) {
+      return '';
+    }
+
+
+    if (tokenTbl.length === 0) {
+      // //Crear token
+      return 0;
+    }
+
+    return this.processResult(tokenTbl)[0];
+  }
+
   static async getAll() {
     let tokenTbl = '';
     try {
@@ -109,20 +139,16 @@ class Token {
    * @param  {[type]} ntoken [description]
    * @return {[type]}        status
    */
-  static async active(ntoken) {
-    let tokenTbl = '';
+  static async deactivate(tokenId) {
     try {
-      tokenTbl = await db.selectAll('token',
-        [{ col: 'hash', oper: '=', val: ntoken }]);
+      await db.update('token',
+        [{ col: 'status', val: '0' }],
+        [{ col: 'id', oper: '=', val: tokenId }]);
     } catch (e) {
-      return '';
+      return false;
     }
 
-    if (tokenTbl.length === 0) { return 0; }
-
-    const token = this.processResult(tokenTbl)[0];
-
-    return token.status;
+    return true;
   }
 
   static processResult(data) {
