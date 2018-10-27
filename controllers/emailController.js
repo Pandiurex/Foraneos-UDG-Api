@@ -1,9 +1,9 @@
 const {
-  email,
+  Email,
 } = require('../models');
 
 exports.create = async (req, res) => {
-  let result = await email.create(req.body);
+  let result = await Email.create(req.body);
 
   if (result === 0) {
     result = {
@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await email.remove(req.params.id);
+  let result = await Email.remove(req.params.id);
 
   if (result === 0) {
     result = {

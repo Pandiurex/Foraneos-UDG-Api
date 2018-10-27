@@ -1,9 +1,9 @@
 const {
-  user,
+  User,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await user.getAll();
+  let result = await User.getAll();
 
   if (result === 0) {
     result = {
@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  let result = await user.get(req.params.id);
+  let result = await User.get(req.params.id);
 
   if (result === 0) {
     result = {
@@ -35,7 +35,7 @@ exports.showOne = async (req, res) => {
 };
 
 exports.create = async (req, res, next) => {
-  let result = await user.create(req.body);
+  let result = await User.create(req.body);
 
   if (result === 0) {
     result = {
@@ -54,13 +54,13 @@ exports.create = async (req, res, next) => {
     };
     res.status(409).send(result);
   } else {
-    req.body = result;
+    res.locals = { user: result };
     next();
   }
 };
 
 exports.update = async (req, res) => {
-  let result = await user.update(req.params.id, req.body);
+  let result = await User.update(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -84,7 +84,7 @@ exports.update = async (req, res) => {
 };
 
 exports.patch = async (req, res) => {
-  let result = await user.patch(req.params.id, req.body);
+  let result = await User.patch(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -116,7 +116,7 @@ exports.patch = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await user.remove(req.params.id);
+  let result = await User.remove(req.params.id);
 
   if (result === 0) {
     result = {
