@@ -101,7 +101,7 @@ class Factory {
 
     try {
       myPromises = users.map(async (data) => {
-        await models.user.create(data);
+        await models.User.create(data);
       });
     } catch (e) {
       return false;
