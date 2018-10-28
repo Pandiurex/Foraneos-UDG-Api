@@ -1,7 +1,7 @@
-const { USERTYPES } = require('./userTypes');
-const { ROLEACCESS } = require('./roleAccess');
+const { userTypes } = require('./userTypes');
+const { roleAccess } = require('./roleAccess');
 
 module.exports = {
-  USERTYPES,
-  ROLEACCESS,
+  userTypes,
+  roleAccess,
 };

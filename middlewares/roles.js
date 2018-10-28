@@ -32,7 +32,7 @@ exports.userRoleAuth = routes => (req, res, next) => {
 
   if (!route) {
     return res.status(403).send({
-      statusCode: 403,
+      status: 403,
       name: 'Error',
       message: 'User do not have access',
     });
@@ -42,7 +42,7 @@ exports.userRoleAuth = routes => (req, res, next) => {
 
   if (!canAccess) {
     return res.status(403).send({
-      statusCode: 403,
+      status: 403,
       name: 'Error',
       message: 'User do not have access',
     });
