@@ -1,11 +1,11 @@
-const { userType } = require('./userTypes');
+const { USERTYPES } = require('./userTypes');
 
 const {
   ADMIN, OWNER, TENANT, VISITANT,
-} = userType;
+} = USERTYPES;
 
 // Pasamos como clave el valor de la variable.
-exports.rolesAccess = {
+exports.ROLEACCESS = {
   [ADMIN]: {
     GET: /(\/\w+)+\/?/g,
     POST: /(\/\w+)+\/?/g,

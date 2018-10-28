@@ -1,16 +1,16 @@
 /**
  * El tipo de usuario que se ha evaluado de acuerdo a lo dado,
  * Los planeados por el momento son:
- * - Visitor
- * - Admin
- * - Owner
- * - Tenant
+ * -VISITANT
+ * -ADMIN
+ * -OWNER
+ * -TENANT
  * @param { { userType: { method: RegExp } } } routes
  * Objeto a evaluar si se va a otorgar acceso a la solicitud.
  * @returns {function(req Request, res Response, next NextFunction) : Response}
  */
 
-const userRoleAuth = routes => (req, res, next) => {
+exports.userRoleAuth = routes => (req, res, next) => {
   const {
     headers: { userType }, // userType se va a incluir más adelante en el Front.
     method,
@@ -49,8 +49,4 @@ const userRoleAuth = routes => (req, res, next) => {
   }
 
   return next();
-};
-
-module.exports = {
-  userRoleAuth,
 };
