@@ -7,28 +7,28 @@ const {
 // Pasamos como clave el valor de la variable.
 exports.roleAccess = {
   [ADMIN]: {
-    GET: /(\/\w+)+\/?/g,
-    POST: /(\/\w+)+\/?/g,
-    PUT: /(\/\w+)+\/?/g,
-    PATCH: /(\/\w+)+\/?/g,
-    DELETE: /(\/\w+)+\/?/g,
+    GET: /(\/\w+)+\/?/,
+    POST: /(\/\w+)+\/?/,
+    PUT: /(\/\w+)+\/?/,
+    PATCH: /(\/\w+)+\/?/,
+    DELETE: /(\/\w+)+\/?/,
   },
   [OWNER]: {
-    GET: /(\/\w+)+\/?/g,
-    POST: /(\/\w+)+\/?/g,
-    PUT: /(\/\w+)+\/?/g,
-    PATCH: /(\/\w+)+\/?/g,
-    DELETE: /(\/\w+)+\/?/g,
+    GET: /(\/\w+)+\/?/,
+    POST: /(\/\w+)+\/?/,
+    PUT: /(\/\w+)+\/?/,
+    PATCH: /(\/\w+)+\/?/,
+    DELETE: /(\/\w+)+\/?/,
   },
   [TENANT]: {
-    GET: /(\/\w+)+\/?/g,
-    POST: /(\/\w+)+\/?/g,
-    PUT: /(\/\w+)+\/?/g,
-    PATCH: /(\/\w+)+\/?/g,
-    DELETE: /(\/\w+)+\/?/g,
+    GET: /(\/\w+)+\/?/,
+    POST: /(\/\w+)+\/?/,
+    PUT: /(\/\w+)+\/?/,
+    PATCH: /(\/\w+)+\/?/,
+    DELETE: /(\/\w+)+\/?/,
   },
   [VISITANT]: {
     // Aquí van las rutas de auth para un visitante.
-    POST: /(\/auth)(\/login)?\/?/g,
+    POST: /(\/auth)(\/login)?\/?/,
   },
 };
