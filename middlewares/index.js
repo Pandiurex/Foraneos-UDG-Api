@@ -1,5 +1,6 @@
 exports.errMid = require('./errMid');
 exports.authMid = require('./auth');
+exports.roles = require('./roles');
 
 exports.errorHandler = (err, req, res, next) => {
   console.log('Error handler');

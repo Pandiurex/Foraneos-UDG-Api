@@ -4,7 +4,8 @@ const { errMid, authMid } = require('../middlewares');
 
 const route = express.Router();
 
-route.post('/confirmEmail', authMid.confirmEmail)
+route
+  .post('/confirmEmail', authMid.confirmEmail)
   .post('/login', authMid.login)
   .delete('/logout', [authMid.sessionChecker],
     authMid.logout)
