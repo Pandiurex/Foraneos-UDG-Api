@@ -1,7 +1,7 @@
 const db = require('../db');
 
-  /**
- * Class locationService with its attributes 
+/**
+ * Class locationService with its attributes
  to define the different locations
   */
 class LocationService {
@@ -23,9 +23,9 @@ class LocationService {
     });
   }
 
-   /**
- * The function goes and searches the database 
- for the service to the database, if it finds it 
+  /**
+ * The function goes and searches the database
+ for the service to the database, if it finds it
  returns the object
  * @param  {number, number}
  * @return {object}
@@ -49,9 +49,9 @@ class LocationService {
 
     return locationService;
   }
-  
+
   /**
- * Take the parameters and insert in 
+ * Take the parameters and insert in
  the database if the parameters are correct
  * @param  {number, number}
  * @return {object}
@@ -73,9 +73,9 @@ class LocationService {
 
     return this.get(locationId, serviceId);
   }
-  
+
   /**
- * Take the parameters and remove 
+ * Take the parameters and remove
  the indicated service from the database
  * @param  {number, number}
  * @return {object}
@@ -96,8 +96,8 @@ class LocationService {
     return locationService;
   }
 
- /**
- * Process the result of a query by traversing the entire 
+  /**
+ * Process the result of a query by traversing the entire
  instruction to generate the object and return it
  * @param  {string}
  * @return {string}

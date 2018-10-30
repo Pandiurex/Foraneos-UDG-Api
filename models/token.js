@@ -97,7 +97,6 @@ class Token {
 
 
     if (tokenTbl.length === 0) {
-      // //Crear token
       return 0;
     }
 

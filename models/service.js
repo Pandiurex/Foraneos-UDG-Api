@@ -1,19 +1,19 @@
 const db = require('../db');
 
-  /**
- * service class with constructor that 
+/**
+ * service class with constructor that
  defines its different attributes
   */
-}
+
 class Service {
   /** @constructor */
   constructor(data) {
-     /**
+    /**
    * Propiedad que indica el id del servicio
    * @type {number}
    */
     this.id = data.id;
-     /**
+    /**
    * Propiedad que indica una descripcion del servicio
    * @type {string}
    */
@@ -30,7 +30,7 @@ class Service {
   }
 
   /**
- * It goes and searches the database 
+ * It goes and searches the database
  for the service and returns the found object
  * @param  {number}
  * @return {object}
@@ -50,9 +50,9 @@ class Service {
 
     return JSON.stringify(service);
   }
-  
+
   /**
- * Goes and searches the database for 
+ * Goes and searches the database for
  the service and returns all found objects
  * @return  {object}
  */
@@ -70,7 +70,7 @@ class Service {
   }
 
   /**
- * Take the parameters and insert 
+ * Take the parameters and insert
  the data in the database and returns the found object
  * @param  {string, string}
  * @return {object}
@@ -89,7 +89,7 @@ class Service {
   }
 
   /**
- * Process the result of a query by traversing the entire 
+ * Process the result of a query by traversing the entire
  instruction to generate the object and return it
  * @param  {string}
  * @return {string}
