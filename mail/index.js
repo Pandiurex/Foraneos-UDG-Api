@@ -37,10 +37,8 @@ class Mailer {
 
     this.transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log('Aqui toy');
         return console.log(error);
       }
-      console.log('Quiuboles');
       console.log('Message sent: %s', info.messageId);
       // Preview only available when sending through an Ethereal account
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
