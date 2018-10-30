@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const db = require('../db');
 
 class User {
@@ -12,7 +13,7 @@ class User {
     this.firstSurname = data.firstSurname;
     this.secondSurname = data.secondSurname;
     this.profileImage = data.secondSurname;
-    if (data.birthdate.getFullYear() !== undefined) {
+    if (data.birthdate !== undefined) {
       const year = data.birthdate.getFullYear();
       const month = data.birthdate.getMonth() + 1;
       const day = data.birthdate.getDate();
@@ -38,9 +39,8 @@ class User {
 
   static async get(userId) {
     let userTbl = '';
-
     try {
-      userTbl = await db.select('user', '',
+      userTbl = await db.selectAll('user',
         [{ col: 'id', oper: '=', val: userId }]);
     } catch (e) {
       return 0;
@@ -274,6 +274,75 @@ class User {
 
     return this.get(userId);
   }
+
+  /**
+   * Receives the username and password to check in the database,
+   * if they are equals returns the user id, otherwise returns -1
+   *
+   * @param  {string} options.username Username of the user
+   * @param  {string} options.password Password of the user encrypted
+   *
+   * @return {number}                  Returns the userId if the
+   * username and the password that receives from parameters are
+   * equals to the username and password from the database,
+   * otherwise returns 0
+   */
+  static async checkUsernamePass({ username, password }) {
+    let userTbl = '';
+    try {
+      userTbl = await db.select('user', ['id', 'username', 'password'],
+        [{ col: 'username', oper: '=', val: username }]);
+    } catch (e) {
+      return 0;
+    }
+
+    if (userTbl.length === 0) {
+      return 0;
+    }
+
+    const user = this.processResult(userTbl)[0];
+
+    if (bcrypt.compareSync(password, user.password)) {
+      return user.id;
+    }
+
+    return 0;
+  }
+
+  static async getByUsername({ username }) {
+    let userTbl = '';
+    try {
+      userTbl = await db.selectAll('user',
+        [{ col: 'username', oper: '=', val: username }]);
+    } catch (e) {
+      return 0;
+    }
+
+    if (userTbl.length === 0) {
+      return 0;
+    }
+
+    return this.processResult(userTbl)[0];
+  }
+
+  static async getByEmail({ email }) {
+    let emailTbl = '';
+    try {
+      emailTbl = await db.selectAll('email',
+        [{ col: 'email', oper: '=', val: email }]);
+    } catch (e) {
+      return 0;
+    }
+
+    if (emailTbl.length === 0) {
+      return 0;
+    }
+
+    const { userId } = emailTbl[0];
+
+    return this.get(userId);
+  }
+
 
   static processResult(data) {
     this.result = [];

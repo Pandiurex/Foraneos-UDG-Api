@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const models = require('../models');
 
 class Factory {
@@ -12,6 +13,7 @@ class Factory {
       n += await this.createComplaints(num) ? 1 : 0;
       n += await this.createLivesIn(num) ? 1 : 0;
       n += await this.createMessage(num) ? 1 : 0;
+      console.log('vamos a llamar rate');
       n += await this.createRate(num) ? 1 : 0;
     } catch (e) {
       return 0;
@@ -73,10 +75,18 @@ class Factory {
     const users = [];
 
     for (let i = 1; i <= num; i += 1) {
+      const pass = `PassWord${i}`;
+
+      console.log(pass);
+
+      const hash = bcrypt.hashSync(pass, Number(process.env.SECRET));
+
+      console.log(hash);
+
       users.push({
         userType: `${i % 3}`,
         username: `username${i}`,
-        password: `PassWord${i}`,
+        password: hash,
         name: `name${i}`,
         firstSurname: `fSurname${i}`,
         secondSurname: `sSurname${i}`,
@@ -91,7 +101,7 @@ class Factory {
 
     try {
       myPromises = users.map(async (data) => {
-        await models.user.create(data);
+        await models.User.create(data);
       });
     } catch (e) {
       return false;
@@ -237,6 +247,7 @@ class Factory {
     const rates = [];
 
     for (let i = 1; i <= num; i += 1) {
+      console.log('Estas insertando');
       rates.push({
         userId: 1 + ((i + 3) % num),
         locationId: i,
@@ -257,6 +268,7 @@ class Factory {
         await models.rate.create(data);
       });
     } catch (e) {
+      console.log(`error try: ${e}`);
       return false;
     }
 

@@ -1,0 +1,6 @@
+PORT=3000
+DB_USER=usuario_raiz
+DB_PASS=123456
+DB_NAME=DB1
+DB_HOST=localhost
+SECRET=palabraX58

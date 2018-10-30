@@ -60,6 +60,18 @@ class Email {
     return email;
   }
 
+  static async verifyEmail(emailId) {
+    try {
+      await db.update('email',
+        [{ col: 'verified', val: '1' }],
+        [{ col: 'id', oper: '=', val: emailId }]);
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
   static processResult(data) {
     this.result = [];
     data.forEach((obj) => {

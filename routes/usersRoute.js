@@ -3,27 +3,41 @@ const express = require('express');
 const {
   usersController,
 } = require('../controllers');
-const middlewaresErr = require('../middlewares');
+const { errMid, authMid } = require('../middlewares');
 
 const route = express.Router();
 
 route
-  // Login users.
-  .post('/login', usersController.login)
-  .get('/signoff', usersController.signOff)
   // Users.
-  .get('/', usersController.showAll)
-  .get('/:id', middlewaresErr.errMid.paramsValid, usersController.showOne)
-  .post('/', [middlewaresErr.errMid.nameValid,
-    middlewaresErr.errMid.passwordValid,
-    middlewaresErr.errMid.birthDateValid,
-    middlewaresErr.errMid.userTypeValid,
-    middlewaresErr.errMid.genderValid,
-    middlewaresErr.errMid.emailValid,
-    middlewaresErr.errMid.surnameValid,
-  ], usersController.create)
-  .put('/:id', middlewaresErr.errMid.paramsValid, usersController.update)
-  .patch('/:id', middlewaresErr.errMid.paramsValid, usersController.patch)
-  .delete('/:id', middlewaresErr.errMid.paramsValid, usersController.remove);
+  .get('/', [authMid.sessionChecker, authMid.havePermissions],
+    usersController.showAll)
+  .get('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.showOne)
+  .post('/', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.nameValid,
+    errMid.passwordValid,
+    errMid.birthDateValid,
+    errMid.userTypeValid,
+    errMid.genderValid,
+    errMid.emailValid,
+    errMid.surnameValid,
+    errMid.hashPassword,
+    usersController.create,
+  ], authMid.register)
+  .put('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.update)
+  .patch('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.patch)
+  .delete('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.remove);
 
 module.exports = route;

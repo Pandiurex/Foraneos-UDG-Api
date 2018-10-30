@@ -1,6 +1,6 @@
 exports.complaintType = require('./complaintType');
 exports.complaint = require('./complaint');
-exports.email = require('./email');
+exports.Email = require('./email');
 exports.livesIn = require('./livesIn');
 exports.location = require('./location');
 exports.locationImage = require('./locationImage');
@@ -8,4 +8,5 @@ exports.locationService = require('./locationService');
 exports.message = require('./message');
 exports.rate = require('./rate');
 exports.service = require('./service');
-exports.user = require('./user');
+exports.Token = require('./token');
+exports.User = require('./user');

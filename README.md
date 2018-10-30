@@ -87,6 +87,20 @@ Cada que vez que se crea una nueva publicación de un lugar, se tiene la oportun
 
 Se administra una "bandeja de entrada" donde se almacenarán todos los mensajes recibidos, facilitando al usuario un solo lugar disponible para manejar las conversaciones.
 
+#### 5.-Autenticacion.
+
+Esta api cuenta con un sistema de autenticacion mediante tokens, que funciona de la siguiente manera:
+Cuando un usuario se registra por primera vez, y pasa por todos los middlewares sin ningun error, se crea un hash con algunos de los datos del usuario, en nuestro caso tomamos el username y una constate de tipo Date que trae la fecha actual en la que se realizo el registro del usuario, lo cual nos permite crear un identificador unico que jamas se va a repetir, y de esta manera creamos nuestro usuario, en este momento se manda un correo que se explica mas adelante.
+
+#### 6.-Autorizacion.
+Cuando se requiere acceder a distintas rutas en nuestro sistema, en algunos casos se requieren de ciertos permisos, esto lo manejamos en la seccion de autorizacion, ya que no todos los usuarios pueden acceder a las mismas rutas.
+Para esto se definieron ciertos roles o tipos de usuarios que nos permiten manejar estos permisos de una manera mas eficiente, y tambien es facil mantener un control sobre aquella informacion sencible para cierto tipos de usuarios, lo cual nos permite ofrecer mayor seguridad y confiabilidad.
+
+#### 7.-Envio de Correos.
+Se ha implementado un sistema de confirmacion de correos en algunas de nuestras rutas.
+El primer caso donde se utiliza este tipo de sistema es al momento de registrarse, cuando un usuario crea su cuenta, y ha pasado por todos los filtros, se envia un correo de verificacion de cuenta que contiene un hash de algunos datos del usuario, esto nos permite confirmar que el correo es valido y tambien nos permite activar esa cuenta en nuestra base de datos, para que el usuario pueda acceder a esas rutas donde los usuarios que no se encuentran en nuestro sistema tienen derechco a acceder.
+
+El otro caso donde se implementa el envio de correos, es cuando el usuario no recuerda su contraseña para acceder a nuestro sistema, por lo cual implementamos una ruta donde el usuario ingresara el correo que tiene registrado y posteriormente se le enviara un correo con un link de restauracion de contraseña, donde podra ingresar una nueva contraseña para posteriormente acceda nuevamente a nuestro sistema.
 
 ### 4.-Usuarios, permisos, etc.
 
