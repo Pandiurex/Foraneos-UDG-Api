@@ -16,7 +16,7 @@ exports.userRoleAuth = routes => (req, res, next) => {
     method,
     url,
   } = req;
-  const role = !userType ? 0 : userType;
+  const role = !userType ? 3 : userType;
 
   const roleMethods = routes[role];
 
@@ -28,9 +28,9 @@ exports.userRoleAuth = routes => (req, res, next) => {
     });
   }
 
-  const route = roleMethods[method];
+  const routeArray = roleMethods[method];
 
-  if (!route) {
+  if (!routeArray) {
     return res.status(403).send({
       status: 403,
       name: 'Error',
@@ -38,7 +38,7 @@ exports.userRoleAuth = routes => (req, res, next) => {
     });
   }
 
-  const canAccess = route.test(url);
+  const canAccess = routeArray.some(route => route.test(url));
 
   if (!canAccess) {
     return res.status(403).send({

@@ -1,6 +1,6 @@
 exports.userTypes = {
-  VISITANT: 0,
-  ADMIN: 1,
-  OWNER: 2,
-  TENANT: 3,
+  ADMIN: 0,
+  OWNER: 1,
+  TENANT: 2,
+  VISITANT: 3,
 };
