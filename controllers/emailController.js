@@ -2,7 +2,7 @@ const {
   Email,
 } = require('../models');
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   let result = await Email.create(req.body);
 
   if (result === 0) {
@@ -12,12 +12,11 @@ exports.create = async (req, res) => {
         message: 'Conflict creating resource',
       },
     };
-    res.status(409);
+    res.status(409).send(result);
   } else {
-    res.status(201);
+    res.locals.email = result;
+    next();
   }
-
-  res.send(result);
 };
 
 exports.remove = async (req, res) => {
