@@ -20,7 +20,7 @@ class Auth {
       };
       res.status(400).send(result);
     } else {
-      res.locals = { user: await User.get(token.userId) };
+      res.locals.user = await User.get(token.userId);
       next();
     }
   }
@@ -28,9 +28,6 @@ class Auth {
   static async register(req, res) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
-    console.log('Confirm email hash created');
-    console.log(hash);
-    console.log(res.locals);
     const options = {
       from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
       to: res.locals.user.mainEmail,
@@ -47,35 +44,78 @@ class Auth {
     });
   }
 
+  static async reqConfirmEmail(req, res) {
+    const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
+
+    res.locals.user.emails.forEach((email) => {
+      if (email.verified === 1) {
+        const options = {
+          from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+          to: email.email,
+          subject: 'Confirmation Email ✔',
+          text: 'Presiona Para Confirmar',
+          html: `<p>Presiona
+          <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.email.id}">
+          aqui</a> para activar tu correo</p>`,
+        };
+        emailer.sendMail(options);
+      }
+    });
+
+    const result = {
+      message: {
+        status: 200,
+        message: 'Email sended',
+      },
+    };
+    res.send(result);
+  }
+
   static async confirmEmail(req, res) {
-    const token = await Token.getActiveTokenByHash(req.query.hash);
+    const token = await Token.getActiveTokenByHash(req.query.hash,
+      CONFIRM_EMAIL_TYPE);
+    let result = '';
 
     if (!Auth.isCurrentlyActive(token)) {
       // Revisar que error poner si no se encuentra un token de confirmacion de correo
-      const result = {
+      result = {
         error: {
           status: 401,
           message: 'Token not active',
         },
       };
-      res.status(401).send(result);
+      res.status(401);
     } else {
       const email = await Email.get(req.query.emailId);
 
       if (email === 0) {
-        const result = {
+        result = {
           error: {
             status: 404,
             message: 'Email not found',
           },
         };
-        res.status(404).send(result);
+        res.status(404);
+      } else if (email.userId !== token.userId) {
+        result = {
+          error: {
+            status: 401,
+            message: 'The email doesnt belong to the user',
+          },
+        };
+        res.status(401);
       } else {
         await Email.verifyEmail(email.id);
         await Token.deactivate(token.id);
-        res.send();
+        result = {
+          message: {
+            status: 200,
+            message: 'Email confirmed',
+          },
+        };
       }
     }
+    res.send(result);
   }
 
   static async login(req, res) {
@@ -102,9 +142,14 @@ class Auth {
           hash,
         });
       } else {
-        res.send({
+        const result = {
           hash: token.hash,
-        });
+          message: {
+            status: 200,
+            message: 'Session started',
+          },
+        };
+        res.send(result);
       }
     }
   }
@@ -117,6 +162,7 @@ class Auth {
     if (token !== 0) {
       await Token.deactivate(token.id);
     }
+
     const result = {
       message: {
         status: 200,
@@ -139,9 +185,6 @@ class Auth {
       res.status(401).send(result);
     } else {
       const hash = await Auth.generateToken(user, PASS_RECOVERY_TYPE);
-
-      console.log('Request password recovery hash created');
-      console.log(hash);
 
       const options = {
         from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
@@ -197,7 +240,7 @@ class Auth {
     const expires = createdAt;
 
     if (type === CONFIRM_EMAIL_TYPE) {
-      expires.setYear((expires.getYear() + 100));
+      expires.setYear((expires.getFullYear() + 5));
     } else if (type === SESSION_TYPE) {
       expires.setHours((expires.getHours() + 1));
     } else if (type === PASS_RECOVERY_TYPE) {
