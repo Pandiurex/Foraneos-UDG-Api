@@ -32,21 +32,19 @@ class Auth {
     console.log(hash);
     console.log(res.locals);
     const options = {
-      from: '"Foraneos UDG Team" <info@foraneos-udg.tk>', // sender address
-      to: 'crissin21_01@hotmail.com', // list of receivers
-      subject: 'Confirmation Email ✔', // Subject line
+      from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+      to: res.locals.user.mainEmail,
+      subject: 'Confirmation Email ✔',
       text: 'Presiona Para Confirmar',
       html: `<p>Presiona
       <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
-      aqui</a> para activar tu correo</p>`, // html body
+      aqui</a> para activar tu correo</p>`,
     };
     emailer.sendMail(options);
 
     res.send({
       user: res.locals.user,
     });
-    // Enviar por email la url con el hash de confirmacion
-    // de correo y el id del correo a confirmar
   }
 
   static async confirmEmail(req, res) {
@@ -129,22 +127,41 @@ class Auth {
   }
 
   static async reqPassRecovery(req, res) {
-    const user = await User.getByUsername(req.query);
+    const user = await User.getByEmail(req.query);
 
-    const hash = await Auth.generateToken(user, PASS_RECOVERY_TYPE);
+    if (user === 0) {
+      const result = {
+        error: {
+          status: 401,
+          message: 'User doesnt exist',
+        },
+      };
+      res.status(401).send(result);
+    } else {
+      const hash = await Auth.generateToken(user, PASS_RECOVERY_TYPE);
 
-    console.log('Request password recovery hash created');
-    console.log(hash);
+      console.log('Request password recovery hash created');
+      console.log(hash);
 
-    // Enviar por email la url con el hash de recuperacion de contraseña
+      const options = {
+        from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+        to: user.mainEmail,
+        subject: 'Recovery Account Email ✔',
+        text: 'Presiona Para Confirmar',
+        html: `<p>Presiona
+        <a href="http://localhost:3000/api/auth/passwordRecovery?hash=${hash}">
+        aqui</a> para recuperar tu contraseña</p>`,
+      };
+      emailer.sendMail(options);
 
-    const result = {
-      message: {
-        status: 200,
-        message: 'Email sended',
-      },
-    };
-    res.send(result);
+      const result = {
+        message: {
+          status: 200,
+          message: 'Email sended',
+        },
+      };
+      res.send(result);
+    }
   }
 
   static async passRecovery(req, res) {
@@ -159,7 +176,7 @@ class Auth {
       };
       res.status(401).send(result);
     } else {
-      // await Token.deactivate(token.id);
+      await Token.deactivate(token.id);
       await User.patch(token.userId, { password: req.query.password });
 
       const result = {

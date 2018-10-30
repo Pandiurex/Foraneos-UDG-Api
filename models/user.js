@@ -325,6 +325,24 @@ class User {
     return this.processResult(userTbl)[0];
   }
 
+  static async getByEmail({ email }) {
+    let emailTbl = '';
+    try {
+      emailTbl = await db.selectAll('email',
+        [{ col: 'email', oper: '=', val: email }]);
+    } catch (e) {
+      return 0;
+    }
+
+    if (emailTbl.length === 0) {
+      return 0;
+    }
+
+    const { userId } = emailTbl[0];
+
+    return this.get(userId);
+  }
+
 
   static processResult(data) {
     this.result = [];
