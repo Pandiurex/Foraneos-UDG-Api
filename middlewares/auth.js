@@ -204,7 +204,7 @@ class Auth {
       expires.setMinutes((expires.getMinutes() + 10));
     }
 
-    const key = `INCIO ${username}${createdAt} FINAL`;
+    const key = `${username}${createdAt}`;
 
     hash = bcrypt.hashSync(key, Number(process.env.SECRET));
 
