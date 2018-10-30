@@ -90,7 +90,7 @@ Se administra una "bandeja de entrada" donde se almacenarán todos los mensajes 
 #### 5.-Autenticacion.
 
 Esta api cuenta con un sistema de autenticacion mediante tokens, que funciona de la siguiente manera:
-Cuando un usuario se registra por primera vez, y pasa por todos los middlewares sin ningun error, se crea un hash con algunos de los datos del usuario, en nuestro caso tomamos el username y una constate de tipo Date, lo cual nos permite crear un identificador unico que jamas se va a repetir, y de esta manera creamos nuestro usuario, en este momento se manda un correo que se explica mas adelante.
+Cuando un usuario se registra por primera vez, y pasa por todos los middlewares sin ningun error, se crea un hash con algunos de los datos del usuario, en nuestro caso tomamos el username y una constate de tipo Date que trae la fecha actual en la que se realizo el registro del usuario, lo cual nos permite crear un identificador unico que jamas se va a repetir, y de esta manera creamos nuestro usuario, en este momento se manda un correo que se explica mas adelante.
 
 #### 6.-Autorizacion.
 Cuando se requiere acceder a distintas rutas en nuestro sistema, en algunos casos se requieren de ciertos permisos, esto lo manejamos en la seccion de autorizacion, ya que no todos los usuarios pueden acceder a las mismas rutas.
