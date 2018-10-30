@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
-const { Token } = require('../models');
-const { User, Email } = require('../models');
+const { Token, User, Email } = require('../models');
+const roleAccess = require('./permissions');
 const emailer = require('../mail');
 
 const CONFIRM_EMAIL_TYPE = 'ce';
@@ -12,16 +12,55 @@ class Auth {
     const token = await Token.getActiveTokenByHash(req.query.hash, SESSION_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
-      const result = {
-        error: {
-          status: 400,
-          message: 'Session invalid',
-        },
-      };
-      res.status(400).send(result);
+      res.locals.user = { userType: 3 };
+      next();
     } else {
       res.locals.user = await User.get(token.userId);
       next();
+    }
+  }
+
+  static async havePermissions(req, res, next) {
+    const { userType } = res.locals.user;
+    const { method } = req;
+    const url = req.originalUrl;
+
+    console.log(userType);
+    console.log(method);
+    console.log(url);
+
+    const roleMethods = roleAccess[userType];
+
+    if (!roleMethods) {
+      const result = {
+        status: 403,
+        message: 'Invalid role request',
+      };
+      res.status(403).send(result);
+    } else {
+      const routeArray = roleMethods[method];
+
+      if (!routeArray) {
+        const result = {
+          status: 403,
+          message: 'Invalid method request',
+        };
+        res.status(403).send(result);
+      } else {
+
+        console.log(routeArray);
+        const canAccess = routeArray.some(route => route.test(url));
+
+        if (!canAccess) {
+          const result = {
+            status: 403,
+            message: 'User doesnt have access',
+          };
+          res.status(403).send(result);
+        } else {
+          next();
+        }
+      }
     }
   }
 

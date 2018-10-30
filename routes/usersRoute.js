@@ -9,9 +9,15 @@ const route = express.Router();
 
 route
   // Users.
-  .get('/', usersController.showAll)
-  .get('/:id', errMid.paramsValid, usersController.showOne)
-  .post('/', [errMid.nameValid,
+  .get('/', [authMid.sessionChecker, authMid.havePermissions],
+    usersController.showAll)
+  .get('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.showOne)
+  .post('/', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.nameValid,
     errMid.passwordValid,
     errMid.birthDateValid,
     errMid.userTypeValid,
@@ -21,8 +27,17 @@ route
     errMid.hashPassword,
     usersController.create,
   ], authMid.register)
-  .put('/:id', errMid.paramsValid, usersController.update)
-  .patch('/:id', errMid.paramsValid, usersController.patch)
-  .delete('/:id', errMid.paramsValid, usersController.remove);
+  .put('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.update)
+  .patch('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.patch)
+  .delete('/:id', [authMid.sessionChecker,
+    authMid.havePermissions,
+    errMid.paramsValid],
+  usersController.remove);
 
 module.exports = route;

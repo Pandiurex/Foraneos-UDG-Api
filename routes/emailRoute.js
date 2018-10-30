@@ -8,7 +8,8 @@ const { authMid } = require('../middlewares');
 const route = express.Router();
 
 route
-  .post('/', [authMid.sessionChecker, emailController.create], authMid.reqConfirmEmail)
+  .post('/', [authMid.sessionChecker, authMid.havePermissions, emailController.create],
+    authMid.reqConfirmEmail)
   .delete('/:id', emailController.remove);
 
 module.exports = route;
