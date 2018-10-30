@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const { Token } = require('../models');
 const { User, Email } = require('../models');
+const emailer = require('../mail');
 
 const CONFIRM_EMAIL_TYPE = 'ce';
 const SESSION_TYPE = 's';
@@ -27,13 +28,23 @@ class Auth {
   static async register(req, res) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
+    console.log('Confirm email hash created');
+    console.log(hash);
+    console.log(res.locals);
+    const options = {
+      from: '"Foraneos UDG Team" <info@foraneos-udg.tk>', // sender address
+      to: 'crissin21_01@hotmail.com', // list of receivers
+      subject: 'Confirmation Email ✔', // Subject line
+      text: 'Presiona Para Confirmar',
+      html: `<p>Presiona
+      <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
+      aqui</a> para activar tu correo</p>`, // html body
+    };
+    emailer.sendMail(options);
+
     res.send({
       user: res.locals.user,
     });
-
-    console.log('Confirm email hash created');
-    console.log(hash);
-
     // Enviar por email la url con el hash de confirmacion
     // de correo y el id del correo a confirmar
   }
