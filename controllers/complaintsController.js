@@ -1,9 +1,9 @@
 const {
-  complaint,
+  Complaint,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await complaint.getAll(req.params.locationId);
+  let result = await Complaint.getAll(req.params.locationId);
 
   if (result === 0) {
     result = {
@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  let result = await complaint.create(req.body);
+  let result = await Complaint.create(req.body);
 
   if (result === 0) {
     result = {
@@ -37,7 +37,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await complaint.remove(req.params.locationId, req.params.id);
+  let result = await Complaint.remove(req.params.locationId, req.params.id);
 
   if (result === 0) {
     result = {

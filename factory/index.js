@@ -35,7 +35,7 @@ class Factory {
 
     try {
       myPromises = complaintTypes.map(async (data) => {
-        await models.complaintType.create(data);
+        await models.ComplaintType.create(data);
       });
     } catch (e) {
       return false;
@@ -60,7 +60,7 @@ class Factory {
 
     try {
       myPromises = services.map(async (data) => {
-        await models.service.create(data);
+        await models.Service.create(data);
       });
     } catch (e) {
       return false;
@@ -148,7 +148,7 @@ class Factory {
 
     try {
       myPromises = locations.map(async (data) => {
-        await models.location.create(data);
+        await models.Location.create(data);
       });
     } catch (e) {
       return false;
@@ -175,7 +175,7 @@ class Factory {
 
     try {
       myPromises = complaints.map(async (data) => {
-        await models.complaint.create(data);
+        await models.Complaint.create(data);
       });
     } catch (e) {
       return false;
@@ -202,7 +202,7 @@ class Factory {
 
     try {
       myPromises = livesIn.map(async (data) => {
-        await models.livesIn.create(data);
+        await models.LivesIn.create(data);
       });
     } catch (e) {
       return false;
@@ -232,7 +232,7 @@ class Factory {
 
     try {
       myPromises = messages.map(async (data) => {
-        await models.message.create(data);
+        await models.Message.create(data);
       });
     } catch (e) {
       return false;
@@ -265,7 +265,7 @@ class Factory {
 
     try {
       myPromises = rates.map(async (data) => {
-        await models.rate.create(data);
+        await models.Rate.create(data);
       });
     } catch (e) {
       console.log(`error try: ${e}`);

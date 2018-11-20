@@ -1,8 +1,8 @@
-const factory = require('../factory');
+const Factory = require('../factory');
 
 
 exports.fillUpDB = async (req, res) => {
-  let result = await factory.fillUpDB(req.query.num);
+  let result = await Factory.fillUpDB(req.query.num);
 
   if (result === 0) {
     result = {

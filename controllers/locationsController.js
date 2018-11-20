@@ -1,5 +1,5 @@
 const {
-  location,
+  Location,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
@@ -8,7 +8,7 @@ exports.showAll = async (req, res) => {
   const { limitOffset } = req.query;
   const { limitCount } = req.query;
 
-  let result = await location.getAll(orderBy,
+  let result = await Location.getAll(orderBy,
     orderSense, limitOffset, limitCount);
 
   if (result === 0) {
@@ -25,7 +25,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  let result = await location.get(req.params.id);
+  let result = await Location.get(req.params.id);
 
   if (result === 0) {
     result = {
@@ -41,7 +41,7 @@ exports.showOne = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  let result = await location.create(req.body);
+  let result = await Location.create(req.body);
 
   if (result === 0) {
     result = {
@@ -67,7 +67,7 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  let result = await location.update(req.params.id, req.body);
+  let result = await Location.update(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -99,7 +99,7 @@ exports.update = async (req, res) => {
 };
 
 exports.patch = async (req, res) => {
-  let result = await location.patch(req.params.id, req.body);
+  let result = await Location.patch(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -123,7 +123,7 @@ exports.patch = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await location.remove(req.params.id);
+  let result = await Location.remove(req.params.id);
 
   if (result === 0) {
     result = {

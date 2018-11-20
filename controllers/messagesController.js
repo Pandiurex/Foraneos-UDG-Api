@@ -1,9 +1,9 @@
 const {
-  message,
+  Message,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await message.getAll(req.params.locationId);
+  let result = await Message.getAll(req.params.locationId);
 
   if (result === 0) {
     result = {
@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  let result = await message.get(req.params.id);
+  let result = await Message.get(req.params.id);
 
   if (result === 0) {
     result = {
@@ -35,7 +35,7 @@ exports.showOne = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  let result = await message.create(req.body);
+  let result = await Message.create(req.body);
 
   if (result === 0) {
     result = {

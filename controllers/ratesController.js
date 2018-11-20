@@ -1,9 +1,9 @@
 const {
-  rate,
+  Rate,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await rate.getAll(req.params.locationId);
+  let result = await Rate.getAll(req.params.locationId);
 
   if (result === 0) {
     result = {
@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.showOne = async (req, res) => {
-  let result = await rate.get(req.params.id);
+  let result = await Rate.get(req.params.id);
 
   if (result === 0) {
     result = {
@@ -35,7 +35,7 @@ exports.showOne = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  let result = await rate.create(req.body);
+  let result = await Rate.create(req.body);
 
   if (result === 0) {
     result = {
@@ -53,7 +53,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await rate.remove(req.params.id);
+  let result = await Rate.remove(req.params.id);
 
   if (result === 0) {
     result = {

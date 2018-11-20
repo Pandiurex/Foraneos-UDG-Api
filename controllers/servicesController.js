@@ -1,9 +1,9 @@
 const {
-  service,
+  Service,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await service.getAll();
+  let result = await Service.getAll();
 
   if (result === 0) {
     result = {

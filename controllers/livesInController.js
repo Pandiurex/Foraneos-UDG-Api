@@ -1,9 +1,9 @@
 const {
-  livesIn,
+  LivesIn,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await livesIn.getAll(req.params.userId);
+  let result = await LivesIn.getAll(req.params.userId);
 
   if (result === 0) {
     result = {

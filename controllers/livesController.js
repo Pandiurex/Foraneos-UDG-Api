@@ -1,9 +1,9 @@
 const {
-  livesIn,
+  LivesIn,
 } = require('../models');
 
 exports.showAll = async (req, res) => {
-  let result = await livesIn.getAll('', req.params.locationId);
+  let result = await LivesIn.getAll('', req.params.locationId);
 
   if (result === 0) {
     result = {
@@ -19,7 +19,7 @@ exports.showAll = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  let result = await livesIn.create(req.body);
+  let result = await LivesIn.create(req.body);
 
   if (result === 0) {
     result = {
@@ -45,7 +45,7 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  let result = await livesIn.update(req.params.id, req.body);
+  let result = await LivesIn.update(req.params.id, req.body);
 
   if (result === 0) {
     result = {
@@ -61,7 +61,7 @@ exports.update = async (req, res) => {
 };
 
 exports.patch = async (req, res) => {
-  let result = await livesIn.patch(req.params.id, req.body);
+  let result = await LivesIn.patch(req.params.id, req.body);
 
   if (result === 0) {
     result = {

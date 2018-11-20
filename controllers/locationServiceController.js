@@ -1,9 +1,9 @@
 const {
-  locationService,
+  LocationService,
 } = require('../models');
 
 exports.create = async (req, res) => {
-  let result = await locationService.create(req.body);
+  let result = await LocationService.create(req.body);
 
   if (result === 0) {
     result = {
@@ -29,7 +29,7 @@ exports.create = async (req, res) => {
 };
 
 exports.remove = async (req, res) => {
-  let result = await locationService.remove(req.params.locationId,
+  let result = await LocationService.remove(req.params.locationId,
     req.params.id);
 
   if (result === 0) {
