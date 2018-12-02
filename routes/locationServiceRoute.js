@@ -1,19 +1,22 @@
-// Routes of location_service.
 const express = require('express');
-const {
-  locationServiceController,
-} = require('../controllers');
-const middlewaresErr = require('../middlewares');
-const { authMid } = require('../middlewares');
+const { locationServiceController } = require('../controllers');
+const { authMid, locationServiceMid, fileMid } = require('../middlewares');
 
 const route = express.Router();
 
 route
-  .post('/:locationId/locationService', [authMid.sessionChecker, authMid.havePermissions],
-    locationServiceController.create)
-  .delete('/:locationId/locationService/:id', [authMid.sessionChecker,
+  .post('/', [authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.paramsValid],
-  locationServiceController.remove);
+    locationServiceMid.checkAll],
+  locationServiceController.create)
+  .delete('/', [authMid.sessionChecker,
+    authMid.havePermissions,
+    locationServiceMid.checkAll],
+  locationServiceController.remove)
+  .get('/', [locationServiceMid.checkImageName,
+    authMid.sessionChecker,
+    authMid.havePermissions],
+  fileMid.getImage);
+
 
 module.exports = route;
