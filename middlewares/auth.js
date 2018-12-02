@@ -25,38 +25,29 @@ class Auth {
     const { method } = req;
     const url = req.originalUrl;
 
-    console.log(userType);
-    console.log(method);
-    console.log(url);
-
     const roleMethods = roleAccess[userType];
 
     if (!roleMethods) {
-      const result = {
+      next({
         status: 403,
-        message: 'Invalid role request',
-      };
-      res.status(403).send(result);
+        message: 'User doesnt have access',
+      });
     } else {
       const routeArray = roleMethods[method];
 
       if (!routeArray) {
-        const result = {
+        next({
           status: 403,
-          message: 'Invalid method request',
-        };
-        res.status(403).send(result);
+          message: 'User doesnt have access',
+        });
       } else {
-
-        console.log(routeArray);
         const canAccess = routeArray.some(route => route.test(url));
 
         if (!canAccess) {
-          const result = {
+          next({
             status: 403,
             message: 'User doesnt have access',
-          };
-          res.status(403).send(result);
+          });
         } else {
           next();
         }
@@ -101,94 +92,77 @@ class Auth {
       }
     });
 
-    const result = {
-      message: {
-        status: 200,
-        message: 'Email sended',
-      },
-    };
-    res.send(result);
+    res.send({
+      status: 200,
+      message: 'Email sended',
+    });
   }
 
-  static async confirmEmail(req, res) {
+  static async confirmEmail(req, res, next) {
     const token = await Token.getActiveTokenByHash(req.query.hash,
       CONFIRM_EMAIL_TYPE);
-    let result = '';
 
     if (!Auth.isCurrentlyActive(token)) {
       // Revisar que error poner si no se encuentra un token de confirmacion de correo
-      result = {
-        error: {
-          status: 401,
-          message: 'Token not active',
-        },
-      };
-      res.status(401);
+      next({
+        status: 401,
+        message: 'Token not active',
+      });
     } else {
-      const email = await Email.get(req.query.emailId);
+      const email = await Email.get(req.body.emailId);
 
       if (email === 0) {
-        result = {
-          error: {
-            status: 404,
-            message: 'Email not found',
-          },
-        };
-        res.status(404);
+        next({
+          status: 404,
+          message: 'Email not found',
+        });
       } else if (email.userId !== token.userId) {
-        result = {
-          error: {
-            status: 401,
-            message: 'The email doesnt belong to the user',
-          },
-        };
-        res.status(401);
+        next({
+          status: 401,
+          message: 'The email doesnt belong to the user',
+        });
       } else {
         await Email.verifyEmail(email.id);
         await Token.deactivate(token.id);
-        result = {
-          message: {
-            status: 200,
-            message: 'Email confirmed',
-          },
-        };
+        res.send({
+          status: 200,
+          message: 'Email confirmed',
+        });
       }
     }
-    res.send(result);
   }
 
-  static async login(req, res) {
-    const userId = await User.checkUsernamePass(req.query);
+  static async login(req, res, next) {
+    const userId = await User.checkEmailPass(req.body);
 
     if (userId === 0) {
-      const result = {
-        error: {
-          status: 401,
-          message: 'Username or Password incorrect',
-        },
-      };
-      res.status(401).send(result);
+      next({
+        status: 401,
+        message: 'Email or Password incorrect',
+      });
     } else {
       const token = await Token.getActiveToken(userId, SESSION_TYPE);
 
       if (!Auth.isCurrentlyActive(token)) {
         const user = await User.get(userId);
 
+        console.log('Generando');
+        console.time('generate');
         const hash = await Auth.generateToken(user,
           SESSION_TYPE);
+        console.timeEnd('generate');
 
         res.send({
           hash,
+          status: 200,
+          message: 'Session started',
         });
       } else {
-        const result = {
+        res.send({
           hash: token.hash,
-          message: {
-            status: 200,
-            message: 'Session started',
-          },
-        };
-        res.send(result);
+          status: 200,
+          message: 'Session started',
+        });
       }
     }
   }
@@ -202,26 +176,20 @@ class Auth {
       await Token.deactivate(token.id);
     }
 
-    const result = {
-      message: {
-        status: 200,
-        message: 'Session finished',
-      },
-    };
-    res.send(result);
+    res.send({
+      status: 200,
+      message: 'Session finished',
+    });
   }
 
-  static async reqPassRecovery(req, res) {
+  static async reqPassRecovery(req, res, next) {
     const user = await User.getByEmail(req.query);
 
     if (user === 0) {
-      const result = {
-        error: {
-          status: 401,
-          message: 'User doesnt exist',
-        },
-      };
-      res.status(401).send(result);
+      next({
+        status: 401,
+        message: 'User doesnt exist',
+      });
     } else {
       const hash = await Auth.generateToken(user, PASS_RECOVERY_TYPE);
 
@@ -236,39 +204,29 @@ class Auth {
       };
       emailer.sendMail(options);
 
-      const result = {
-        message: {
-          status: 200,
-          message: 'Email sended',
-        },
-      };
-      res.send(result);
+      res.send({
+        status: 200,
+        message: 'Email sended',
+      });
     }
   }
 
-  static async passRecovery(req, res) {
+  static async passRecovery(req, res, next) {
     const token = await Token.getActiveTokenByHash(req.query.hash, PASS_RECOVERY_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
-      const result = {
-        error: {
-          status: 401,
-          message: 'Token not active',
-        },
-      };
-      res.status(401).send(result);
+      next({
+        status: 401,
+        message: 'Token not active',
+      });
     } else {
       await Token.deactivate(token.id);
-      await User.patch(token.userId, { password: req.query.password });
+      await User.patch(token.userId, { password: req.body.password });
 
-      const result = {
-        message: {
-          status: 200,
-          message: 'Password changed',
-        },
-      };
-
-      res.send(result);
+      res.send({
+        status: 200,
+        message: 'Password changed',
+      });
     }
   }
 
@@ -288,7 +246,7 @@ class Auth {
 
     const key = `${username}${createdAt}`;
 
-    hash = bcrypt.hashSync(key, Number(process.env.SECRET));
+    hash = await bcrypt.hash(key, Number(process.env.SECRET));
 
     await Token.create({
       hash,
