@@ -127,6 +127,7 @@ class Factory {
         streetAcross2: `streetAcross2-${i}`,
         extNum: i,
         intNum: i,
+        sexType: (i % 3),
         numRooms: i,
         description: `description${i}`,
         restrictions: `restriction${i}`,
