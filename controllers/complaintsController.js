@@ -1,53 +1,40 @@
-const {
-  Complaint,
-} = require('../models');
+const { Complaint } = require('../models');
 
-exports.showAll = async (req, res) => {
-  let result = await Complaint.getAll(req.params.locationId);
+exports.showAll = async (req, res, next) => {
+  const result = await Complaint.getAll(req.params.locationId);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
-  }
-
-  res.send(result);
-};
-
-exports.create = async (req, res) => {
-  let result = await Complaint.create(req.body);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
   } else {
-    res.status(201);
+    res.send(result);
   }
-
-  res.send(result);
 };
 
-exports.remove = async (req, res) => {
-  let result = await Complaint.remove(req.params.locationId, req.params.id);
+exports.create = async (req, res, next) => {
+  const result = await Complaint.create(req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
+  } else {
+    res.status(201).send(result);
   }
+};
 
-  res.send(result);
+exports.remove = async (req, res, next) => {
+  const result = await Complaint.remove(req.body);
+
+  if (result === 0) {
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
+  }
 };

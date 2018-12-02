@@ -1,19 +1,14 @@
-const {
-  LivesIn,
-} = require('../models');
+const { LivesIn } = require('../models');
 
-exports.showAll = async (req, res) => {
-  let result = await LivesIn.getAll(req.params.userId);
+exports.showAll = async (req, res, next) => {
+  const result = await LivesIn.getAll(req.params.userId);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };
