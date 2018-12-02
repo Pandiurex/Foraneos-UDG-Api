@@ -67,10 +67,10 @@ const checkDate = (date) => {
 };
 
 const hashPassword = async (req) => {
-  if (req.query.password) {
+  if (req.query.password !== undefined) {
     req.query.password = await bcrypt.hash(`${req.query.password}`,
       Number(process.env.SECRET));
-  } else if (req.body.password) {
+  } else if (req.body.password !== undefined) {
     req.body.password = await bcrypt.hash(`${req.body.password}`,
       Number(process.env.SECRET));
   }

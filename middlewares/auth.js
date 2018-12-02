@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { Token, User, Email } = require('../models');
 const roleAccess = require('./permissions');
 const emailer = require('../mail');
+const { hashPassword } = require('./general');
 
 const CONFIRM_EMAIL_TYPE = 'ce';
 const SESSION_TYPE = 's';
@@ -9,7 +10,7 @@ const PASS_RECOVERY_TYPE = 'r';
 
 class Auth {
   static async sessionChecker(req, res, next) {
-    const token = await Token.getActiveTokenByHash(req.query.hash, SESSION_TYPE);
+    const token = await Token.getActiveTokenByHash(req.get('hash'), SESSION_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
       res.locals.user = { userType: 3 };
@@ -59,12 +60,12 @@ class Auth {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
     const options = {
-      from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+      from: `"Foraneos UDG Team" <${process.env.MAIL_USER}>`,
       to: res.locals.user.mainEmail,
       subject: 'Confirmation Email ✔',
       text: 'Presiona Para Confirmar',
       html: `<p>Presiona
-      <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
+      <a href="${process.env.URL}/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
       aqui</a> para activar tu correo</p>`,
     };
     emailer.sendMail(options);
@@ -80,12 +81,12 @@ class Auth {
     res.locals.user.emails.forEach((email) => {
       if (email.verified === 1) {
         const options = {
-          from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+          from: `"Foraneos UDG Team" <${process.env.MAIL_USER}>`,
           to: email.email,
           subject: 'Confirmation Email ✔',
           text: 'Presiona Para Confirmar',
           html: `<p>Presiona
-          <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.email.id}">
+          <a href="${process.env.URL}/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.email.id}">
           aqui</a> para activar tu correo</p>`,
         };
         emailer.sendMail(options);
@@ -109,7 +110,7 @@ class Auth {
         message: 'Token not active',
       });
     } else {
-      const email = await Email.get(req.body.emailId);
+      const email = await Email.get(req.query.emailId);
 
       if (email === 0) {
         next({
@@ -194,12 +195,12 @@ class Auth {
       const hash = await Auth.generateToken(user, PASS_RECOVERY_TYPE);
 
       const options = {
-        from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+        from: `"Foraneos UDG Team" <${process.env.MAIL_USER}>`,
         to: user.mainEmail,
         subject: 'Recovery Account Email ✔',
         text: 'Presiona Para Confirmar',
         html: `<p>Presiona
-        <a href="http://localhost:3000/api/auth/passwordRecovery?hash=${hash}">
+        <a href="${process.env.URL}/api/auth/passwordRecovery?hash=${hash}">
         aqui</a> para recuperar tu contraseña</p>`,
       };
       emailer.sendMail(options);
@@ -220,6 +221,7 @@ class Auth {
         message: 'Token not active',
       });
     } else {
+      await hashPassword(req);
       await Token.deactivate(token.id);
       await User.patch(token.userId, { password: req.body.password });
 

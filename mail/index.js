@@ -16,12 +16,12 @@ class Mailer {
       },
     });
     this.mailOptions = {
-      from: '"Testing Mail" <foraneos@udg.com',
+      from: `"Testing Mail" <${process.env.MAIL_USER}>`,
     };
     this.transporter.verify((error, success) => {
       if (error) {
         console.log(error);
-      } else {
+      } else if (success) {
         console.log('Server is ready to take our messages');
       }
     });
