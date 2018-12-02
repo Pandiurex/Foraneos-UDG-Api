@@ -1,43 +1,35 @@
-// Routes of locations.
 const express = require('express');
-const {
-  locationsController,
-} = require('../controllers');
-const middlewaresErr = require('../middlewares');
-const { authMid } = require('../middlewares');
+const { locationsController } = require('../controllers');
+const { authMid, locationMid, generalMid } = require('../middlewares');
 
 const route = express.Router();
 
 route
   .get('/', [authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.orderByValid,
-    middlewaresErr.errMid.limitValid,
-    middlewaresErr.errMid.queryValid,
-  ], locationsController.showAll)
-  .get('/:id', [authMid.sessionChecker,
-    authMid.havePermissions,
-    middlewaresErr.errMid.paramsValid],
+    locationMid.checkAllGetAll],
+  locationsController.showAll)
+  .get('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
   locationsController.showOne)
   .post('/', [authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.lattLongValid,
-    middlewaresErr.errMid.streetValid,
-    middlewaresErr.errMid.numLocationsValid,
-    middlewaresErr.errMid.decimalLocationValid,
-    middlewaresErr.errMid.roomValid,
+    locationMid.checkAllPost,
   ], locationsController.create)
-  .put('/:id', [authMid.sessionChecker,
+  .put('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.paramsValid],
+    locationMid.checkAllPut],
   locationsController.update)
-  .patch('/:id', [authMid.sessionChecker,
+  .patch('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.paramsValid],
+    locationMid.checkAllPatch],
   locationsController.patch)
-  .delete('/:id', [authMid.sessionChecker,
-    authMid.havePermissions,
-    middlewaresErr.errMid.paramsValid],
+  .delete('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
   locationsController.remove);
 
 module.exports = route;
