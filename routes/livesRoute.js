@@ -1,22 +1,27 @@
-// Routes of Lives.
 const express = require('express');
 const { livesController } = require('../controllers');
-const middlewaresErr = require('../middlewares');
-const { authMid } = require('../middlewares');
+const { authMid, livesMid, generalMid } = require('../middlewares');
 
 const route = express.Router();
 
 route
-  .get('/:locationId/lives', [authMid.sessionChecker, authMid.havePermissions],
-    livesController.showAll)
-  .post('/:locationId/lives', [authMid.sessionChecker,
+  .get('/:locationId/lives', [generalMid.checkParamLocationId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
+  livesController.showAll)
+  .post('/lives', [authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.startDateValid,
-    middlewaresErr.errMid.endDateValid,
-  ], livesController.create)
-  .put('/:locationId/lives/:id', [authMid.sessionChecker, authMid.havePermissions],
-    livesController.update)
-  .patch('/:locationId/lives/:id', [authMid.sessionChecker, authMid.havePermissions],
-    livesController.patch);
+    livesMid.checkAllPost],
+  livesController.create)
+  .put('/lives/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions,
+    livesMid.checkAllPut],
+  livesController.update)
+  .patch('/lives/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions,
+    livesMid.checkAllPatch],
+  livesController.patch);
 
 module.exports = route;
