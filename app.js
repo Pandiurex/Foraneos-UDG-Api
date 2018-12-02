@@ -1,13 +1,18 @@
-// app.js is main
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const {
-  errorHandler,
-} = require('./middlewares');
+const fs = require('fs');
+const { errorHandler } = require('./middlewares');
 
 const app = express();
 const routes = require('./routes');
+
+try {
+  fs.mkdirSync('locationImages');
+  fs.mkdirSync('profileImages');
+} catch (err) {
+  console.log('Existent dir');
+}
 
 app
   .use(bodyParser.json())
