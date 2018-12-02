@@ -8,7 +8,7 @@ const roleAccess = {
     GET: [/(\/\w+)+\/?/],
     POST: [/(\/\w+)+\/?/],
     PUT: [/(\/\w+)+\/?/],
-    PATCH: [/(\/\w+)+\/?}/],
+    PATCH: [/(\/\w+)+\/?/],
     DELETE: [/(\/\w+)+\/?/],
   },
   [OWNER]: {
