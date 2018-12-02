@@ -234,6 +234,17 @@ const checkEmail = (req, res, next) => {
   }
 };
 
+const checkProfileImageName = (req, res, next) => {
+  if (getCompare.profileImage.test(req.query.image) === false) {
+    next({
+      status: 406,
+      message: 'Invalid format in image',
+    });
+  } else {
+    next();
+  }
+};
+
 const checkAllPost = [
   checkUserType,
   checkUsername,
@@ -282,4 +293,5 @@ module.exports = {
   checkQueryEmail,
   checkQueryEmailId,
   checkEmail,
+  checkProfileImageName,
 };

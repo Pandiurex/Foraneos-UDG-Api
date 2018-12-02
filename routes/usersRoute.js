@@ -2,7 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const { usersController } = require('../controllers');
 const {
-  errMid,
   authMid,
   userMid,
   fileMid,
