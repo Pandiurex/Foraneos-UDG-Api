@@ -85,6 +85,10 @@ class Complaint {
       return 0;
     }
 
+    if (complaintsTbl.length === 0) {
+      return 0;
+    }
+
     const complaints = this.processResult(complaintsTbl);
 
     const myPromises = complaints.map(async (data) => {
@@ -148,8 +152,8 @@ class Complaint {
     return this.get(locationId, userId);
   }
 
-  static async remove(locationId, userId) {
-    const complaint = this.get(locationId, userId);
+  static async remove({ locationId, userId }) {
+    const complaint = await this.get(locationId, userId);
 
     if (complaint === 0) {
       return 0;

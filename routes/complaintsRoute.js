@@ -13,7 +13,8 @@ route
     authMid.havePermissions,
     complaintMid.checkAll],
   complaintsController.create)
-  .delete('/complaints/:id', [generalMid.checkParamId,
+  .delete('/complaints', [complaintMid.checkLocationId,
+    complaintMid.checkUserId,
     authMid.sessionChecker,
     authMid.havePermissions],
   complaintsController.remove);
