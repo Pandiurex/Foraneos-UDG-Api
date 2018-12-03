@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const { errorHandler } = require('./middlewares');
@@ -15,6 +16,7 @@ try {
 }
 
 app
+  .use(cors())
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({
     extended: true,
