@@ -19,8 +19,7 @@ exports.create = async (req, res, next) => {
 };
 
 exports.remove = async (req, res, next) => {
-  const result = await LocationService.remove(req.params.locationId,
-    req.params.id);
+  const result = await LocationService.remove(req.body);
 
   if (result === 0) {
     next({

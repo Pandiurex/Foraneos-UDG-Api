@@ -34,7 +34,7 @@ class LocationService {
     let locationServiceTbl = '';
 
     try {
-      locationServiceTbl = await db.select('location_service', '',
+      locationServiceTbl = await db.selectAll('location_service',
         [{ col: 'locationId', oper: '=', val: locationId },
           {
             logic: 'AND', col: 'serviceId', oper: '=', val: serviceId,
@@ -80,7 +80,7 @@ class LocationService {
  * @param  {number, number}
  * @return {object}
  */
-  static async remove(locationId, serviceId) {
+  static async remove({ locationId, serviceId }) {
     const locationService = await this.get(locationId, serviceId);
 
     try {
