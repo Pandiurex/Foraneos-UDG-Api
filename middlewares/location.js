@@ -67,12 +67,12 @@ const checkLimit = (req, res, next) => {
     checkLimitOffset(req, res, next);
     checkLimitCount(req, res, next);
     next();
-  } else if (!req.query.orderBy && !req.query.orderSense) {
+  } else if (!req.query.limitOffset && !req.query.limitCount) {
     next();
   } else {
     next({
       status: 406,
-      message: 'Parameters limitOffset and orderSense has to be together',
+      message: 'Parameters limitOffset and limitCount has to be together',
     });
   }
 };
