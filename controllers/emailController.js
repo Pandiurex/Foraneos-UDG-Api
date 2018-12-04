@@ -5,7 +5,7 @@ const { Email } = require('../models');
  * @param  {object}   req   Request form express package
  * @param  {object}   res   Response from express package
  * @param  {Function} next  Function that continues the middlewares processing
- * @return {[type]}         Sends error if it happens, otherwise sends the email created
+ * @return undefined         Sends error if it happens, otherwise sends the email created
  */
 exports.create = async (req, res, next) => {
   const result = await Email.create(req.body);
@@ -26,7 +26,7 @@ exports.create = async (req, res, next) => {
  * @param  {object}   req   Request form express package
  * @param  {object}   res   Response from express package
  * @param  {Function} next  Function that continues the middlewares processing
- * @return {[type]}         Sends error if it happens, otherwise sends the email removed
+ * @return undefined         Sends error if it happens, otherwise sends the email removed
  */
 exports.remove = async (req, res, next) => {
   const result = await Email.remove(req.params.id);
