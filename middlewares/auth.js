@@ -43,7 +43,6 @@ class Auth {
         });
       } else {
         const canAccess = routeArray.some(route => route.test(url));
-
         if (!canAccess) {
           next({
             status: 403,
@@ -200,7 +199,7 @@ class Auth {
         subject: 'Recovery Account Email ✔',
         text: 'Presiona Para Confirmar',
         html: `<p>Presiona
-        <a href="${process.env.URL}/api/auth/passwordRecovery?hash=${hash}">
+        <a href="${process.env.URL_PASS}/api/auth/passwordRecovery?hash=${hash}">
         aqui</a> para recuperar tu contraseña</p>`,
       };
       emailer.sendMail(options);
@@ -213,7 +212,7 @@ class Auth {
   }
 
   static async passRecovery(req, res, next) {
-    const token = await Token.getActiveTokenByHash(req.query.hash, PASS_RECOVERY_TYPE);
+    const token = await Token.getActiveTokenByHash(req.body.hash, PASS_RECOVERY_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
       next({
