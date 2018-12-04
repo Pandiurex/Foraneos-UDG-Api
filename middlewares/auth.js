@@ -8,7 +8,18 @@ const CONFIRM_EMAIL_TYPE = 'ce';
 const SESSION_TYPE = 's';
 const PASS_RECOVERY_TYPE = 'r';
 
+/**
+ * Class that manages the authentication and authorization of the api
+ */
 class Auth {
+  /**
+   * Checks the session from the hash received in req
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the session exists saves the user, otherwise defines
+   *                             the user like visitant
+   */
   static async sessionChecker(req, res, next) {
     const token = await Token.getActiveTokenByHash(req.get('hash'), SESSION_TYPE);
 
@@ -21,6 +32,14 @@ class Auth {
     }
   }
 
+  /**
+   * Checks the permissions from the user received in sessionChecker
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the user has permissions continues with middlewares,
+   *                             otherwise send an error message
+   */
   static async havePermissions(req, res, next) {
     const { userType } = res.locals.user;
     const { method } = req;
@@ -55,6 +74,12 @@ class Auth {
     }
   }
 
+  /**
+   * Checks in an user and creates a confirm_email token and sends it with emailer
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @return undefined        Sends the created user
+   */
   static async register(req, res) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
@@ -74,6 +99,12 @@ class Auth {
     });
   }
 
+  /**
+   * Creates a confirm_email token and sends it with emailer
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @return undefined        Sends the correct response
+   */
   static async reqConfirmEmail(req, res) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
@@ -98,12 +129,19 @@ class Auth {
     });
   }
 
+  /**
+   * Confirms the emailId and the hash received in query
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If and error happens sends it, otherwise confirms the
+   *                             email
+   */
   static async confirmEmail(req, res, next) {
     const token = await Token.getActiveTokenByHash(req.query.hash,
       CONFIRM_EMAIL_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
-      // Revisar que error poner si no se encuentra un token de confirmacion de correo
       next({
         status: 401,
         message: 'Token not active',
@@ -132,6 +170,14 @@ class Auth {
     }
   }
 
+  /**
+   * If the email and password in req.body are correct, creates a session hash
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the email or password are incorrect returns an error,
+   *                             otherwise returns a session hash
+   */
   static async login(req, res, next) {
     const userId = await User.checkEmailPass(req.body);
 
@@ -167,6 +213,12 @@ class Auth {
     }
   }
 
+  /**
+   * Deactivates the session hash
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @return undefined
+   */
   static async logout(req, res) {
     const { user } = res.locals;
 
@@ -182,6 +234,13 @@ class Auth {
     });
   }
 
+  /**
+   * Creates a pass_recovery token and sends it in an email
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined
+   */
   static async reqPassRecovery(req, res, next) {
     const user = await User.getByEmail(req.query);
 
@@ -211,6 +270,13 @@ class Auth {
     }
   }
 
+  /**
+   * Changes the password form the user
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the token is inactive sends an error
+   */
   static async passRecovery(req, res, next) {
     const token = await Token.getActiveTokenByHash(req.body.hash, PASS_RECOVERY_TYPE);
 
@@ -231,6 +297,13 @@ class Auth {
     }
   }
 
+  /**
+   * Generates a token from the type received
+   * @param  {string} options.username username from the user
+   * @param  {number} options.id       id from the user
+   * @param  {string} type             Type of token to create
+   * @return {string}                  Returns the created hash
+   */
   static async generateToken({ username, id }, type) {
     let hash = '';
 
@@ -260,6 +333,11 @@ class Auth {
     return hash;
   }
 
+  /**
+   * Checks if a token is still active
+   * @param  {string}  token Token to check
+   * @return {Boolean}       Returns if the token is active
+   */
   static isCurrentlyActive(token) {
     if (token === 0) {
       return false;
