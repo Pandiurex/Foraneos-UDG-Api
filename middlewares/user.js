@@ -29,14 +29,25 @@ const checkUsername = (req, res, next) => {
   }
 };
 
-const checkPassword = (req, res, next) => {
+const checkPassword = async (req, res, next) => {
   if (getCompare.password.test(req.body.password) === false) {
     next({
       status: 406,
       message: 'Invalid format in password',
     });
   } else {
-    hashPassword(req);
+    await hashPassword(req);
+    next();
+  }
+};
+
+const checkPasswordWithoutHash = async (req, res, next) => {
+  if (getCompare.password.test(req.body.password) === false) {
+    next({
+      status: 406,
+      message: 'Invalid format in password',
+    });
+  } else {
     next();
   }
 };
@@ -294,4 +305,5 @@ module.exports = {
   checkQueryEmailId,
   checkEmail,
   checkProfileImageName,
+  checkPasswordWithoutHash,
 };
