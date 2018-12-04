@@ -1,5 +1,12 @@
 const { Location } = require('../models');
 
+/**
+ * Gets all the locations with the specified filters
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends all the locations
+ */
 exports.showAll = async (req, res, next) => {
   const { orderBy } = req.query;
   const { orderSense } = req.query;
@@ -19,6 +26,13 @@ exports.showAll = async (req, res, next) => {
   }
 };
 
+/**
+ * Gets a location with the id in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location specified
+ */
 exports.showOne = async (req, res, next) => {
   const result = await Location.get(req.params.id);
 
@@ -32,6 +46,13 @@ exports.showOne = async (req, res, next) => {
   }
 };
 
+/**
+ * Creates a location with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location created
+ */
 exports.create = async (req, res, next) => {
   const result = await Location.create(req.body);
 
@@ -50,6 +71,13 @@ exports.create = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates all the editable datas from a location with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location updated
+ */
 exports.update = async (req, res, next) => {
   const result = await Location.update(req.params.id, req.body);
 
@@ -73,6 +101,13 @@ exports.update = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates one of the editable datas from a location with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the data updated
+ */
 exports.patch = async (req, res, next) => {
   const result = await Location.patch(req.params.id, req.body);
 
@@ -91,6 +126,13 @@ exports.patch = async (req, res, next) => {
   }
 };
 
+/**
+ * Removes a location logically with the id in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location removed
+ */
 exports.remove = async (req, res, next) => {
   const result = await Location.remove(req.params.id);
 
