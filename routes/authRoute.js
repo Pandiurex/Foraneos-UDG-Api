@@ -10,14 +10,18 @@ authMid.confirmEmail)
   .post('/login', [authMid.sessionChecker,
     authMid.havePermissions,
     userMid.checkEmail,
-    userMid.checkPassword],
+    userMid.checkPasswordWithoutHash],
   authMid.login)
   .delete('/logout', [authMid.sessionChecker,
     authMid.havePermissions],
   authMid.logout)
-  .get('/reqPasswordRecovery', [userMid.checkQueryEmail],
-    authMid.reqPassRecovery)
-  .post('/passwordRecovery', [userMid.checkPassword],
-    authMid.passRecovery);
+  .get('/reqPasswordRecovery', [authMid.sessionChecker,
+    authMid.havePermissions,
+    userMid.checkQueryEmail],
+  authMid.reqPassRecovery)
+  .post('/passwordRecovery', [authMid.sessionChecker,
+    authMid.havePermissions,
+    userMid.checkPasswordWithoutHash],
+  authMid.passRecovery);
 
 module.exports = route;
