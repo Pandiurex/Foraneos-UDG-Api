@@ -1,53 +1,40 @@
-const {
-  message,
-} = require('../models');
+const { Message } = require('../models');
 
-exports.showAll = async (req, res) => {
-  let result = await message.getAll(req.params.locationId);
+exports.showAll = async (req, res, next) => {
+  const result = await Message.getAll(req.params.locationId);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
-  }
-
-  res.send(result);
-};
-
-exports.showOne = async (req, res) => {
-  let result = await message.get(req.params.id);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
-  }
-
-  res.send(result);
-};
-
-exports.create = async (req, res) => {
-  let result = await message.create(req.body);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
   } else {
-    res.status(201);
+    res.send(result);
   }
+};
 
-  res.send(result);
+exports.showOne = async (req, res, next) => {
+  const result = await Message.get(req.params.id);
+
+  if (result === 0) {
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
+  }
+};
+
+exports.create = async (req, res, next) => {
+  const result = await Message.create(req.body);
+
+  if (result === 0) {
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
+  } else {
+    res.status(201).send(result);
+  }
 };

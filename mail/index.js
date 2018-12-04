@@ -1,35 +1,49 @@
 const nodemailer = require('nodemailer');
 
+/**
+ * Class that manages the delivery of mails
+ */
 class Mailer {
+  /**
+   * Constructor of Mailer class
+   * @return {object} Returns an instance of Mailer
+   */
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST, // Variable de entorno
+      host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,
-      secure: true, // true for 465, false for other ports
+      secure: true,
       auth: {
-        user: process.env.MAIL_USER, // generated ethereal user
-        pass: process.env.MAIL_PASS, // generated ethereal password
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
       },
       tls: {
-        // do not fail on invalid certs
         rejectUnauthorized: false,
       },
     });
     this.mailOptions = {
-      from: '"Testing Mail" <foraneos@udg.com',
+      from: `"Testing Mail" <${process.env.MAIL_USER}>`,
     };
     this.transporter.verify((error, success) => {
       if (error) {
         console.log(error);
-      } else {
-        console.log('Server is ready to take our messages');
+      } else if (success) {
+        console.log('Mailer ready');
       }
     });
   }
 
+  /**
+   * Sends an email to the address specified in options
+   * @param  {object} options Object that contains the next attributes:
+   *                          {string}  from    Address from which the email will be sent
+   *                          {string}  to      Address ti which the email will be sent
+   *                          {string}  subject Mail subject
+   *                          {string}  text    Mail text
+   *                          {string}  html    Mail description
+   * @return {number}         If there is an error happens it returns the error, otherwise returns 0
+   */
   sendMail(options) {
-    console.log('Sending Email');
-
     const mailOptions = {
       ...this.mailOptions,
       ...options,
@@ -40,14 +54,9 @@ class Mailer {
         return console.log(error);
       }
       console.log('Message sent: %s', info.messageId);
-      // Preview only available when sending through an Ethereal account
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
       console.log(`Message sent to: ${mailOptions.to}`);
       console.log(`Message sent to: ${mailOptions.html}`);
-
-      // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-      // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
       return 0;
     });
   }

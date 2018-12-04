@@ -12,7 +12,7 @@ class User {
     this.name = data.name;
     this.firstSurname = data.firstSurname;
     this.secondSurname = data.secondSurname;
-    this.profileImage = data.secondSurname;
+    this.profileImage = data.profileImage;
     if (data.birthdate !== undefined) {
       const year = data.birthdate.getFullYear();
       const month = data.birthdate.getMonth() + 1;
@@ -130,7 +130,6 @@ class User {
     {
       mainEmailId, userType, password, name,
       firstSurname, secondSurname, profileImage, birthdate,
-      gender,
     }) {
     const columnsUpdate = [];
 
@@ -138,7 +137,7 @@ class User {
       const emailTbl = await db.selectAll('email',
         [{ col: 'userId', oper: '=', val: userId }]);
 
-      if (emailTbl.some(data => data.id === mainEmailId)) {
+      if (emailTbl.some(data => data.id === Number(mainEmailId))) {
         columnsUpdate.push({ col: 'mainEmailId', val: mainEmailId });
       } else {
         return 1;
@@ -173,10 +172,6 @@ class User {
       columnsUpdate.push({ col: 'birthdate', val: birthdate });
     }
 
-    if (gender !== undefined) {
-      columnsUpdate.push({ col: 'gender', val: gender });
-    }
-
     try {
       await db.update('user', columnsUpdate,
         [{ col: 'id', oper: '=', val: userId }]);
@@ -191,7 +186,6 @@ class User {
     {
       mainEmailId, userType, password, name,
       firstSurname, secondSurname, profileImage, birthdate,
-      gender,
     }) {
     const columnsUpdate = [];
     let updated = '';
@@ -200,7 +194,7 @@ class User {
       const emailTbl = await db.selectAll('email',
         [{ col: 'userId', oper: '=', val: userId }]);
 
-      if (emailTbl.some(data => data.id === mainEmailId)) {
+      if (emailTbl.some(data => data.id === Number(mainEmailId))) {
         columnsUpdate.push({ col: 'mainEmailId', val: mainEmailId });
       } else {
         return 1;
@@ -244,11 +238,6 @@ class User {
       updated = { birthdate };
     }
 
-    if (gender !== undefined) {
-      columnsUpdate.push({ col: 'gender', val: gender });
-      updated = { gender };
-    }
-
     if (columnsUpdate.length !== 1) { return 2; }
 
     try {
@@ -287,11 +276,20 @@ class User {
    * equals to the username and password from the database,
    * otherwise returns 0
    */
-  static async checkUsernamePass({ username, password }) {
+  static async checkEmailPass({ email, password }) {
     let userTbl = '';
+    let mainEmailId = '';
     try {
+      mainEmailId = await db.selectAll('email', [{ col: 'email', oper: '=', val: email }]);
+
+      if (mainEmailId.length === 0) {
+        return 0;
+      }
+
+      mainEmailId = mainEmailId[0].id;
+
       userTbl = await db.select('user', ['id', 'username', 'password'],
-        [{ col: 'username', oper: '=', val: username }]);
+        [{ col: 'mainEmailId', oper: '=', val: mainEmailId }]);
     } catch (e) {
       return 0;
     }
@@ -302,7 +300,10 @@ class User {
 
     const user = this.processResult(userTbl)[0];
 
-    if (bcrypt.compareSync(password, user.password)) {
+    console.log('Compare');
+    console.time('compare');
+    if (await bcrypt.compare(password, user.password)) {
+      console.timeEnd('compare');
       return user.id;
     }
 

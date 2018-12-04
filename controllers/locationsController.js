@@ -1,147 +1,152 @@
-const {
-  location,
-} = require('../models');
+const { Location } = require('../models');
 
-exports.showAll = async (req, res) => {
+/**
+ * Gets all the locations with the specified filters
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends all the locations
+ */
+exports.showAll = async (req, res, next) => {
   const { orderBy } = req.query;
   const { orderSense } = req.query;
   const { limitOffset } = req.query;
   const { limitCount } = req.query;
 
-  let result = await location.getAll(orderBy,
+  const result = await Location.getAll(orderBy,
     orderSense, limitOffset, limitCount);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
-  }
-
-  res.send(result);
-};
-
-exports.showOne = async (req, res) => {
-  let result = await location.get(req.params.id);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
-  }
-
-  res.send(result);
-};
-
-exports.create = async (req, res) => {
-  let result = await location.create(req.body);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409);
-  } else if (result === 1) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Service not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
   } else {
-    res.status(201);
+    res.send(result);
   }
-
-  res.send(result);
 };
 
-exports.update = async (req, res) => {
-  let result = await location.update(req.params.id, req.body);
+/**
+ * Gets a location with the id in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location specified
+ */
+exports.showOne = async (req, res, next) => {
+  const result = await Location.get(req.params.id);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
+  }
+};
+
+/**
+ * Creates a location with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location created
+ */
+exports.create = async (req, res, next) => {
+  const result = await Location.create(req.body);
+
+  if (result === 0) {
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error updating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 404,
+      message: 'Service not found',
+    });
+  } else {
+    res.status(201).send(result);
+  }
+};
+
+/**
+ * Updates all the editable datas from a location with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location updated
+ */
+exports.update = async (req, res, next) => {
+  const result = await Location.update(req.params.id, req.body);
+
+  if (result === 0) {
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else if (result === 1) {
+    next({
+      status: 409,
+      message: 'Error updating resource',
+    });
   } else if (result === 2) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Doesn\'t can reduce more the num of rooms',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Doesn\'t can reduce more the num of rooms',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };
 
-exports.patch = async (req, res) => {
-  let result = await location.patch(req.params.id, req.body);
+/**
+ * Updates one of the editable datas from a location with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the data updated
+ */
+exports.patch = async (req, res, next) => {
+  const result = await Location.patch(req.params.id, req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error updating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Error updating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Doesn\'t can reduce more the num of rooms',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Doesn\'t can reduce more the num of rooms',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };
 
-exports.remove = async (req, res) => {
-  let result = await location.remove(req.params.id);
+/**
+ * Removes a location logically with the id in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the location removed
+ */
+exports.remove = async (req, res, next) => {
+  const result = await Location.remove(req.params.id);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Doesn\'t can delete a location with rooms in use',
-      },
-    };
-    res.status(404);
+    next({
+      status: 409,
+      message: 'Doesn\'t can delete a location with rooms in use',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };

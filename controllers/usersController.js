@@ -1,132 +1,104 @@
-const {
-  User,
-} = require('../models');
+const { User } = require('../models');
 
-exports.showAll = async (req, res) => {
-  let result = await User.getAll();
+exports.showAll = async (req, res, next) => {
+  const result = await User.getAll();
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };
 
-exports.showOne = async (req, res) => {
-  let result = await User.get(req.params.id);
+exports.showOne = async (req, res, next) => {
+  const result = await User.get(req.params.id);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };
 
 exports.create = async (req, res, next) => {
-  let result = await User.create(req.body);
+  const result = await User.create(req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409).send(result);
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Email already exists',
-      },
-    };
-    res.status(409).send(result);
+    next({
+      status: 409,
+      message: 'Email already exists',
+    });
   } else {
-    res.locals = { user: result };
+    res.locals.user = result;
     next();
   }
 };
 
-exports.update = async (req, res) => {
-  let result = await User.update(req.params.id, req.body);
+exports.update = async (req, res, next) => {
+  const result = await User.update(req.params.id, req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error updating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Error updating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'New email doesn\'t belong to the user',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'New email doesn\'t belong to the user',
+    });
+  } else {
+    res.locals.user = result;
+    next();
   }
-
-  res.send(result);
 };
 
-exports.patch = async (req, res) => {
-  let result = await User.patch(req.params.id, req.body);
+exports.patch = async (req, res, next) => {
+  const result = await User.patch(req.params.id, req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error updating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Error updating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'New email doesn\'t belong to the user',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'New email doesn\'t belong to the user',
+    });
   } else if (result === 2) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Patch only receive one attribute',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Patch only receive one attribute',
+    });
+  } else if (req.file === undefined) {
+    res.send(result);
+  } else {
+    res.locals.user = result;
+    next();
   }
-
-  res.send(result);
 };
 
-exports.remove = async (req, res) => {
-  let result = await User.remove(req.params.id);
+exports.remove = async (req, res, next) => {
+  const result = await User.remove(req.params.id);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };

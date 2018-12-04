@@ -2,14 +2,26 @@ const bcrypt = require('bcrypt');
 const { Token, User, Email } = require('../models');
 const roleAccess = require('./permissions');
 const emailer = require('../mail');
+const { hashPassword } = require('./general');
 
 const CONFIRM_EMAIL_TYPE = 'ce';
 const SESSION_TYPE = 's';
 const PASS_RECOVERY_TYPE = 'r';
 
+/**
+ * Class that manages the authentication and authorization of the api
+ */
 class Auth {
+  /**
+   * Checks the session from the hash received in req
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the session exists saves the user, otherwise defines
+   *                             the user like visitant
+   */
   static async sessionChecker(req, res, next) {
-    const token = await Token.getActiveTokenByHash(req.query.hash, SESSION_TYPE);
+    const token = await Token.getActiveTokenByHash(req.get('hash'), SESSION_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
       res.locals.user = { userType: 3 };
@@ -20,43 +32,41 @@ class Auth {
     }
   }
 
+  /**
+   * Checks the permissions from the user received in sessionChecker
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the user has permissions continues with middlewares,
+   *                             otherwise send an error message
+   */
   static async havePermissions(req, res, next) {
     const { userType } = res.locals.user;
     const { method } = req;
     const url = req.originalUrl;
 
-    console.log(userType);
-    console.log(method);
-    console.log(url);
-
     const roleMethods = roleAccess[userType];
 
     if (!roleMethods) {
-      const result = {
+      next({
         status: 403,
-        message: 'Invalid role request',
-      };
-      res.status(403).send(result);
+        message: 'User doesnt have access',
+      });
     } else {
       const routeArray = roleMethods[method];
 
       if (!routeArray) {
-        const result = {
+        next({
           status: 403,
-          message: 'Invalid method request',
-        };
-        res.status(403).send(result);
+          message: 'User doesnt have access',
+        });
       } else {
-
-        console.log(routeArray);
         const canAccess = routeArray.some(route => route.test(url));
-
         if (!canAccess) {
-          const result = {
+          next({
             status: 403,
             message: 'User doesnt have access',
-          };
-          res.status(403).send(result);
+          });
         } else {
           next();
         }
@@ -64,16 +74,22 @@ class Auth {
     }
   }
 
+  /**
+   * Checks in an user and creates a confirm_email token and sends it with emailer
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @return undefined        Sends the created user
+   */
   static async register(req, res) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
     const options = {
-      from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+      from: `"Foraneos UDG Team" <${process.env.MAIL_USER}>`,
       to: res.locals.user.mainEmail,
       subject: 'Confirmation Email ✔',
       text: 'Presiona Para Confirmar',
       html: `<p>Presiona
-      <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
+      <a href="${process.env.URL}/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
       aqui</a> para activar tu correo</p>`,
     };
     emailer.sendMail(options);
@@ -83,116 +99,126 @@ class Auth {
     });
   }
 
+  /**
+   * Creates a confirm_email token and sends it with emailer
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @return undefined        Sends the correct response
+   */
   static async reqConfirmEmail(req, res) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
     res.locals.user.emails.forEach((email) => {
       if (email.verified === 1) {
         const options = {
-          from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+          from: `"Foraneos UDG Team" <${process.env.MAIL_USER}>`,
           to: email.email,
           subject: 'Confirmation Email ✔',
           text: 'Presiona Para Confirmar',
           html: `<p>Presiona
-          <a href="http://localhost:3000/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.email.id}">
+          <a href="${process.env.URL}/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.email.id}">
           aqui</a> para activar tu correo</p>`,
         };
         emailer.sendMail(options);
       }
     });
 
-    const result = {
-      message: {
-        status: 200,
-        message: 'Email sended',
-      },
-    };
-    res.send(result);
+    res.send({
+      status: 200,
+      message: 'Email sended',
+    });
   }
 
-  static async confirmEmail(req, res) {
+  /**
+   * Confirms the emailId and the hash received in query
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If and error happens sends it, otherwise confirms the
+   *                             email
+   */
+  static async confirmEmail(req, res, next) {
     const token = await Token.getActiveTokenByHash(req.query.hash,
       CONFIRM_EMAIL_TYPE);
-    let result = '';
 
     if (!Auth.isCurrentlyActive(token)) {
-      // Revisar que error poner si no se encuentra un token de confirmacion de correo
-      result = {
-        error: {
-          status: 401,
-          message: 'Token not active',
-        },
-      };
-      res.status(401);
+      next({
+        status: 401,
+        message: 'Token not active',
+      });
     } else {
       const email = await Email.get(req.query.emailId);
 
       if (email === 0) {
-        result = {
-          error: {
-            status: 404,
-            message: 'Email not found',
-          },
-        };
-        res.status(404);
+        next({
+          status: 404,
+          message: 'Email not found',
+        });
       } else if (email.userId !== token.userId) {
-        result = {
-          error: {
-            status: 401,
-            message: 'The email doesnt belong to the user',
-          },
-        };
-        res.status(401);
+        next({
+          status: 401,
+          message: 'The email doesnt belong to the user',
+        });
       } else {
         await Email.verifyEmail(email.id);
         await Token.deactivate(token.id);
-        result = {
-          message: {
-            status: 200,
-            message: 'Email confirmed',
-          },
-        };
+        res.send({
+          status: 200,
+          message: 'Email confirmed',
+        });
       }
     }
-    res.send(result);
   }
 
-  static async login(req, res) {
-    const userId = await User.checkUsernamePass(req.query);
+  /**
+   * If the email and password in req.body are correct, creates a session hash
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the email or password are incorrect returns an error,
+   *                             otherwise returns a session hash
+   */
+  static async login(req, res, next) {
+    const userId = await User.checkEmailPass(req.body);
 
     if (userId === 0) {
-      const result = {
-        error: {
-          status: 401,
-          message: 'Username or Password incorrect',
-        },
-      };
-      res.status(401).send(result);
+      next({
+        status: 401,
+        message: 'Email or Password incorrect',
+      });
     } else {
       const token = await Token.getActiveToken(userId, SESSION_TYPE);
 
       if (!Auth.isCurrentlyActive(token)) {
         const user = await User.get(userId);
 
+        console.log('Generando');
+        console.time('generate');
         const hash = await Auth.generateToken(user,
           SESSION_TYPE);
+        console.timeEnd('generate');
 
         res.send({
           hash,
+          status: 200,
+          message: 'Session started',
         });
       } else {
-        const result = {
+        res.send({
           hash: token.hash,
-          message: {
-            status: 200,
-            message: 'Session started',
-          },
-        };
-        res.send(result);
+          status: 200,
+          message: 'Session started',
+        });
       }
     }
   }
 
+  /**
+   * Deactivates the session hash
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @return undefined
+   */
   static async logout(req, res) {
     const { user } = res.locals;
 
@@ -202,76 +228,82 @@ class Auth {
       await Token.deactivate(token.id);
     }
 
-    const result = {
-      message: {
-        status: 200,
-        message: 'Session finished',
-      },
-    };
-    res.send(result);
+    res.send({
+      status: 200,
+      message: 'Session finished',
+    });
   }
 
-  static async reqPassRecovery(req, res) {
+  /**
+   * Creates a pass_recovery token and sends it in an email
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined
+   */
+  static async reqPassRecovery(req, res, next) {
     const user = await User.getByEmail(req.query);
 
     if (user === 0) {
-      const result = {
-        error: {
-          status: 401,
-          message: 'User doesnt exist',
-        },
-      };
-      res.status(401).send(result);
+      next({
+        status: 401,
+        message: 'User doesnt exist',
+      });
     } else {
       const hash = await Auth.generateToken(user, PASS_RECOVERY_TYPE);
 
       const options = {
-        from: '"Foraneos UDG Team" <info@foraneos-udg.tk>',
+        from: `"Foraneos UDG Team" <${process.env.MAIL_USER}>`,
         to: user.mainEmail,
         subject: 'Recovery Account Email ✔',
         text: 'Presiona Para Confirmar',
         html: `<p>Presiona
-        <a href="http://localhost:3000/api/auth/passwordRecovery?hash=${hash}">
+        <a href="${process.env.URL_PASS}${hash}">
         aqui</a> para recuperar tu contraseña</p>`,
       };
       emailer.sendMail(options);
 
-      const result = {
-        message: {
-          status: 200,
-          message: 'Email sended',
-        },
-      };
-      res.send(result);
+      res.send({
+        status: 200,
+        message: 'Email sended',
+      });
     }
   }
 
-  static async passRecovery(req, res) {
-    const token = await Token.getActiveTokenByHash(req.query.hash, PASS_RECOVERY_TYPE);
+  /**
+   * Changes the password form the user
+   * @param  {object}   req   Request form express package
+   * @param  {object}   res   Response from express package
+   * @param  {Function} next  Function that continues the middlewares processing
+   * @return undefined        If the token is inactive sends an error
+   */
+  static async passRecovery(req, res, next) {
+    const token = await Token.getActiveTokenByHash(req.body.hash, PASS_RECOVERY_TYPE);
 
     if (!Auth.isCurrentlyActive(token)) {
-      const result = {
-        error: {
-          status: 401,
-          message: 'Token not active',
-        },
-      };
-      res.status(401).send(result);
+      next({
+        status: 401,
+        message: 'Token not active',
+      });
     } else {
+      await hashPassword(req);
       await Token.deactivate(token.id);
-      await User.patch(token.userId, { password: req.query.password });
+      await User.patch(token.userId, { password: req.body.password });
 
-      const result = {
-        message: {
-          status: 200,
-          message: 'Password changed',
-        },
-      };
-
-      res.send(result);
+      res.send({
+        status: 200,
+        message: 'Password changed',
+      });
     }
   }
 
+  /**
+   * Generates a token from the type received
+   * @param  {string} options.username username from the user
+   * @param  {number} options.id       id from the user
+   * @param  {string} type             Type of token to create
+   * @return {string}                  Returns the created hash
+   */
   static async generateToken({ username, id }, type) {
     let hash = '';
 
@@ -288,7 +320,7 @@ class Auth {
 
     const key = `${username}${createdAt}`;
 
-    hash = bcrypt.hashSync(key, Number(process.env.SECRET));
+    hash = await bcrypt.hash(key, Number(process.env.SECRET));
 
     await Token.create({
       hash,
@@ -301,6 +333,11 @@ class Auth {
     return hash;
   }
 
+  /**
+   * Checks if a token is still active
+   * @param  {string}  token Token to check
+   * @return {Boolean}       Returns if the token is active
+   */
   static isCurrentlyActive(token) {
     if (token === 0) {
       return false;

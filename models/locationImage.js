@@ -29,7 +29,7 @@ class LocationImage {
     return locationImage;
   }
 
-  static async create({ locationId, image, description }) {
+  static async create({ locationId, image, description = '' }) {
     let locationImageId = '';
 
     try {

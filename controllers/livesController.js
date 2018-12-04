@@ -1,85 +1,91 @@
-const {
-  livesIn,
-} = require('../models');
+const { LivesIn } = require('../models');
 
-exports.showAll = async (req, res) => {
-  let result = await livesIn.getAll('', req.params.locationId);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
-  }
-
-  res.send(result);
-};
-
-exports.create = async (req, res) => {
-  let result = await livesIn.create(req.body);
+/**
+ * Gets all the livesIn related to the locationId in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends all the relations
+ */
+exports.showAll = async (req, res, next) => {
+  const result = await LivesIn.getAll('', req.params.locationId);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409);
-  } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Location doesn\'t have suficcient Rooms',
-      },
-    };
-    res.status(409);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
   } else {
-    res.status(201);
+    res.send(result);
   }
-
-  res.send(result);
 };
 
-exports.update = async (req, res) => {
-  let result = await livesIn.update(req.params.id, req.body);
+/**
+ * Creates a livesIn with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the livesIn created
+ */
+exports.create = async (req, res, next) => {
+  const result = await LivesIn.create(req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error updating resource',
-      },
-    };
-    res.status(409);
-  }
-
-  res.send(result);
-};
-
-exports.patch = async (req, res) => {
-  let result = await livesIn.patch(req.params.id, req.body);
-
-  if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error updating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Patch only receive one attribute',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Location doesn\'t have suficcient Rooms',
+    });
+  } else {
+    res.status(201).send(result);
   }
+};
 
-  res.send(result);
+/**
+ * Updates all the editable datas form a livesIn with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the livesIn updated
+ */
+exports.update = async (req, res, next) => {
+  const result = await LivesIn.update(req.params.id, req.body);
+
+  if (result === 0) {
+    next({
+      status: 409,
+      message: 'Error updating resource',
+    });
+  } else {
+    res.send(result);
+  }
+};
+
+/**
+ * Updates one of the editable datas form a livesIn with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined         Sends error if it happens otherwise sends the data updated
+ */
+exports.patch = async (req, res, next) => {
+  const result = await LivesIn.patch(req.params.id, req.body);
+
+  if (result === 0) {
+    next({
+      status: 409,
+      message: 'Error updating resource',
+    });
+  } else if (result === 1) {
+    next({
+      status: 409,
+      message: 'Patch only receive one attribute',
+    });
+  } else {
+    res.send(result);
+  }
 };

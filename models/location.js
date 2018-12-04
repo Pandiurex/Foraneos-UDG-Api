@@ -14,6 +14,7 @@ class Location {
     this.streetAcross2 = data.streetAcross2;
     this.extNum = data.extNum;
     this.intNum = data.intNum;
+    this.sexType = data.sexType;
     this.numRooms = data.numRooms;
     this.availableRooms = data.availableRooms;
     this.description = data.description;
@@ -51,7 +52,7 @@ class Location {
     let locationTbl = '';
 
     try {
-      locationTbl = await db.select('location', '',
+      locationTbl = await db.selectAll('location',
         [{ col: 'id', oper: '=', val: locationId }]);
     } catch (e) {
       return 0;
@@ -139,7 +140,7 @@ class Location {
     try {
       locationsTbl = await db.select('location',
         ['id', 'ownerUserId', 'active', 'lattitude',
-          'longitude', 'colony', 'numRooms', 'availableRooms',
+          'longitude', 'colony', 'sexType', 'numRooms', 'availableRooms',
           'cost', 'avgRate', 'avgServicesRate', 'avgSecurityRate',
           'avgLocalizationRate', 'avgCostBenefictRate'], '',
         order, limit);
@@ -191,9 +192,9 @@ class Location {
   static async create(
     {
       ownerUserId, lattitude, longitude, street,
-      colony, postalCode, streetAcross1, streetAcross2,
-      extNum, intNum, numRooms, description,
-      restrictions, cost, images = [], services = [],
+      colony, postalCode = 0, streetAcross1, streetAcross2 = '',
+      extNum, intNum = 0, sexType, numRooms, description = '',
+      restrictions = '', cost,
     },
   ) {
     let locationId = '';
@@ -202,54 +203,27 @@ class Location {
       locationId = await db.insert('location',
         ['ownerUserId', 'lattitude', 'longitude', 'street',
           'colony', 'postalCode', 'streetAcross1', 'streetAcross2',
-          'extNum', 'intNum', 'numRooms', 'description',
+          'extNum', 'intNum', 'sexType', 'numRooms', 'description',
           'restrictions', 'cost', 'availableRooms'],
         [ownerUserId, lattitude, longitude, street,
           colony, postalCode, streetAcross1, streetAcross2,
-          extNum, intNum, numRooms, description,
+          extNum, intNum, sexType, numRooms, description,
           restrictions, cost, numRooms]);
     } catch (e) {
       return 0;
     }
 
-    const myPromises = images.map(async (data) => {
-      await db.insert('location_image',
-        ['locationId', 'image', 'description'],
-        [locationId, data.image, data.description]);
-    });
-
-    await Promise.all(myPromises);
-
-    try {
-      const myPromises2 = services.map(async (serviceId) => {
-        await db.insert('location_service',
-          ['locationId', 'serviceId'],
-          [locationId, serviceId]);
-      });
-
-      await Promise.all(myPromises2);
-    } catch (e) {
-      await db.delete('location',
-        [{ col: 'id', oper: '=', val: locationId }]);
-
-      await db.delete('location_image',
-        [{ col: 'locationId', oper: '=', val: locationId }]);
-
-      return 1;
-    }
-
-
     return this.get(locationId);
   }
 
   static async remove(locationId) {
-    const location = this.get(locationId);
+    const location = await this.get(locationId);
 
     if (location === 0) {
       return 0;
     }
 
-    if (location.availableRooms === 0) {
+    if (location.numRooms - location.availableRooms > 0) {
       return 1;
     }
 
@@ -262,8 +236,8 @@ class Location {
 
   static async update(locationId,
     {
-      postalCode, numRooms, description, restrictions,
-      cost,
+      active, postalCode, numRooms, sexType,
+      description, restrictions, cost,
     }) {
     const location = this.get(locationId);
 
@@ -272,6 +246,10 @@ class Location {
     }
 
     const columnsUpdate = [];
+
+    if (active !== undefined) {
+      columnsUpdate.push({ col: 'active', val: active });
+    }
 
     if (postalCode !== undefined) {
       columnsUpdate.push({ col: 'postalCode', val: postalCode });
@@ -282,6 +260,10 @@ class Location {
         return 2;
       }
       columnsUpdate.push({ col: 'numRooms', val: numRooms });
+    }
+
+    if (sexType !== undefined) {
+      columnsUpdate.push({ col: 'sexType', val: sexType });
     }
 
     if (description !== undefined) {
@@ -308,13 +290,18 @@ class Location {
 
   static async patch(locationId,
     {
-      postalCode, numRooms, description, restrictions,
-      cost,
+      active, postalCode, numRooms, sexType,
+      description, restrictions, cost,
     }) {
     const location = this.get(locationId);
 
     const columnsUpdate = [];
     let updated = '';
+
+    if (active !== undefined) {
+      columnsUpdate.push({ col: 'active', val: active });
+      updated = { active };
+    }
 
     if (postalCode !== undefined) {
       columnsUpdate.push({ col: 'postalCode', val: postalCode });
@@ -327,6 +314,11 @@ class Location {
       }
       columnsUpdate.push({ col: 'numRooms', val: numRooms });
       updated = { numRooms };
+    }
+
+    if (sexType !== undefined) {
+      columnsUpdate.push({ col: 'sexType', val: sexType });
+      updated = { sexType };
     }
 
     if (description !== undefined) {

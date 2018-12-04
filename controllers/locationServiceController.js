@@ -1,46 +1,32 @@
-const {
-  locationService,
-} = require('../models');
+const { LocationService } = require('../models');
 
-exports.create = async (req, res) => {
-  let result = await locationService.create(req.body);
+exports.create = async (req, res, next) => {
+  const result = await LocationService.create(req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Service already exists',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Service already exists',
+    });
   } else {
-    res.status(201);
+    res.status(201).send(result);
   }
-
-  res.send(result);
 };
 
-exports.remove = async (req, res) => {
-  let result = await locationService.remove(req.params.locationId,
-    req.params.id);
+exports.remove = async (req, res, next) => {
+  const result = await LocationService.remove(req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };

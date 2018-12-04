@@ -1,15 +1,27 @@
-// Routes of tokens.
 const express = require('express');
-const { errMid, authMid } = require('../middlewares');
+const { authMid, userMid } = require('../middlewares');
 
 const route = express.Router();
 
-route.post('/confirmEmail', [authMid.sessionChecker, authMid.havePermissions],
-  authMid.confirmEmail)
-  .post('/login', [authMid.sessionChecker, authMid.havePermissions], authMid.login)
-  .delete('/logout', [authMid.sessionChecker, authMid.havePermissions], [authMid.sessionChecker],
-    authMid.logout)
-  .get('/reqPasswordRecovery', authMid.reqPassRecovery)
-  .post('/passwordRecovery', [errMid.hashPassword], authMid.passRecovery);
+route.get('/confirmEmail', [authMid.sessionChecker,
+  authMid.havePermissions,
+  userMid.checkQueryEmailId],
+authMid.confirmEmail)
+  .post('/login', [authMid.sessionChecker,
+    authMid.havePermissions,
+    userMid.checkEmail,
+    userMid.checkPasswordWithoutHash],
+  authMid.login)
+  .delete('/logout', [authMid.sessionChecker,
+    authMid.havePermissions],
+  authMid.logout)
+  .get('/reqPasswordRecovery', [authMid.sessionChecker,
+    authMid.havePermissions,
+    userMid.checkQueryEmail],
+  authMid.reqPassRecovery)
+  .post('/passwordRecovery', [authMid.sessionChecker,
+    authMid.havePermissions,
+    userMid.checkPasswordWithoutHash],
+  authMid.passRecovery);
 
 module.exports = route;

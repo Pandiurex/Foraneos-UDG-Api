@@ -1,19 +1,32 @@
-// Routes of location_image.
 const express = require('express');
+const multer = require('multer');
+const { locationImageController } = require('../controllers');
 const {
-  locationImageController,
-} = require('../controllers');
-const middlewaresErr = require('../middlewares');
-const { authMid } = require('../middlewares');
+  authMid,
+  locationImageMid,
+  fileMid,
+  generalMid,
+} = require('../middlewares');
 
 const route = express.Router();
+const upload = multer({ dest: 'temp/' });
 
 route
-  .post('/', [authMid.sessionChecker, authMid.havePermissions],
-    locationImageController.create)
-  .delete('/:id', [authMid.sessionChecker,
+  .post('/', [upload.single('image'),
+    authMid.sessionChecker,
     authMid.havePermissions,
-    middlewaresErr.errMid.paramsValid],
-  locationImageController.remove);
+    locationImageMid.checkAll,
+    locationImageController.create,
+    fileMid.saveImage],
+  fileMid.errorHandler)
+  .delete('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions,
+    locationImageController.remove],
+  fileMid.deleteImage)
+  .get('/', [locationImageMid.checkImageName,
+    authMid.sessionChecker,
+    authMid.havePermissions],
+  fileMid.getImage);
 
 module.exports = route;

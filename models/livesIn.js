@@ -116,6 +116,8 @@ class LivesIn {
       return 0;
     }
 
+    if (livesInTbl.length === 0) { return 0; }
+
     const livesIn = this.processResult(livesInTbl);
 
     const myPromises = livesIn.map(async (data) => {

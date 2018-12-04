@@ -1,43 +1,52 @@
-// Routes of users.
 const express = require('express');
+const multer = require('multer');
+const { usersController } = require('../controllers');
 const {
-  usersController,
-} = require('../controllers');
-const { errMid, authMid } = require('../middlewares');
+  authMid,
+  userMid,
+  fileMid,
+  generalMid,
+} = require('../middlewares');
 
 const route = express.Router();
+const upload = multer({ dest: 'temp/' });
 
 route
-  // Users.
   .get('/', [authMid.sessionChecker, authMid.havePermissions],
     usersController.showAll)
-  .get('/:id', [authMid.sessionChecker,
-    authMid.havePermissions,
-    errMid.paramsValid],
+  .get('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
   usersController.showOne)
-  .post('/', [authMid.sessionChecker,
+  .post('/', [upload.single('image'),
+    authMid.sessionChecker,
     authMid.havePermissions,
-    errMid.nameValid,
-    errMid.passwordValid,
-    errMid.birthDateValid,
-    errMid.userTypeValid,
-    errMid.genderValid,
-    errMid.emailValid,
-    errMid.surnameValid,
-    errMid.hashPassword,
+    userMid.checkAllPost,
     usersController.create,
+    fileMid.saveImage,
+    fileMid.errorHandler,
   ], authMid.register)
-  .put('/:id', [authMid.sessionChecker,
+  .put('/:id', [upload.single('image'),
+    generalMid.checkParamId,
+    authMid.sessionChecker,
     authMid.havePermissions,
-    errMid.paramsValid],
-  usersController.update)
-  .patch('/:id', [authMid.sessionChecker,
+    userMid.checkAllPut,
+    usersController.update,
+    userMid.deletePastProfileImage,
+    fileMid.saveImage],
+  fileMid.errorHandler)
+  .patch('/:id', [upload.single('image'),
+    generalMid.checkParamId,
+    authMid.sessionChecker,
     authMid.havePermissions,
-    errMid.paramsValid],
-  usersController.patch)
-  .delete('/:id', [authMid.sessionChecker,
-    authMid.havePermissions,
-    errMid.paramsValid],
+    userMid.checkAllPatch,
+    usersController.patch,
+    userMid.deletePastProfileImage,
+    fileMid.saveImage],
+  fileMid.errorHandler)
+  .delete('/:id', [generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
   usersController.remove);
 
 module.exports = route;

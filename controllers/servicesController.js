@@ -1,19 +1,14 @@
-const {
-  service,
-} = require('../models');
+const { Service } = require('../models');
 
-exports.showAll = async (req, res) => {
-  let result = await service.getAll();
+exports.showAll = async (req, res, next) => {
+  const result = await Service.getAll();
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };

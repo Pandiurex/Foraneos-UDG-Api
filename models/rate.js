@@ -61,7 +61,7 @@ class Rate {
 
   static async create(
     {
-      userId, locationId, commentTitle, comment,
+      userId, locationId, commentTitle = '', comment = '',
       date, servicesRate, securityRate, localizationRate,
       costBenefictRate,
     },

@@ -1,6 +1,7 @@
 // index.js create group the routes.
 const route = require('express').Router();
 const usersRoute = require('./usersRoute');
+const profileImageRoute = require('./profileImageRoute');
 const locationsRoute = require('./locationsRoute');
 const ratesRoute = require('./ratesRoute');
 const messagesRoute = require('./messagesRoute');
@@ -18,14 +19,15 @@ const authRoute = require('./authRoute');
 route
   .get('/', (req, res) => res.send('Welcome to Our System!'))
   .use('/auth', authRoute)
+  .use('/locations', complaintsRoute)
   .use('/users', usersRoute)
+  .use('/userProfileImage', profileImageRoute)
   .use('/users', livesInRoute)
   .use('/locations', locationsRoute)
   .use('/locations', livesRoute)
   .use('/locations', ratesRoute)
   .use('/locations', messagesRoute)
-  .use('/locations', complaintsRoute)
-  .use('/locations', locationServiceRoute)
+  .use('/locationService', locationServiceRoute)
   .use('/complaintTypes', complaintTypesRoute)
   .use('/services', servicesRoute)
   .use('/factory', factoryRoute)

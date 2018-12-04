@@ -1,44 +1,47 @@
-const {
-  Email,
-} = require('../models');
+const { Email } = require('../models');
 
+/**
+ * Creates an email with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined         Sends error if it happens, otherwise sends the email created
+ */
 exports.create = async (req, res, next) => {
-  let result = await Email.create(req.body);
+  const result = await Email.create(req.body);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Conflict creating resource',
-      },
-    };
-    res.status(409).send(result);
+    next({
+      status: 409,
+      message: 'Conflict creating resource',
+    });
   } else {
     res.locals.email = result;
     next();
   }
 };
 
-exports.remove = async (req, res) => {
-  let result = await Email.remove(req.params.id);
+/**
+ * Removes an email with the id in the params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined         Sends error if it happens, otherwise sends the email removed
+ */
+exports.remove = async (req, res, next) => {
+  const result = await Email.remove(req.params.id);
 
   if (result === 0) {
-    result = {
-      error: {
-        status: 404,
-        message: 'Resource not found',
-      },
-    };
-    res.status(404);
+    next({
+      status: 404,
+      message: 'Resource not found',
+    });
   } else if (result === 1) {
-    result = {
-      error: {
-        status: 409,
-        message: 'Error deleting resource',
-      },
-    };
-    res.status(409);
+    next({
+      status: 409,
+      message: 'Error deleting resource',
+    });
+  } else {
+    res.send(result);
   }
-
-  res.send(result);
 };

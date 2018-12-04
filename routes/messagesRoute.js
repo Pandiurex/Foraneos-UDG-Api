@@ -1,19 +1,22 @@
-// Routes of messages.
 const express = require('express');
-const {
-  messagesController,
-} = require('../controllers');
-const middlewaresErr = require('../middlewares');
-const { authMid } = require('../middlewares');
+const { messagesController } = require('../controllers');
+const { authMid, messageMid, generalMid } = require('../middlewares');
 
 const route = express.Router();
 
 route
-  .get('/:locationId/messages/', [authMid.sessionChecker, authMid.havePermissions],
-    messagesController.showAll)
-  .get('/:locationId/messages/:id', [authMid.sessionChecker, authMid.havePermissions],
-    middlewaresErr.errMid.paramsValid, messagesController.showOne)
-  .post('/:locationId/messages/', [authMid.sessionChecker, authMid.havePermissions],
-    messagesController.create);
+  .get('/:locationId/messages/', [generalMid.checkParamLocationId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
+  messagesController.showAll)
+  .get('/:locationId/messages/:id', [generalMid.checkParamLocationId,
+    generalMid.checkParamId,
+    authMid.sessionChecker,
+    authMid.havePermissions],
+  messagesController.showOne)
+  .post('/messages', [authMid.sessionChecker,
+    authMid.havePermissions,
+    messageMid.checkAll],
+  messagesController.create);
 
 module.exports = route;
