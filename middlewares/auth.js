@@ -199,7 +199,7 @@ class Auth {
         subject: 'Recovery Account Email ✔',
         text: 'Presiona Para Confirmar',
         html: `<p>Presiona
-        <a href="${process.env.URL_PASS}/api/auth/passwordRecovery?hash=${hash}">
+        <a href="${process.env.URL_PASS}${hash}">
         aqui</a> para recuperar tu contraseña</p>`,
       };
       emailer.sendMail(options);
