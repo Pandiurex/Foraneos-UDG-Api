@@ -1,6 +1,12 @@
 PORT=3000
-DB_USER=usuario_raiz
+DB_USER=root_user
 DB_PASS=123456
 DB_NAME=DB1
 DB_HOST=localhost
-SECRET=palabraX58
+SECRET=10
+MAIL_HOST=mail.domain.domain
+MAIL_PORT=465
+MAIL_USER=noreply@domain.domain
+MAIL_PASS=password
+URL=https://domain.domain
+URL_PASS=https://domain.domain/password_recovery.html
