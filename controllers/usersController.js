@@ -1,5 +1,12 @@
 const { User } = require('../models');
 
+/**
+ * Gets all the users
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends all the users
+ */
 exports.showAll = async (req, res, next) => {
   const result = await User.getAll();
 
@@ -13,6 +20,13 @@ exports.showAll = async (req, res, next) => {
   }
 };
 
+/**
+ * Gets an user with the id in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the user specified
+ */
 exports.showOne = async (req, res, next) => {
   const result = await User.get(req.params.id);
 
@@ -26,6 +40,13 @@ exports.showOne = async (req, res, next) => {
   }
 };
 
+/**
+ * Creates a user with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the user created
+ */
 exports.create = async (req, res, next) => {
   const result = await User.create(req.body);
 
@@ -45,6 +66,13 @@ exports.create = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates all the editable datas from an user with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the user updated
+ */
 exports.update = async (req, res, next) => {
   const result = await User.update(req.params.id, req.body);
 
@@ -64,6 +92,13 @@ exports.update = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates one of the editable datas from an user with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the data updated
+ */
 exports.patch = async (req, res, next) => {
   const result = await User.patch(req.params.id, req.body);
 
@@ -90,6 +125,13 @@ exports.patch = async (req, res, next) => {
   }
 };
 
+/**
+ * Removes a user logically with the id in req.params
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the user removed
+ */
 exports.remove = async (req, res, next) => {
   const result = await User.remove(req.params.id);
 

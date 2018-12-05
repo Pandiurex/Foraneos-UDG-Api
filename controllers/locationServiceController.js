@@ -1,5 +1,12 @@
 const { LocationService } = require('../models');
 
+/**
+ * Creates a locationService with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the locationService created
+ */
 exports.create = async (req, res, next) => {
   const result = await LocationService.create(req.body);
 
@@ -18,6 +25,14 @@ exports.create = async (req, res, next) => {
   }
 };
 
+
+/**
+ * Removes a locationService with the req.body
+ * @param  {object}   req   Request form express package
+ * @param  {object}   res   Response from express package
+ * @param  {Function} next  Function that continues the middlewares processing
+ * @return undefined        Sends error if it happens, otherwise sends the locationService removed
+ */
 exports.remove = async (req, res, next) => {
   const result = await LocationService.remove(req.body);
 
