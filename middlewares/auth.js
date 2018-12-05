@@ -188,21 +188,24 @@ class Auth {
       });
     } else {
       const token = await Token.getActiveToken(userId, SESSION_TYPE);
+      const user = await User.get(userId);
 
       if (!Auth.isCurrentlyActive(token)) {
-        const user = await User.get(userId);
-
         const hash = await Auth.generateToken(user,
           SESSION_TYPE);
 
         res.send({
           hash,
+          user: user.id,
+          type: user.userType,
           status: 200,
           message: 'Session started',
         });
       } else {
         res.send({
           hash: token.hash,
+          user: user.id,
+          type: user.userType,
           status: 200,
           message: 'Session started',
         });
