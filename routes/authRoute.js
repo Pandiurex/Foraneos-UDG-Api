@@ -10,7 +10,7 @@ authMid.confirmEmail)
   .post('/login', [authMid.sessionChecker,
     authMid.havePermissions,
     userMid.checkEmail,
-    userMid.checkPasswordWithoutHash],
+    userMid.checkPassword],
   authMid.login)
   .delete('/logout', [authMid.sessionChecker,
     authMid.havePermissions],
@@ -21,7 +21,7 @@ authMid.confirmEmail)
   authMid.reqPassRecovery)
   .post('/passwordRecovery', [authMid.sessionChecker,
     authMid.havePermissions,
-    userMid.checkPasswordWithoutHash],
+    userMid.checkPassword],
   authMid.passRecovery);
 
 module.exports = route;
