@@ -192,11 +192,8 @@ class Auth {
       if (!Auth.isCurrentlyActive(token)) {
         const user = await User.get(userId);
 
-        console.log('Generando');
-        console.time('generate');
         const hash = await Auth.generateToken(user,
           SESSION_TYPE);
-        console.timeEnd('generate');
 
         res.send({
           hash,
