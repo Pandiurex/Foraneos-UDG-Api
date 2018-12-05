@@ -5,11 +5,11 @@ const VISITANT = 3;
 
 const roleAccess = {
   [ADMIN]: {
-    GET: [/(\/\w+)+\/?$/],
-    POST: [/(\/\w+)+\/?$/],
-    PUT: [/(\/\w+)+\/?$/],
-    PATCH: [/(\/\w+)+\/?$/],
-    DELETE: [/(\/\w+)+\/?$/],
+    GET: [/.*$/],
+    POST: [/.*$/],
+    PUT: [/.*$/],
+    PATCH: [/.*$/],
+    DELETE: [/.*$/],
   },
   [OWNER]: {
     GET: [/(\/locations)(\?.*)?$/,

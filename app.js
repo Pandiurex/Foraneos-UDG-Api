@@ -14,7 +14,7 @@ const logStdout = process.stdout;
 
 console.log = (d) => {
   logFile.write(`${util.format(d)}\n}`);
-  logStdout.write(`${util.format(d)}\n}`);
+  logStdout.write(`${util.format(d)}\n`);
 };
 
 try {
