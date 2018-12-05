@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const db = require('../db');
 
 class User {
@@ -299,7 +300,7 @@ class User {
 
     const user = this.processResult(userTbl)[0];
 
-    if (password, user.password) {
+    if (await bcrypt.compare(password, user.password)) {
       return user.id;
     }
 
