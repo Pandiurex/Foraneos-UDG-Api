@@ -198,6 +198,7 @@ class Auth {
           hash,
           user: user.id,
           type: user.userType,
+          verified: user.emails[0].verified,
           status: 200,
           message: 'Session started',
         });
@@ -206,6 +207,7 @@ class Auth {
           hash: token.hash,
           user: user.id,
           type: user.userType,
+          verified: user.emails[0].verified,
           status: 200,
           message: 'Session started',
         });
