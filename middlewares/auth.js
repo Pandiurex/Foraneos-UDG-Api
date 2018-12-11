@@ -80,7 +80,7 @@ class Auth {
    * @param  {object}   res   Response from express package
    * @return undefined        Sends the created user
    */
-  static async register(req, res) {
+  static async register(req, res, next) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
     const options = {
@@ -94,9 +94,7 @@ class Auth {
     };
     emailer.sendMail(options);
 
-    res.send({
-      user: res.locals.user,
-    });
+    next();
   }
 
   /**
