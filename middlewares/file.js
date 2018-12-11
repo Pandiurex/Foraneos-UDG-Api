@@ -10,6 +10,7 @@ const saveImage = (req, res, next) => {
       });
     }
   });
+
   res.status(201).send({
     status: 201,
     message: 'Image created',

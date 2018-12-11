@@ -23,9 +23,9 @@ route
     authMid.havePermissions,
     userMid.checkAllPost,
     usersController.create,
-    fileMid.saveImage,
-    fileMid.errorHandler,
-  ], authMid.register)
+    authMid.register,
+    fileMid.saveImage],
+  fileMid.errorHandler)
   .put('/:id', [upload.single('image'),
     generalMid.checkParamId,
     authMid.sessionChecker,

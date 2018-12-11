@@ -80,7 +80,7 @@ class Auth {
    * @param  {object}   res   Response from express package
    * @return undefined        Sends the created user
    */
-  static async register(req, res) {
+  static async register(req, res, next) {
     const hash = await Auth.generateToken(res.locals.user, CONFIRM_EMAIL_TYPE);
 
     const options = {
@@ -89,14 +89,13 @@ class Auth {
       subject: 'Confirmation Email ✔',
       text: 'Presiona Para Confirmar',
       html: `<p>Presiona
-      <a href="${process.env.URL}/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.user.mainEmailId}">
+          <a href="${process.env.URL_EMAIL}?h=${hash}&e=${res.locals.user.mainEmailId}">
       aqui</a> para activar tu correo</p>`,
     };
+
     emailer.sendMail(options);
 
-    res.send({
-      user: res.locals.user,
-    });
+    next();
   }
 
   /**
@@ -116,7 +115,7 @@ class Auth {
           subject: 'Confirmation Email ✔',
           text: 'Presiona Para Confirmar',
           html: `<p>Presiona
-          <a href="${process.env.URL}/api/auth/confirmEmail?hash=${hash}&emailId=${res.locals.email.id}">
+          <a href="${process.env.URL_EMAIL}?h=${hash}&e=${res.locals.email.id}">
           aqui</a> para activar tu correo</p>`,
         };
         emailer.sendMail(options);
@@ -188,24 +187,26 @@ class Auth {
       });
     } else {
       const token = await Token.getActiveToken(userId, SESSION_TYPE);
+      const user = await User.get(userId);
 
       if (!Auth.isCurrentlyActive(token)) {
-        const user = await User.get(userId);
-
-        console.log('Generando');
-        console.time('generate');
         const hash = await Auth.generateToken(user,
           SESSION_TYPE);
-        console.timeEnd('generate');
 
         res.send({
           hash,
+          user: user.id,
+          type: user.userType,
+          verified: user.emails[0].verified,
           status: 200,
           message: 'Session started',
         });
       } else {
         res.send({
           hash: token.hash,
+          user: user.id,
+          type: user.userType,
+          verified: user.emails[0].verified,
           status: 200,
           message: 'Session started',
         });

@@ -142,7 +142,8 @@ class Location {
         ['id', 'ownerUserId', 'active', 'lattitude',
           'longitude', 'colony', 'sexType', 'numRooms', 'availableRooms',
           'cost', 'avgRate', 'avgServicesRate', 'avgSecurityRate',
-          'avgLocalizationRate', 'avgCostBenefictRate'], '',
+          'avgLocalizationRate', 'avgCostBenefictRate',
+          'street', 'intNum', 'extNum'], '',
         order, limit);
     } catch (e) {
       return 0;
