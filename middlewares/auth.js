@@ -89,9 +89,10 @@ class Auth {
       subject: 'Confirmation Email ✔',
       text: 'Presiona Para Confirmar',
       html: `<p>Presiona
-          <a href="${process.env.URL_EMAIL}?h=${hash}&e=${res.locals.email.id}">
+          <a href="${process.env.URL_EMAIL}?h=${hash}&e=${res.locals.user.mainEmailId}">
       aqui</a> para activar tu correo</p>`,
     };
+
     emailer.sendMail(options);
 
     next();
